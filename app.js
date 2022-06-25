@@ -22,15 +22,15 @@ app.use(session(sessionConfig))
 
 const oktaAPI = require("./routes/okta")
 const xeroAPI = require("./routes/xero")
+const login = require("./routes/login")
+const visual = require("./routes/visualize")
 
 
-app.use("/xero", xeroAPI)
+app.use("/", xeroAPI)
 app.use("/okta", oktaAPI)
+app.use("/login", login)
+app.use("/viz", visual)
 
-
-app.get("/home", (req, res)=>{
-    res.render("home")
-})
 
 app.listen(3000,()=>{
     console.log('Listening to port 3000')

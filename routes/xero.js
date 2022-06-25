@@ -32,6 +32,10 @@ router.get('/',(req,res)=>{
     res.send(`Sign in and connect with Xero using OAuth2! <br><a href="${consentUrl}">Connect to Xero</a>`)
 })
 
+router.get("/home", (req, res)=>{
+    res.render("home")
+})
+
 router.get('/callback',async(req,res)=>{
     try{
         client.CLOCK_TOLERANCE=5
