@@ -1,12 +1,19 @@
-const express = require('express')
-const router = express.Router()
+const passport = require('passport')
+const User = require('../models/user')
+const router = require('express').Router()
 
-router.post("/",(req, res)=>{
-    res.sendStatus(403)
+router.post("/", passport.authenticate('local', {failureRedirect: '/login'}) ,(req, res)=>{
+    res.sendStatus(200)
 })
 
-router.post("/signup",(req, res)=>{
-    res.sendStatus(403)
+router.post("/signup",(req, res, next)=>{
+    User.register({username: req.body.username, email: req.body.email}, req.body.password, (err)=>{
+        if(err){
+            console.log("Error in Signup")
+            return next(err)
+        }
+    })
+    res.sendStatus(200)
 })
 
 
