@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const session = require('express-session')
 const path = require('path')
@@ -30,7 +31,8 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-mongoose.connect('mongodb+srv://nishit-saasden:2eyWBha7RbnySSqJ@cluster0.vym2cnu.mongodb.net/?retryWrites=true&w=majority',{ 
+
+mongoose.connect(process.env.MONGODB_URI,{ 
         useNewUrlParser: true, 
         useUnifiedTopology: true 
     }, (err) => {

@@ -7,8 +7,9 @@ const domain = "https://trial-2640796.okta.com"
 const api_token = "SSWS 005UYgB9e0MdLcB3ystcwleeVi2j1bixFXRjMYztZ0"
 const clientID = "0oa1eghxx2scZAdnA697"
 
-router.get("/user/app/list", async(req,res) => {
-    const options = httpsHeader.getHeaders(domain, '/api/v1/apps', api_token)
+//get list of all applications
+router.get("/app/list", async(req,res) => {
+    const options = httpsHeader.getHeaders(domain, '/api/v1/apps', 'GET', api_token)
     request(options, function(err, result, body) {
         if(err) {
             console.log(err)
@@ -31,8 +32,8 @@ router.get("/user/app/list", async(req,res) => {
 
 
 //get list of groups
-router.get("/user/groups", async(req,res) => {
-    const options = httpsHeader.getHeaders(domain, '/api/v1/groups', api_token)
+router.get("/groups/list", async(req,res) => {
+    const options = httpsHeader.getHeaders(domain, '/api/v1/groups', 'GET', api_token)
     request(options, function(err, result, body) {
         if(err) {
             console.log(err)
@@ -41,7 +42,7 @@ router.get("/user/groups", async(req,res) => {
             output = JSON.parse(body)
             let x = []
             output.forEach(element => {
-                x.push([element.id])
+                x.push({id : element.id})
             });
             res.send(JSON.stringify({data : x}))
         }
@@ -50,10 +51,10 @@ router.get("/user/groups", async(req,res) => {
 });
 
 //deactivate an application
-router.get("/user/app/deactivate", async(req,res) => {
+router.get("/app/deactivate", async(req,res) => {
     const appID = req.query.ID
     const path = '/api/v1/apps/'+ appID +'/lifecycle/deactivate'
-    const options = httpsHeader.getHeaders(domain, path ,api_token)
+    const options = httpsHeader.getHeaders(domain, path, 'POST', api_token)
     request(options, function(err, result, body) {
         if(err) {
             console.log(err)
@@ -66,10 +67,10 @@ router.get("/user/app/deactivate", async(req,res) => {
 });
 
 //delete an application
-router.get("/user/app/delete", async(req,res) => {
+router.get("/app/delete", async(req,res) => {
     const appID = req.body.ID
     const path = '/api/v1/apps/' + appID
-    const options = httpsHeader.getHeaders(domain, path, api_token)
+    const options = httpsHeader.getHeaders(domain, path, 'DELETE', api_token)
     request(options, function(err, result, body) {
         if(err) {
             console.log(err)
@@ -82,11 +83,11 @@ router.get("/user/app/delete", async(req,res) => {
 });
 
 //remove a user from an application
-router.get("/user/app/remove", async(req,res) => {
+router.get("/app/user/remove", async(req,res) => {
     const appID = req.query.appID
     const usrID = req.query.usrID
     const path =  '/api/v1/apps/'+ appID +'/users/' + usrID
-    const options = httpsHeader.getHeaders(domain, path, api_token)
+    const options = httpsHeader.getHeaders(domain, path, 'POST', api_token)
 
     request(options, function(err, result, body) {
         if(err) {
@@ -100,11 +101,10 @@ router.get("/user/app/remove", async(req,res) => {
 });
 
 //list all users assigned under an app
-router.get("/user/list", async(req,res) => {
-    const appID = req.query.appID
-    const usrID = req.query.usrID
-    const path = '/api/v1/apps/' + appID + '/users/' + usrID
-    const options = httpsHeader.getHeaders(domain, path, api_token)
+router.post("/app/user/list", async(req,res) => {
+    const appID = req.body.appID
+    const path = '/api/v1/apps/' + appID + '/users/'
+    const options = httpsHeader.getHeaders(domain, path, 'GET', api_token)
 
     request(options, function(err, result, body) {
         if(err) {
@@ -114,9 +114,9 @@ router.get("/user/list", async(req,res) => {
             output = JSON.parse(body)
             x = []
             output.forEach(element => {
-                x.push({
+                x.push({    
                     id : element.id,
-                    name : element.firstName + ' ' + element.lastName
+                    userName : element.credentials.userName
                 })
             })
             res.send({data : x})

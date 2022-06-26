@@ -1,7 +1,7 @@
-module.exports.getHeaders = (domain, path, api_token) => {
+module.exports.getHeaders = (domain, path, method, api_token) => {
     const options = {
         url: domain + path,
-        method: 'GET',
+        method: method,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
