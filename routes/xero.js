@@ -176,7 +176,27 @@ router.get('/getBatchPayments',async(req,res)=>{
         res.redirect('/home')
     })
 })
-
+router.get('/getContacts',async(req,res)=>{
+    const getContacts={
+        url:'https://api.xero.com/api.xro/2.0/Contacts',
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'xero-tenant-id': req.session.xeroTenantId[0]
+        },
+        auth: {
+            'bearer': req.session.accessToken
+        }
+    }
+    request.get(getContacts,(error,response,body)=>{
+        if(error)
+        {
+            console.log(error)
+        }
+        console.log('cntacts : '+body)
+        res.redirect('/home')
+    })
+})
 
 
 router.get('/refreshToken', async function (req, res) {
