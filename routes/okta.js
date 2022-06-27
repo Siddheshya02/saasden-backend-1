@@ -2,10 +2,10 @@ const express = require('express')
 const router = express.Router()
 const request = require('request')
 const httpsHeader = require("../JS/getHeaders")
-
-const domain = "https://trial-2640796.okta.com"
-const api_token = "SSWS 005UYgB9e0MdLcB3ystcwleeVi2j1bixFXRjMYztZ0"
-const clientID = "0oa1eghxx2scZAdnA697"
+require('dotenv').config({ path: '../.env' })
+const domain = process.env.OKTA_DOMAIN 
+const api_token = process.env.OKTA_API_TOKEN
+const clientID = process.env.OKTA_CLIENT_ID
 
 //get list of all applications
 router.get("/app/list", async(req,res) => {
@@ -16,6 +16,7 @@ router.get("/app/list", async(req,res) => {
             res.sendStatus(500)
         } else {
             output = JSON.parse(body)
+            console.log(output)
             let x = []
             output.forEach(element => {
                 x.push({
@@ -24,7 +25,7 @@ router.get("/app/list", async(req,res) => {
                     status: element.status
                 })
             });
-            res.send(JSON.stringify({data : x}))
+            res.send(JSON.stringify({data : output}))
         }
     });
 
