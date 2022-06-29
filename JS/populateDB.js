@@ -30,10 +30,12 @@ async function appDB(accessToken, tenantID){
         }
     })
 
-    userAppSchema.insertMany(contactList)
-        .then(() => console.log("App List successfully Inserted"))
-        .catch((err) => console.log(err))
-
+    try {
+        await userAppSchema.insertMany(contactList)
+        console.log("Records inserted succesfully")
+    } catch (error) {
+        console.log(err)
+    }
 }
 
 
