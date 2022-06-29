@@ -1,33 +1,38 @@
-function appDB(){
-    require('dotenv').config({ path: '../.env' })
-    const domain = process.env.OKTA_DOMAIN 
-    const api_token = process.env.OKTA_API_TOKEN
-    const httpsHeader = require("./getHeaders")
-    const request = require('request')
-    const options = httpsHeader.getHeaders(domain, '/api/v1/apps', 'GET', api_token)
-    request(options, function(err, result, body) {
-        if(err)
-            console.log(err)
-        else {
-            output = JSON.parse(body)
-            okta_apps = []
-            output.forEach(app => okta_apps.push(app.name));
-            console.log(okta_apps)
+async function appDB(accessToken, tenantID){
+    const oktaOptions = require("./getOktaOptions")
+    const xeroOptions = require("./getXeroOptions")
+    const userAppSchema = require('../models/userApps')
+    const axios = require('axios')
+    
+    var okta_apps = []
+    const options_Okta = oktaOptions.getOptions('/api/v1/apps', 'GET')
+    var output = await axios.request(options_Okta)
+    output.data.forEach(app => okta_apps.push(app.name));
+    console.log(okta_apps)
+
+    var xeroList = []
+    const options_Xero = xeroOptions.getOptions('https://api.xero.com/api.xro/2.0/Contacts', 'GET', tenantID, accessToken)
+    var output = await axios.request(options_Xero)
+    output.data.forEach(contact => xeroList.push([contact.ContactID, contact.Name]))
+    console.log(xeroList)
+    
+    var contactList = []
+    okta_apps.forEach(app => {
+        for(i=0; i<xeroList.length; i++){
+            if(app == xeroList[i][1]){
+                contactList.push({
+                    appName : xeroList[i][1],
+                    contactID : xeroList[i][0]
+                })
+                xeroList.splice(i,1)
+                break
+            }
         }
     })
 
-    let contactList = []
-    xero_details.forEach(contact => contactList.push([contact.ContactID, contact.Name])
-    data = []
-
-    okta_apps.forEach(app => {
-        var Xapp = contactList.filter((app, i)=>{
-            return contactList[i] == app
-        })
-    });
-
-    for
-
+    userAppSchema.insertMany(contactList)
+        .then(() => console.log("App List successfully Inserted"))
+        .catch((err) => console.log(err))
 
 }
 
