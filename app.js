@@ -46,15 +46,20 @@ mongoose.connect(process.env.MONGODB_URI,{
 const oktaAPI = require("./routes/okta")
 const xeroAPI = require("./routes/xero")
 const login = require("./routes/login")
+const subscription = require("./routes/subscription")
+const employees = require('./routes/employee')
 const visual = require("./routes/visualize");
-const dasboard = require("./routes/dashboard")
 
-app.use("/", xeroAPI)
+
+//Ignore these 2 routes
+//app.use("/", xeroAPI)
 //app.use("/okta", oktaAPI)
-app.use("/login", login)
-app.use("/viz", visual)
-app.use('/dasboard', dashboard)
 
+
+app.use("/login", login)
+app.use('/susbscription', subscription)
+app.use('/employee', employees)
+app.use("/viz", visual)
 
 app.listen(3000,()=>{
     console.log('Listening to port 3000')

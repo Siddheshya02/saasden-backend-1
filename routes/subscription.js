@@ -19,9 +19,10 @@ router.get("/", async(req, res)=>{
             total_amount: txDetails.totalAmount,
             renewalDate: txDetails.renewalDate,
             status: app.status,
-            users: userList
+            users: userList //json -> userID, name
         })
     });
+    res.send(JSON.stringify(data))
 })
 
 

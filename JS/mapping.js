@@ -38,5 +38,3 @@ async function appDB(accessToken, tenantID){
     }
 }
 
-
-appDB()

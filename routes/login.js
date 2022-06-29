@@ -2,8 +2,10 @@ const passport = require('passport')
 const User = require('../models/user')
 const router = require('express').Router()
 
-router.post("/", passport.authenticate('local', {failureRedirect: '/login'}) ,(req, res)=>{
+router.post("/", passport.authenticate('local', {failureRedirect: '/login'}) ,(req, res)=>{ 
     res.sendStatus(200)
+    //userName
+    //password
 })
 
 router.post("/signup",(req, res, next)=>{
