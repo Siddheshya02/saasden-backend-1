@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const request = require('request')
 const {Issuer}=require('openid-client')
-
+const getInvoice=require('../JS/licenses')
 
 if(process.env.NODE_ENV!=='production')
     require('dotenv').config({ path: '../.env' })
@@ -129,6 +129,13 @@ router.get('/getInvoices', async(req, res)=>{
             console.log('error from invoicesRequest: ' + error)
 
         console.log('body: ' + body)
+        const result=getInvoice.totalAmount('3138017f-8ddc-420e-a159-e7e1cf9e643d,4b2df4a1-7aa5-4ce3-9e9c-3c55794c5283',req.session.xeroTenantId,req.session.accessToken)
+        .then((data)=>{
+            console.log(data)
+        })
+        .catch((e)=>{
+            console.log(e)
+        })
         res.redirect('/home')
     })
 })

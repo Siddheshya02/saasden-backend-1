@@ -13,9 +13,14 @@ async function getActiveLicences(appID){
     return data
 }
 
-async function totalAmount(contactID){
-    //xero function to get all costs + quantity
+
+async function totalAmount(contactID,tenantID,accessToken){
+    const axios=require('axios')
+    const xeroOptions = require("./getXeroOptions")
+  const options_Xero=xeroOptions.getOptions(`https://api.xero.com/api.xro/2.0/Invoices?ContactIDs=${contactID}`,'GET',tenantID, accessToken)
+  const body=await axios.request(options_Xero)
+//   const transactions=JSON.parse(body)
+    return transactions
 }
-
-
-modules.export = {getLicences, totalAmount}
+module.exports.totalAmount=totalAmount
+//Base request url : https://api.xero.com/api.xro/2.0/Invoices?parameters
