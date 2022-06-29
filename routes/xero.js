@@ -191,10 +191,8 @@ router.get('/getContacts',async(req,res)=>{
     }
     request.get(getContacts,(error,response,body)=>{
         if(error)
-        {
             console.log(error)
-        }
-        console.log('cntacts : '+body)
+        console.log('contacts : '+body)
         res.redirect('/home')
     })
 })
