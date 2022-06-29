@@ -21,6 +21,7 @@ async function totalAmount(contactID,tenantID,accessToken){
     const output=await axios.request(options_Xero)
     const data = output.data.pop()
     return {
+        'renewalDate': data.DueDate,
         'txAmount' : data.Total,
         'totalAmount' : data.LineItems[0].quantity
     }

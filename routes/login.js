@@ -26,7 +26,7 @@ router.post("/signup",(req, res, next)=>{
     res.sendStatus(200)
 })
 
-router.get("/logout", (req,res)=>{
+router.post("/logout", (req,res)=>{
     //logout logic goes here
     res.sendStatus(200)
 })
