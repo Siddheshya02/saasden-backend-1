@@ -5,12 +5,4 @@ router.get("/", (req, res)=>{
     res.send("Page in development")
 })
 
-router.post("/populate",(req, res) => {
-    
-})
-
-
-router.get("/apps")
-
-
 module.exports = router;

@@ -7,7 +7,15 @@ router.post("/", passport.authenticate('local', {failureRedirect: '/login'}) ,(r
 })
 
 router.post("/signup",(req, res, next)=>{
-    User.register({username: req.body.username, email: req.body.email}, req.body.password, (err)=>{
+    User.register({
+        name: req.body.name,
+        companyName: req.body.companyName,
+        workEmail: req.body.workEmail,
+        userName: req.body.userName,
+        xeroID: req.body.xeroID,
+        oktaDomain: req.body.oktaDomain,
+        oktaAPIKey: req.body.APIKey,
+    }, req.body.password, (err)=>{
         if(err){
             console.log("Error in Signup")
             return next(err)

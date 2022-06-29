@@ -47,12 +47,13 @@ const oktaAPI = require("./routes/okta")
 const xeroAPI = require("./routes/xero")
 const login = require("./routes/login")
 const visual = require("./routes/visualize");
-
+const dasboard = require("./routes/dashboard")
 
 app.use("/", xeroAPI)
-app.use("/okta", oktaAPI)
+//app.use("/okta", oktaAPI)
 app.use("/login", login)
 app.use("/viz", visual)
+app.use('/dasboard', dashboard)
 
 
 app.listen(3000,()=>{
