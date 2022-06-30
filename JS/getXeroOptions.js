@@ -3,9 +3,9 @@ module.exports.getOptions = (url, method, tenantID, bearer) => {
         method: method,
         url: url,
         headers:{
-            Authorization: 'Bearer ' + bearer,
-            Accept: 'application/json',
-            ContentType: 'application/json',
+            'Authorization': 'Bearer ' + bearer,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
             'xero-tenant-id': tenantID
         }
     }

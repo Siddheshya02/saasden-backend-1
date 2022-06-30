@@ -52,10 +52,9 @@ const visual = require("./routes/visualize");
 
 
 //Ignore these 2 routes
-//app.use("/", xeroAPI)
 //app.use("/okta", oktaAPI)
 
-
+app.use("/", xeroAPI)
 app.use("/login", login)
 app.use('/susbscription', subscription)
 app.use('/employee', employees)

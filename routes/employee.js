@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const oktaOptions = require("./getOktaOptions")
+const oktaOptions = require("../JS/getOktaOptions")
 
 router.get("/", async(req, res)=>{
     const options = oktaOptions.getOptions('/api/v1/users/', 'GET')
@@ -8,7 +8,7 @@ router.get("/", async(req, res)=>{
     var data = []
     output.data.forEach(user => {
         data.push({
-            usrID: user.id,
+            userID: user.id,
             name: user.profile.firstName + ' ' + user.profile.lastName,
         })
     });
@@ -22,7 +22,7 @@ router.get("/apps", async(req, res)=>{
     var data = []
     output.data.forEach(app => {
         data.push({
-            id : app.id,
+            appID : app.id,
             name: app.label,
             status: app.status
         })

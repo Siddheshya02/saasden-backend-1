@@ -8,7 +8,7 @@ const licence = require('../JS/licenses')
 router.get("/", async(req, res)=>{
     const appList = await userAppSchema.find();
     var data = []
-    appList.forEach(app => {
+    appList.forEach(async(app) => {
         var txDetails = await licence.totalAmount() //vadiraj's function
         var userList = await licence.getActiveLicences(app.id)
         data.push({

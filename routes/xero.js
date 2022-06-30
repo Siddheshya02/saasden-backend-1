@@ -33,6 +33,7 @@ router.get('/',(req,res)=>{
 })
 
 router.get("/home", (req, res)=>{
+    console.log(req.session)
     res.render("home")
 })
 

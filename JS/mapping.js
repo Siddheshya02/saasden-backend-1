@@ -1,4 +1,5 @@
 async function appDB(accessToken, tenantID){
+    require('dotenv').config({path : '../.env'})
     const oktaOptions = require("./getOktaOptions")
     const xeroOptions = require("./getXeroOptions")
     const userAppSchema = require('../models/userApps')
@@ -7,14 +8,12 @@ async function appDB(accessToken, tenantID){
     var okta_apps = []
     const options_Okta = oktaOptions.getOptions('/api/v1/apps', 'GET')
     var output = await axios.request(options_Okta)
-    output.data.forEach(app => okta_apps.push(app.name));
-    console.log(okta_apps)
+    output.data.forEach(app => okta_apps.push(app.label));
 
     var xeroList = []
     const options_Xero = xeroOptions.getOptions('https://api.xero.com/api.xro/2.0/Contacts', 'GET', tenantID, accessToken)
-    var output = await axios.request(options_Xero)
-    output.data.forEach(contact => xeroList.push([contact.ContactID, contact.Name]))
-    console.log(xeroList)
+    var output = await axios.request(options_Xero)    
+    output.data.Contacts.forEach(contact => xeroList.push([contact.ContactID, contact.Name]))
     
     var contactList = []
     okta_apps.forEach(app => {
@@ -30,11 +29,11 @@ async function appDB(accessToken, tenantID){
         }
     })
 
+
     try {
         await userAppSchema.insertMany(contactList)
         console.log("Records inserted succesfully")
     } catch (error) {
-        console.log(err)
+        console.log(error)
     }
 }
-
