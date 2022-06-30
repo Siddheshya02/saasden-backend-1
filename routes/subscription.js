@@ -8,13 +8,10 @@ const licence = require('../JS/licenses')
 router.get("/", async(req, res)=>{
     try{
         const appList = await userAppSchema.find();
-        console.log("appList: "+appList)
         var data = []
         appList.forEach(async(app) => {
             var txDetails = await licence.totalAmount(app.contactID, req.session.token.access_token, req.session.tenantID[0])
-            console.log(txDetails)
             var userList = await licence.getActiveLicences(app.appID)
-            console.log(userList)
             data.push({
                 appID: app.appID,
                 status: userList.status,
@@ -32,11 +29,6 @@ router.get("/", async(req, res)=>{
         console.log(error)
     }
 })
-
-router.get("/employees", async(req, res)=>{
-
-})
-
 
 router.post("/app/deactivate", async(req, res)=>{
     const appID = req.body.appID
