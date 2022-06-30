@@ -7,10 +7,13 @@ const userApps = new Schema({
         required: true,
         unique: true,
     },
+    appID: {
+        type: String,
+        required: true
+    },
     contactID: {
         type: String,
         required: true,
-        required: true
     }
 })
 

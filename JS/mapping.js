@@ -6,7 +6,7 @@ async function appDB(accessToken, tenantID){
     var okta_apps = []
     const options_Okta = options.getOktaOptions('/api/v1/apps', 'GET')
     var output = await axios.request(options_Okta)
-    output.data.forEach(app => okta_apps.push(app.label));
+    output.data.forEach(app => okta_apps.push([app.id, app.label]));
 
     var xeroList = []
     const options_Xero = options.getXeroOptions('https://api.xero.com/api.xro/2.0/Contacts', 'GET', tenantID, accessToken)
@@ -16,9 +16,10 @@ async function appDB(accessToken, tenantID){
     var contactList = []
     okta_apps.forEach(app => {
         for(i=0; i<xeroList.length; i++){
-            if(app == xeroList[i][1]){
+            if(app[1] == xeroList[i][1]){
                 contactList.push({
                     appName : xeroList[i][1],
+                    appID : app[0],
                     contactID : xeroList[i][0]
                 })
                 xeroList.splice(i,1)

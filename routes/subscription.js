@@ -6,23 +6,35 @@ const userAppSchema = require('../models/userApps')
 const licence = require('../JS/licenses')
 
 router.get("/", async(req, res)=>{
-    const appList = await userAppSchema.find();
-    var data = []
-    appList.forEach(async(app) => {
-        var txDetails = await licence.totalAmount(appList.contactID, req.session.accessToken, req.session.xeroTenantId[0])
-        var userList = await licence.getActiveLicences(app.id)
-        data.push({
-            appID: app.id,
-            appName: app.label, //or name, check
-            licences_purchased: txDetails.quantity,
-            licences_used : userList.length,
-            total_amount: txDetails.totalAmount,
-            renewalDate: txDetails.renewalDate,
-            status: app.status,
-            users: userList //json -> userID, name
-        })
-    });
-    res.send(JSON.stringify(data))
+    try{
+        const appList = await userAppSchema.find();
+        console.log("appList: "+appList)
+        var data = []
+        appList.forEach(async(app) => {
+            var txDetails = await licence.totalAmount(app.contactID, req.session.token.access_token, req.session.tenantID[0])
+            console.log(txDetails)
+            var userList = await licence.getActiveLicences(app.appID)
+            console.log(userList)
+            data.push({
+                appID: app.appID,
+                status: userList.status,
+                appName: app.appName,
+                licences_used: userList.activeLicences,
+                licences_purchased: txDetails.quantity,               
+                total_amount: txDetails.txAmount,
+                renewalDate: txDetails.renewalDate,
+                users: userList.users //json -> userID, name
+            })
+        });
+        res.send(JSON.stringify(data))
+    } catch (error){
+        res.sendStatus(500)
+        console.log(error)
+    }
+})
+
+router.get("/employees", async(req, res)=>{
+
 })
 
 

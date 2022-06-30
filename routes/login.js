@@ -4,6 +4,8 @@ const router = require('express').Router()
 const {Issuer}=require('openid-client')
 const axios = require('axios')
 const mapping = require('../JS/mapping')
+const { request } = require('express')
+const { format } = require('path')
 
 
 const client_id =process.env.CLIENT_ID;
@@ -11,9 +13,6 @@ const client_secret =process.env.CLIENT_SECRET;
 const redirectUrl =process.env.REDIRECT_URL
 const scopes =process.env.SCOPES;
 var client
-
-
-
 
 router.post("/signup",(req, res, next)=>{
     userModel.register({
@@ -83,31 +82,31 @@ router.get("/callback", async(req,res)=>{
         Issuer.defaultHttpOptions = {timeout: 20000};
         client.CLOCK_TOLERANCE=5
         const token = await client.callback(redirectUrl, req.query)
-        req.session.accessToken=token.accessToken
-        let accessToken = token.access_token
-        let refreshToken = token.refresh_token    
-        let idToken = token.id_token
+        req.session.token = token
 
-                    
+        // token format
+        // access_token
+        // refresh_token
+        // id_token
         const options_Xero = {
             url: "https://api.xero.com/connections",
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken,
+                'Authorization': 'Bearer ' + req.session.token.access_token,
                 'Timeout': 10000
             }            
         }
   
-        console.log(options_Xero)
         let output = await axios.request(options_Xero)
         let tenantID = []
         output.data.forEach(tenant => {
             tenantID.push(tenant.tenantId)
         });
-        req.session.tenantID=tenantID //figure out session storage issues here
-        await mapping.appDB(accessToken, tenantID[0])
+        req.session.tenantID=tenantID
+        console.log(req.session)
+        //await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
         res.sendStatus(200)
     } catch(error){
         console.log(error)

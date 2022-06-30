@@ -1,24 +1,26 @@
 require('dotenv').config()
+
+const sessions = require('express-session')
+const cookieParser = require("cookie-parser")
 const express = require('express')
-const session = require('express-session')
 const path = require('path')
 const app = express()
 
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
 
+
+app.use(sessions({
+    secret: "HighlysecretSauce",
+    saveUninitialized: true,
+    resave : false
+}))
+app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
 
 
-const sessionConfig={
-    secret: 'A very secret Code',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}
-app.use(session(sessionConfig))
-
+//mongoose passport crap
 const mongoose = require('mongoose');
 const passport = require('passport');
 
@@ -31,7 +33,6 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
 mongoose.connect(process.env.MONGODB_URI,{ 
     useNewUrlParser: true, 
     useUnifiedTopology: true 
@@ -43,18 +44,17 @@ mongoose.connect(process.env.MONGODB_URI,{
 });
 
 
-//const xeroAPI = require("./routes/xero")
+//Routes
 const login = require("./routes/login")
 const subscription = require("./routes/subscription")
 const employees = require('./routes/employee')
 const visual = require("./routes/visualize");
 
-
-//app.use("/", xeroAPI)
 app.use("/", login)
-app.use('/susbscription', subscription)
+app.use('/subscription', subscription)
 app.use('/employee', employees)
 app.use("/viz", visual)
+
 
 app.listen(3000,()=>{
     console.log('Listening to port 3000')
