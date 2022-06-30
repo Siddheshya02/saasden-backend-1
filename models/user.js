@@ -17,19 +17,12 @@ const User = new Schema({
         required: true,
         unique: true
     },
-    xeroID : {
-        type: String,
-        required: true,
-        unique: true
-    },
     oktaDomain : {
         type: String,
-        required: true,
         unique: true
     },
     oktaAPIKey : {
         type: String,
-        required: true,
         unique: true
     }
 });

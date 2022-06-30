@@ -6,9 +6,6 @@
 ### /
 For Xero API
 
-### /okta
-For Okta API
-
 ### /login
 For login/signup purposes
 

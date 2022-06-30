@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const oktaOptions = require("../JS/getOktaOptions")
+const options = require('../JS/utils')
 
 router.get("/", async(req, res)=>{
-    const options = oktaOptions.getOptions('/api/v1/users/', 'GET')
-    const output = await axios.request(options)
+    const options_Okta = options.getOktaOptions('/api/v1/users/', 'GET')
+    const output = await axios.request(options_Okta)
     var data = []
     output.data.forEach(user => {
         data.push({
@@ -17,8 +17,8 @@ router.get("/", async(req, res)=>{
 
 router.get("/apps", async(req, res)=>{
     const usrID = req.query.usrID
-    const options = oktaOptions.getOptions('/api/v1/apps/?filter=user.id+eq+'+usrID, 'GET')
-    const output = await axios.request(options)
+    const options_Okta = options.getOktaOptions('/api/v1/apps/?filter=user.id+eq+'+usrID, 'GET')
+    const output = await axios.request(options_Okta)
     var data = []
     output.data.forEach(app => {
         data.push({
