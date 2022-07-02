@@ -43,23 +43,29 @@ mongoose.connect(process.env.MONGODB_URI,{
         console.log('MongoDB Connected')
 });
 
+//Middleware for route security, very basic, need to secure it
+function checkLogin(req, res, next){
+    if(req.cookie['isLoggedin'] == true)
+        next()
+    else 
+        res.redirect('') // redirect to the frontend login page
+}
+
 
 //Routes
 const login = require("./routes/login")
+const okta = require("./routes/okta")
+const xero = require("./routes/xero")
 const subscription = require("./routes/subscription")
 const employees = require('./routes/employee')
 const visual = require("./routes/visualize");
 
 app.use("/", login)
-app.use('/subscription', subscription)
-app.use('/employee', employees)
-app.use("/viz", visual)
-
-
-app.get("/test", (req,res)=>{
-    res.send("This is working")
-})
-
+app.use("/okta", checkLogin, okta)
+app.use("/xero", checkLogin, xero)
+app.use('/subscription', checkLogin, subscription)
+app.use('/employee', checkLogin, employees)
+app.use("/viz", checkLogin, visual)
 
 app.listen(3000,()=>{
     console.log('Listening to port 3000')
