@@ -32,5 +32,4 @@ router.get("/apps", async(req, res)=>{
     res.send(JSON.stringify(data))
 })
 
-
 module.exports = router;
