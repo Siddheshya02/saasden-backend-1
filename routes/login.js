@@ -15,23 +15,28 @@ const scopes =process.env.SCOPES;
 var client
 
 router.post("/signup",(req, res, next)=>{
+    console.log(req.body)
     userModel.register({
+        username: req.body.username,
         name: req.body.name,
         companyName: req.body.companyName,
         workEmail: req.body.workEmail,
-        userName: req.body.userName,
     }, req.body.password, (err)=>{
         if(err){
             console.log("Error in Signup")
+            res.sendStatus(500)
             return next(err)
+        } else {
+            res.sendStatus(200)
         }
     })
-    res.sendStatus(200)
 })
 
 
-router.post("/login", passport.authenticate('local', {failureRedirect: '/login'}) ,(req, res)=>{ 
-    console.log(request.body)
+router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(req, res)=>{ //put login route of frontend here 
+    res.session.username = req.body.username
+    res.cookie('isLoggedin', 'true', {expires: 180000 + Date.now()})
+    res.cookie('username', req.body.username, {expires: 180000 + Date.now()})
     res.sendStatus(200)
 })
 
@@ -39,7 +44,7 @@ router.post("/login", passport.authenticate('local', {failureRedirect: '/login'}
 router.post("/okta", async(req, res) => {
     try {
         await userModel.findOneAndUpdate(
-            {userName : req.session.userName},
+            {userName : req.cookie['username']},
             {
                 oktaDomain: req.body.oktaDomain,
                 oktaAPIKey: req.body.oktaAPIKey
@@ -106,7 +111,7 @@ router.get("/callback", async(req,res)=>{
         });
         req.session.tenantID=tenantID
         console.log(req.session)
-        //await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
+        await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
         res.sendStatus(200)
     } catch(error){
         console.log(error)
@@ -117,6 +122,7 @@ router.get("/callback", async(req,res)=>{
 
 router.get("/logout", (req,res)=>{
     req.session.destroy()
+    req.cookie['isLoggedin'] = false
     res.sendStatus(200)
 })
 

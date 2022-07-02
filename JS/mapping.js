@@ -29,7 +29,7 @@ async function appDB(accessToken, tenantID){
     })
 
     try {
-        await userAppSchema.insertMany(contactList)
+        await userAppSchema.insertMany(contactList, {ordered : false })
         console.log("Records inserted succesfully")
     } catch (error) {
         console.log(error)
