@@ -1,17 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const request = require('request')
+const router = require('express').Router()
 const {Issuer}=require('openid-client')
-const getInvoice=require('../JS/licenses')
+const axios = require('axios')
 const mapping = require('../JS/mapping')
 
 const client_id =process.env.CLIENT_ID;
 const client_secret =process.env.CLIENT_SECRET;
 const redirectUrl =process.env.REDIRECT_URL
 const scopes =process.env.SCOPES;
+var client
 
-let client, inMemoryToken
-Issuer
+router.get("/", (req, res) => {
+    Issuer
     .discover('https://identity.xero.com/')
     .then((issuer)=>{
         client=new issuer.Client({
@@ -19,208 +18,49 @@ Issuer
             client_secret:client_secret
         })
     })
-    .catch( e => console.log(e))
-
-
-
-router.get('/',(req,res)=>{
-    let consentUrl = client.authorizationUrl({
-        redirect_uri: redirectUrl,
-        scope: scopes,
-    }); 
-    res.send(`Sign in and connect with Xero using OAuth2! <br><a href="${consentUrl}">Connect to Xero</a>`)
+    .then(() => {
+        let consentUrl = client.authorizationUrl({
+            redirect_uri: redirectUrl,
+            scope: scopes,
+        }); 
+        Issuer.defaultHttpOptions = {timeout: 20000};
+        client.CLOCK_TOLERANCE=5
+        res.redirect(consentUrl)
+    })
+    .catch( (e) => {
+        console.log(e)
+        res.sendStatus(500)
+    })
 })
 
-// router.get("/home", (req, res)=>{
-//     console.log(req.session)
-//     res.render("home")
-// })
-
-router.get('/callback',async(req,res)=>{
+router.get("/callback", async(req,res)=>{
     try{
-        client.CLOCK_TOLERANCE=5
-        Issuer.defaultHttpOptions = {timeout: 20000};
         const token = await client.callback(redirectUrl, req.query)
-        inMemoryToken = token 
-        let accessToken = token.access_token 
-        req.session.accessToken=accessToken
-        console.log('\nOAuth successful...\n\naccess token: \n' + accessToken + '\n')
-        let idToken = token.id_token
-        console.log('id token: \n' + idToken + '\n')
-        console.log('id token claims: \n' + JSON.stringify(token.claims, null, 2)); //undefined
-        let refreshToken = token.refresh_token
-        console.log('\nrefresh token: \n' + refreshToken)
-        req.session.save()
-        const connectionsRequestOptions = {
-            url: 'https://api.xero.com/connections',
+        req.session.token = token // token format = {access_token, refresh_token, id_token}
+        const options_Xero = {
+            url: "https://api.xero.com/connections",
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            auth: {
-                'bearer': req.session.accessToken
-            },
-            timeout: 10000
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + req.session.token.access_token,
+                'Timeout': 10000
+            }            
         }
-        request.get(connectionsRequestOptions, function (error, response, body) {
-            if (error) {
-                console.log('error from conenctionsRequest: ' + error)
-            }
-            let data = JSON.parse(body)
-            let tenant = data
-            tenant=data
-            let tenantId=[];  
-            for(let i=0;i<tenant.length;i++){
-                tenantId.push(tenant[i]['tenantId'])     //tenant[i]['tenantId']
-            }
-            req.session.xeroTenantId=tenantId
-            console.log('Retrieving connections...\n\ntenantId: \n' + tenantId[0])
-            req.session.save()
-            await mapping.appDB(req.session.accessToken, req.session.tenantId[0]) // Store Application list to mapDB
-
-        })
-    }
-    catch(e){
-        console.log('ERROR: ' + e)
+  
+        let output = await axios.request(options_Xero)
+        let tenantID = []
+        output.data.forEach(tenant => {
+            tenantID.push(tenant.tenantId)
+        });
+        req.session.tenantID=tenantID
+        console.log(req.session)
+        await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
+        res.sendStatus(200)
+    } catch(error){
+        console.log(error)
         res.sendStatus(500)
     }
-    res.sendStatus(200)
 })
 
-
-// router.get('/getOrganisation',(req,res)=>{
-//     for(let i=0;i<req.session.xeroTenantId.length;i++){
-//         var organisationRequestOptions = {
-//             url: 'https://api.xero.com/api.xro/2.0/organisation',
-//             headers: {
-//                 'Accept': 'application/json',
-//                 'Content-Type': 'application/json',
-//                 'xero-tenant-id': req.session.xeroTenantId[i]
-//             },
-//             auth: {
-//                 'bearer': req.session.accessToken
-//             }
-//         }
-        
-//         request.get(organisationRequestOptions, function (error, response, body) {
-//             if(error)
-//                 console.log('error from organisationRequest: ' + error)
-//             console.log('body: ' + body)     
-//         })
-//     }
-//     res.redirect('/home')
-// })
-
-
-// router.get('/getInvoices', async(req, res)=>{
-//     var invoicesRequestOptions = {
-//         url: 'https://api.xero.com/api.xro/2.0/invoices',
-//         headers: {
-//             'Accept': 'application/json',
-//             'Content-Type': 'application/json',
-//             'xero-tenant-id': req.session.xeroTenantId
-//         },
-//         auth: {
-//             'bearer': req.session.accessToken
-//         }
-//     }
-
-//     request.get(invoicesRequestOptions, function (error, response, body) {
-//         if (error) 
-//             console.log('error from invoicesRequest: ' + error)
-
-//         console.log('body: ' + body)
-//         const result=getInvoice.totalAmount('3138017f-8ddc-420e-a159-e7e1cf9e643d,4b2df4a1-7aa5-4ce3-9e9c-3c55794c5283',req.session.xeroTenantId,req.session.accessToken)
-//         .then((data)=>{
-//             console.log(data)
-//         })
-//         .catch((e)=>{
-//             console.log(e)
-//         })
-//         res.redirect('/home')
-//     })
-// })
-
-
-// router.get('/getBankTransactions',async(req,res)=>{
-//     const getBankTransactionOptions={
-//         url:'https://api.xero.com/api.xro/2.0/BankTransactions',
-//         headers:{
-//             'Accept': 'application/json',
-//             'Content-Type': 'application/json',
-//             'xero-tenant-id': req.session.xeroTenantId[0]
-//         },
-//         auth: {
-//             'bearer': req.session.accessToken
-//         }
-//     }
-//     request.get(getBankTransactionOptions,(error,response,body)=>{
-//         if(error)
-//             console.log('Error from bank transaction request : '+error)
-//         console.log('body : '+body)
-//         res.redirect('/home')
-//     })
-// })
-
-
-// router.get('/getBatchPayments',async(req,res)=>{
-//     const getBatchPayments={
-//         url:'https://api.xero.com/api.xro/2.0/BatchPayments',
-//         headers:{
-//             'Accept': 'application/json',
-//             'Content-Type': 'application/json',
-//             'xero-tenant-id': req.session.xeroTenantId[0]
-//         },
-//         auth: {
-//             'bearer': req.session.accessToken
-//         }
-//     }
-//     request.get(getBatchPayments,(error,response,body)=>{
-//         if(error)
-//         {
-//             console.log('Error from bank transaction request : '+error)
-//         }
-//         console.log('body : '+body)
-//         res.redirect('/home')
-//     })
-// })
-
-// router.get('/getContacts',async(req,res)=>{
-//     const getContacts={
-//         url:'https://api.xero.com/api.xro/2.0/Contacts',
-//         headers:{
-//             'Accept': 'application/json',
-//             'Content-Type': 'application/json',
-//             'xero-tenant-id': req.session.xeroTenantId[0]
-//         },
-//         auth: {
-//             'bearer': req.session.accessToken
-//         }
-//     }
-//     request.get(getContacts,(error,response,body)=>{
-//         if(error)
-//             console.log(error)
-//         console.log('contacts : '+body)
-//         res.redirect('/home')
-//     })
-// })
-
-
-// router.get('/refreshToken', async function (req, res) {
-//     try {
-//         client.CLOCK_TOLERANCE = 5; 
-//         Issuer.defaultHttpOptions = {timeout: 20000};
-//         let newToken = await client.refresh(inMemoryToken.refresh_token);       
-//         req.session.accessToken = newToken.access_token     
-//         req.session.save()                                
-//         inMemoryToken = newToken
-//         console.log('Refresh successful...\n\nnew access token: \n' + newToken.access_token + '\n')
-//         console.log('new refresh token: ' + newToken.refresh_token)
-//     } catch (e) {
-//         console.log('refreshToken error: ' + e)
-//     } finally {
-//         res.redirect('/home')
-//     }
-// })
-
-module.exports = router;
+module.exports = router
