@@ -6,28 +6,39 @@ const userAppSchema = require('../models/userApps')
 const licence = require('../JS/licenses')
 
 router.get("/", async(req, res)=>{
-    try{
-        const appList = await userAppSchema.find();
-        var data = []
-        appList.forEach(async(app) => {
-            var txDetails = await licence.totalAmount(app.contactID, req.session.token.access_token, req.session.tenantID[0])
-            var userList = await licence.getActiveLicences(app.appID)
-            data.push({
-                appID: app.appID,
-                status: userList.status,
-                appName: app.appName,
-                licences_used: userList.activeLicences,
-                licences_purchased: txDetails.quantity,               
-                total_amount: txDetails.txAmount,
-                renewalDate: txDetails.renewalDate,
-                users: userList.users //json -> userID, name
+    const appList = await userAppSchema.find();
+    var data = []
+    var promises = []
+    appList.forEach((app) => {
+        promises.push(
+            Promise.all([
+                licence.totalAmount(app.contactID, req.session.token.access_token, req.session.tenantID[0]),
+                licence.getActiveLicences(app.appID)
+            ]).then((results)=>{
+                data.push({
+                    appID: app.appID,
+                    status: results[1].status,
+                    appName: app.appName,
+                    licences_used: results[1].activeLicences,
+                    licences_purchased: results[0].quantity,               
+                    total_amount: results[0].txAmount,
+                    renewalDate: results[0].renewalDate,
+                    users: results[1].users //json -> userID, name
+                })
+            }).catch((error)=>{
+                console.log(error)
             })
-        });
+        )        
+    })
+
+    Promise.all(promises)
+    .then(()=>{
         res.send(JSON.stringify(data))
-    } catch (error){
-        res.sendStatus(500)
+
+    }).catch((error)=>{
         console.log(error)
-    }
+        res.sendStatus(500)
+    })
 })
 
 router.post("/app/deactivate", async(req, res)=>{

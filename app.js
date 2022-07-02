@@ -56,6 +56,11 @@ app.use('/employee', employees)
 app.use("/viz", visual)
 
 
+app.get("/test", (req,res)=>{
+    res.send("This is working")
+})
+
+
 app.listen(3000,()=>{
     console.log('Listening to port 3000')
 })

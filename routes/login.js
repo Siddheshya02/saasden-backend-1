@@ -4,8 +4,6 @@ const router = require('express').Router()
 const {Issuer}=require('openid-client')
 const axios = require('axios')
 const mapping = require('../JS/mapping')
-const { request } = require('express')
-const { format } = require('path')
 
 
 const client_id =process.env.CLIENT_ID;
@@ -73,6 +71,8 @@ router.get("/xero", (req, res) => {
             redirect_uri: redirectUrl,
             scope: scopes,
         }); 
+        Issuer.defaultHttpOptions = {timeout: 20000};
+        client.CLOCK_TOLERANCE=5
         res.send(`Sign in and connect with Xero using OAuth2! <br><a href="${consentUrl}">Connect to Xero</a>`)
     })
     .catch( (e) => {
@@ -84,11 +84,8 @@ router.get("/xero", (req, res) => {
 
 router.get("/callback", async(req,res)=>{
     try{
-        Issuer.defaultHttpOptions = {timeout: 20000};
-        client.CLOCK_TOLERANCE=5
         const token = await client.callback(redirectUrl, req.query)
         req.session.token = token
-
         // token format
         // access_token
         // refresh_token
