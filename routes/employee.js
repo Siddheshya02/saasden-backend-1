@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const axios = require('axios')
 const options = require('../JS/utils')
 
 router.get("/", async(req, res)=>{
@@ -17,7 +18,8 @@ router.get("/", async(req, res)=>{
 
 router.get("/apps", async(req, res)=>{
     const usrID = req.query.usrID
-    const options_Okta = options.getOktaOptions('/api/v1/apps/?filter=user.id+eq+'+usrID, 'GET')
+    const options_Okta = options.getOktaOptions('/api/v1/apps/?filter=user.id+eq+%22' + usrID + '%22', 'GET')
+    console.log(options_Okta)
     const output = await axios.request(options_Okta)
     var data = []
     output.data.forEach(app => {
