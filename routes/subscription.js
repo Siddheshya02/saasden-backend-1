@@ -7,8 +7,8 @@ const licence = require('../JS/licenses')
 
 router.get("/", async(req, res)=>{
     const appList = await userAppSchema.find();
-    var data = []
-    var promises = []
+    let data = []
+    let promises = []
     appList.forEach((app) => {
         promises.push(
             Promise.all([
