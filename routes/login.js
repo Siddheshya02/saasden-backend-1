@@ -22,9 +22,9 @@ router.post("/signup",(req, res, next)=>{
 
 router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(req, res)=>{ //put login route of frontend here 
     req.session.username = req.body.username
-    res.cookie('isLoggedin', 'true')
+    res.cookie('isLoggedin', true)
     res.cookie('username', req.body.username)
-    res.sendStatus(200)
+    res.redirect("/xero")
 })
 
 router.get("/logout", (req,res)=>{
