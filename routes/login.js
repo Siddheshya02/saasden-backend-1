@@ -21,9 +21,9 @@ router.post("/signup",(req, res, next)=>{
 })
 
 router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(req, res)=>{ //put login route of frontend here 
-    res.session.username = req.body.username
-    res.cookie('isLoggedin', 'true', {expires: 180000 + Date.now()})
-    res.cookie('username', req.body.username, {expires: 180000 + Date.now()})
+    req.session.username = req.body.username
+    res.cookie('isLoggedin', 'true')
+    res.cookie('username', req.body.username)
     res.sendStatus(200)
 })
 

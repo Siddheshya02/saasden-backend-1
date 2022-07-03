@@ -45,7 +45,7 @@ mongoose.connect(process.env.MONGODB_URI,{
 
 //Middleware for route security, very basic, need to secure it
 function checkLogin(req, res, next){
-    if(req.cookie['isLoggedin'] == true)
+    if(res.cookie['isLoggedin'] == true)
         next()
     else 
         res.redirect('') // redirect to the frontend login page

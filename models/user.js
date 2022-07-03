@@ -18,12 +18,10 @@ const User = new Schema({
         unique: true
     },
     oktaDomain : {
-        type: String,
-        unique: true
+        type: String
     },
     oktaAPIKey : {
-        type: String,
-        unique: true
+        type: String
     }
 });
 
