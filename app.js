@@ -4,6 +4,7 @@ const sessions = require('express-session')
 const cookieParser = require("cookie-parser")
 const express = require('express')
 const path = require('path')
+const cors = require("cors")
 const app = express()
 
 app.set('view engine', 'ejs');
@@ -18,6 +19,7 @@ app.use(sessions({
 app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
+app.use("cors")
 
 
 //mongoose passport crap
