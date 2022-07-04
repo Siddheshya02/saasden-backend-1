@@ -70,7 +70,7 @@ app.use('/employee', checkLogin, employees)
 app.use("/viz", checkLogin, visual)
 
 
-app.get("/cookies",(res, res)=>{
+app.get("/cookies",(req, res)=>{
     res.send(req.cookies)
 })
 
