@@ -9,6 +9,12 @@ const app = express()
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
 
+var corsOptions = {
+    origin: "*",
+    credentials: true,
+    optionsSuccessStatus: 200
+  }
+   
 app.use(sessions({
     secret: "HighlysecretSauce",
     saveUninitialized: true,
@@ -17,7 +23,7 @@ app.use(sessions({
 app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
-app.use(cors())
+app.use(cors(corsOptions))
 
 //mongoose passport crap
 const mongoose = require('mongoose');
@@ -47,7 +53,7 @@ function checkLogin(req, res, next){
     if(req.cookies.isLoggedin)
         next()
     else
-        res.redirect('https://example.com') // redirect to the frontend login page
+        res.send("Error in login, check middleware") // redirect to the frontend login page
 }
 
 
@@ -71,7 +77,7 @@ app.get("/cookies",(req, res)=>{
     res.send(req.cookies)
 })
 
-const port=process.env.PORT || 3000
+const port=process.env.PORT || 3001
 app.listen(port, () => console.log(`Listening on port ${port}...`));
 
 
