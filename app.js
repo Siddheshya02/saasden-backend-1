@@ -67,6 +67,11 @@ app.use('/subscription', checkLogin, subscription)
 app.use('/employee', checkLogin, employees)
 app.use("/viz", checkLogin, visual)
 
+
+app.get("/cookies",(res, res)=>{
+    res.send(req.cookies)
+})
+
 app.listen(3000,()=>{
     console.log('Listening to port 3000')
 })
