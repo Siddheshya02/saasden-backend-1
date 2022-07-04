@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+const cors = require("cors")
 const sessions = require('express-session')
 const cookieParser = require("cookie-parser")
 const express = require('express')
@@ -17,6 +17,7 @@ app.use(sessions({
 app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
+app.use(cors())
 
 //mongoose passport crap
 const mongoose = require('mongoose');
