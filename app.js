@@ -10,6 +10,11 @@ const app = express()
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
 
+var corsOptions = {
+    origin: 'http://localhost:3001',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+
 
 app.use(sessions({
     secret: "HighlysecretSauce",
