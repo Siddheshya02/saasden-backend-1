@@ -10,7 +10,7 @@ app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
 
 var corsOptions = {
-    origin: "*",
+    origin: "http://localhost:3000",
     credentials: true,
     optionsSuccessStatus: 200
   }
@@ -77,7 +77,5 @@ app.get("/cookies",(req, res)=>{
     res.send(req.cookies)
 })
 
-const port=process.env.PORT || 3001
+const port=process.env.PORT || 3000
 app.listen(port, () => console.log(`Listening on port ${port}...`));
-
-

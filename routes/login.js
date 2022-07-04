@@ -22,10 +22,11 @@ router.post("/signup",(req, res, next)=>{
 
 
 router.get("/test",(req,res)=>{
-    res.send("Test Route")
+    res.send("Test Router")
 })
 
-router.post("/login", passport.authenticate('local', {failureRedirect: '/test'}) ,(req, res)=>{ //put login route of frontend here 
+router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(req, res)=>{ //put login route of frontend here 
+    console.log(req.body)
     req.session.username = req.body.username
     res.cookie('isLoggedin', true)
     res.cookie('username', req.body.username)
