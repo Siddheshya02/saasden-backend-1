@@ -4,17 +4,10 @@ const sessions = require('express-session')
 const cookieParser = require("cookie-parser")
 const express = require('express')
 const path = require('path')
-const cors = require("cors")
 const app = express()
 
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
-
-var corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200
-  }
-
 
 app.use(sessions({
     secret: "HighlysecretSauce",
@@ -24,8 +17,6 @@ app.use(sessions({
 app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
-app.use(cors())
-
 
 //mongoose passport crap
 const mongoose = require('mongoose');
