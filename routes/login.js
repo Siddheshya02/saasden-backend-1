@@ -35,7 +35,7 @@ router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(re
         secure: "true",
     });
     res.send({
-        url: "https://saasden-backend.herokuapp.com/login"
+        url: "https://saasden-backend.herokuapp.com/xero"
     })
 })
 
