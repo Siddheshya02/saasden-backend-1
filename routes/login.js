@@ -38,7 +38,6 @@ router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(re
 
 router.get("/logout", (req,res)=>{
     req.session.destroy()
-    req.cookie['isLoggedin'] = false
     res.sendStatus(200)
 })
 

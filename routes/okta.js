@@ -5,7 +5,7 @@ const userModel = require('../models/user')
 router.post("/", async(req, res) => {
     try {
         await userModel.findOneAndUpdate(
-            {userName : req.cookie['username']},
+            {userName : req.session.username},
             {
                 oktaDomain: req.body.oktaDomain,
                 oktaAPIKey: req.body.oktaAPIKey

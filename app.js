@@ -53,6 +53,7 @@ function checkLogin(req, res, next){
         if(err)
             res.sendStatus(401)
         else{
+            req.session.username = decoded.username
             next()
         }
     })
