@@ -65,8 +65,8 @@ const visual = require("./routes/visualize");
 const { METHODS } = require('http')
 
 app.use("/", login)
-app.use("/okta", okta) //check here
-app.use("/xero", checkLogin, xero)
+app.use("/okta", checkLogin, okta) //check here
+app.use("/xero", xero)
 app.use('/subscription', checkLogin, subscription)
 app.use('/employee', checkLogin, employees)
 app.use("/viz", checkLogin, visual)
