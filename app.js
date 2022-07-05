@@ -9,12 +9,6 @@ const app = express()
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
 
-var corsOptions = {
-    origin: ["http://localhost:300", "https://login.xero.com"],
-    credentials: true,
-    optionsSuccessStatus: 200
-  }
-   
 app.use(sessions({
     secret: "HighlysecretSauce",
     saveUninitialized: true,
@@ -23,7 +17,11 @@ app.use(sessions({
 app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
-app.use(cors(corsOptions))
+app.use(cors({
+    origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
+    methods: ["GET", "POST", "DELETE"],
+    credentials: true
+}))
 
 //mongoose passport crap
 const mongoose = require('mongoose');
@@ -64,6 +62,7 @@ const xero = require("./routes/xero")
 const subscription = require("./routes/subscription")
 const employees = require('./routes/employee')
 const visual = require("./routes/visualize");
+const { METHODS } = require('http')
 
 app.use("/", login)
 app.use("/okta", checkLogin, okta)
@@ -77,5 +76,5 @@ app.get("/cookies",(req, res)=>{
     res.send(req.cookies)
 })
 
-const port=process.env.PORT || 3000
+const port=process.env.PORT || 3001
 app.listen(port, () => console.log(`Listening on port ${port}...`));

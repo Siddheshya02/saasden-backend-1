@@ -26,7 +26,6 @@ router.get("/test",(req,res)=>{
 })
 
 router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(req, res)=>{ //put login route of frontend here 
-    console.log(req.body)
     res.cookie("isLoggedin", true, {
         sameSite: "none",
         secure: "true",
