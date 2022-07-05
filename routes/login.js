@@ -1,6 +1,7 @@
 const passport = require('passport')
 const userModel = require('../models/user')
 const router = require('express').Router()
+const jwt = require('jsonwebtoken')
 
 router.post("/signup",(req, res, next)=>{
     console.log(req.body)
@@ -20,22 +21,18 @@ router.post("/signup",(req, res, next)=>{
     })
 })
 
-
-router.get("/test",(req,res)=>{
-    res.send("Test Router")
-})
-
 router.post("/login", passport.authenticate('local', {failureRedirect: ''}) ,(req, res)=>{ //put login route of frontend here 
-    res.cookie("isLoggedin", true, {
-        sameSite: "none",
-        secure: "true",
-      });
-    res.cookie("username", req.body.username, {
-        sameSite: "none",
-        secure: "true",
-    });
-    res.json({
-        url: "https://saasden-backend.herokuapp.com/xero"
+    jwt.sign({
+        username: req.body.username
+    }, process.env.secretKey,{expiresIn: "1d"},(err, token)=>{
+        if(err)
+            res.sendStatus(500)
+        else{
+            res.json({
+                url: "https://saasden-backend.herokuapp.com/xero",
+                token: token
+            })
+        }
     })
 })
 

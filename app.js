@@ -4,6 +4,7 @@ const sessions = require('express-session')
 const cookieParser = require("cookie-parser")
 const express = require('express')
 const path = require('path')
+const jwt = require("jsonwebtoken")
 const app = express()
 
 app.set('view engine', 'ejs');
@@ -48,10 +49,13 @@ mongoose.connect(process.env.MONGODB_URI,{
 
 //Middleware for route security, very basic, need to secure it
 function checkLogin(req, res, next){
-    if(req.cookies.isLoggedin)
-        next()
-    else
-        res.send("Error in login, check middleware") // redirect to the frontend login page
+    jwt.verify(req.headers.token, process.env.secretKey,(err, decoded)=>{
+        if(err)
+            res.sendStatus(401)
+        else{
+            next()
+        }
+    })
 }
 
 
@@ -61,8 +65,8 @@ const okta = require("./routes/okta")
 const xero = require("./routes/xero")
 const subscription = require("./routes/subscription")
 const employees = require('./routes/employee')
-const visual = require("./routes/visualize");
-const { METHODS } = require('http')
+const visual = require("./routes/visualize")
+
 
 app.use("/", login)
 app.use("/okta", checkLogin, okta) //check here
@@ -71,10 +75,6 @@ app.use('/subscription', checkLogin, subscription)
 app.use('/employee', checkLogin, employees)
 app.use("/viz", checkLogin, visual)
 
-
-app.get("/cookies",(req, res)=>{
-    res.send(req.cookies)
-})
 
 const port=process.env.PORT || 3001
 app.listen(port, () => console.log(`Listening on port ${port}...`));
