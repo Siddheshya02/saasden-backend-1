@@ -12,6 +12,14 @@ router.post("/", async(req, res) => {
             },
             {new: true }
         )
+
+        res.cookie("oktaDomain", req.body.oktaDomain,{httpOnly: 'true'})
+
+        res.cookie("oktaAPIKey", req.body.oktaAPIKey,{
+            httpOnly: 'true',
+            maxAge: 25056000 //29 days
+        })
+
         res.sendStatus(200)
     } catch (error) {
         console.log(error)

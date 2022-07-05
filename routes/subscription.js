@@ -12,8 +12,8 @@ router.get("/", async(req, res)=>{
     appList.forEach((app) => {
         promises.push(
             Promise.all([
-                licence.totalAmount(app.contactID, req.session.token.access_token, req.session.tenantID[0]),
-                licence.getActiveLicences(app.appID)
+                licence.totalAmount(app.contactID, req.cookies.access_token, req.cookies.tenantID[0]),
+                licence.getActiveLicences(app.appID, req.cookies.oktaDomain, req.cookies.oktaAPIKey)
             ]).then((results)=>{
                 data.push({
                     appID: app.appID,
@@ -44,7 +44,7 @@ router.get("/", async(req, res)=>{
 router.post("/app/deactivate", async(req, res)=>{
     const appID = req.body.appID
     const path = '/api/v1/apps/'+ appID +'/lifecycle/deactivate'
-    const options_Okta = options.getOktaOptions(path, 'POST')
+    const options_Okta = options.getOktaOptions(req.cookies.oktaDomain, path, 'POST', req.cookies.oktaAPIKey)
     try {
         await axios.request(options_Okta)
         res.sendStatus(200)
@@ -57,7 +57,7 @@ router.post("/app/deactivate", async(req, res)=>{
 router.post("/app/activate", async(req, res)=>{
     const appID = req.body.appID
     const path = '/api/v1/apps/'+ appID +'/lifecycle/activate'
-    const options_Okta = options.getOktaOptions(path, 'POST')
+    const options_Okta = options.getOktaOptions(req.cookies.oktaDomain, path, 'POST', req.cookies.oktaAPIKey)
     try {
         await axios.request(options_Okta)
         res.sendStatus(200)
@@ -71,7 +71,7 @@ router.post("/employee/remove", async(req, res)=>{
     const appID = req.body.appID
     const usrID = req.body.usrID
     const path =  '/api/v1/apps/'+ appID +'/users/' + usrID
-    const options_Okta = options.getOktaOptions(path, 'POST')
+    const options_Okta = options.getOktaOptions(req.cookies.oktaDomain, path, 'POST', req.cookies.oktaAPIKey)
     try {
         await axios.request(options_Okta)
         res.sendStatus(200)

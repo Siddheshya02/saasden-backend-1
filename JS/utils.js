@@ -1,11 +1,9 @@
-function getOktaOptions(path, method){
-    const domain = process.env.OKTA_DOMAIN 
-    const api_token = process.env.OKTA_API_TOKEN
+function getOktaOptions(oktaDomain, path, method, oktaAPIKey){
     const options = {
         method: method,
-        url: domain + path,
+        url: oktaDomain + path,
         headers:{
-            Authorization: api_token,
+            Authorization: oktaAPIKey,
             Accept: 'application/json',
             ContentType: 'application/json',
         }

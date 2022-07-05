@@ -2,9 +2,9 @@ const options = require("./utils")
 const userAppSchema = require('../models/userApps')
 const axios = require('axios')
 
-async function appDB(accessToken, tenantID){   
+async function appDB(oktaDomain, oktaAPIKey, accessToken, tenantID){   
     var okta_apps = []
-    const options_Okta = options.getOktaOptions('/api/v1/apps', 'GET')
+    const options_Okta = options.getOktaOptions(oktaDomain, '/api/v1/apps', 'GET', oktaAPIKey)
     var output = await axios.request(options_Okta)
     output.data.forEach(app => okta_apps.push([app.id, app.label]));
 

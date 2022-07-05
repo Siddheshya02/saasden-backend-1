@@ -38,7 +38,6 @@ router.get("/", (req, res) => {
 router.get("/callback", async(req,res)=>{
     try{
         const token = await client.callback(redirectUrl, req.query)
-        req.session.token = token // token format = {access_token, refresh_token, id_token}
         const options_Xero = {
             url: "https://api.xero.com/connections",
             method: 'GET',
@@ -55,12 +54,36 @@ router.get("/callback", async(req,res)=>{
         output.data.forEach(tenant => {
             tenantID.push(tenant.tenantId)
         });
-        req.session.tenantID=tenantID
-        console.log(req.session)
-        await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
+        await mapping.appDB(token.access_token, tenantID[0])
+
+        res.cookie('xero_access_token', token.access_token,{
+            maxAge: 174000, //29 minutues
+            httpOnly: true,
+        })
+        res.cookie('xero_refresh_token', token.refresh_token,{httpOnly: true})
+        res.cookie('xero_id_token', token.id_token, {httpOnly: true})
+        res.cookie('xero_tenant_id', tenantID,{httpOnly: true})
+
         res.sendStatus(200)
     } catch(error){
         console.log(error)
+        res.sendStatus(500)
+    }
+})
+
+
+router.post("/refreshXeroToken", async(req,res)=>{
+    try {
+        client.CLOCK_TOLERANCE = 5; 
+        Issuer.defaultHttpOptions = {timeout: 20000};
+        let newToken = await client.refresh(req.cookies.xero_refresh_token)
+        res.cookie('xero_access_token', newToken.access_token,{
+            maxAge: 174000, //29 minutues
+            httpOnly: true,
+        })  
+        res.sendStatus(200)
+    } catch (e) {
+        console.log('refreshToken error: ' + e)
         res.sendStatus(500)
     }
 })

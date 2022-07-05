@@ -53,12 +53,19 @@ function checkLogin(req, res, next){
         if(err)
             res.sendStatus(401)
         else{
-            req.session.username = decoded.username
-            next()
+            if(!req.coookies.oktaAPIKey){ //check for validity of oktaKeys
+                //redirect to okta API key page
+            }
+            else if(!req.cookies.xero_access_token){ // check for validity of xero keys
+                //redirect to xero Refresh Token
+            }
+            else{
+                next()       
+                req.session.username = decoded.username
+            }
         }
     })
 }
-
 
 //Routes
 const login = require("./routes/login")

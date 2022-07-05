@@ -1,9 +1,9 @@
 const axios = require('axios')
 const options = require('./utils')
 
-async function getActiveLicences(appID){
-    const options_Okta_1 = options.getOktaOptions('/api/v1/apps/' + appID, 'GET')
-    const options_Okta_2 = options.getOktaOptions('/api/v1/apps/' + appID +'/users', 'GET')
+async function getActiveLicences(appID, oktaDomain, oktaAPIKey){
+    const options_Okta_1 = options.getOktaOptions(oktaDomain, '/api/v1/apps/' + appID, 'GET', oktaAPIKey)
+    const options_Okta_2 = options.getOktaOptions(oktaDomain, '/api/v1/apps/' + appID +'/users', 'GET', oktaAPIKey)
     const output_1 = await axios.request(options_Okta_1) //make this parallel
     const output_2 = await axios.request(options_Okta_2)
     let users = []
