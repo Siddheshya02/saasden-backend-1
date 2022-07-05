@@ -18,7 +18,7 @@ app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
 app.use(cors({
-    origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
+    origin: ["http://127.0.0.1:3000", "http://localhost:3000", "https://login.xero.com"],
     methods: ["GET", "POST", "DELETE"],
     credentials: true
 }))
