@@ -25,7 +25,7 @@ router.get("/", (req, res) => {
         }); 
         Issuer.defaultHttpOptions = {timeout: 20000};
         client.CLOCK_TOLERANCE=5
-        res.send({
+        res.json({
             url: consentUrl
         })
     })
