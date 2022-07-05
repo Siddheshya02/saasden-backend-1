@@ -10,7 +10,7 @@ app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))
 
 var corsOptions = {
-    origin: ["http://localhost:3001", "http://login.xero.com"],
+    origin: ["http://localhost:3001", "https://login.xero.com"],
     credentials: true,
     optionsSuccessStatus: 200
   }
