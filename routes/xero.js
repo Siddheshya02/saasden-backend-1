@@ -25,7 +25,9 @@ router.get("/", (req, res) => {
         }); 
         Issuer.defaultHttpOptions = {timeout: 20000};
         client.CLOCK_TOLERANCE=5
-        res.redirect(consentUrl)
+        res.send({
+            url: consentUrl
+        })
     })
     .catch( (e) => {
         console.log(e)
