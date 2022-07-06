@@ -58,8 +58,8 @@ router.get("/callback", async(req,res)=>{
         req.session.tenantID=tenantID
         console.log(req.session)
         await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
-        res.sendStatus(200)
-    } catch(error){
+        res.render("success")
+        } catch(error){
         console.log(error)
         res.sendStatus(500)
     }
