@@ -26,4 +26,37 @@ function getXeroOptions(url, method, tenantID, bearer){
     return options
 }
 
+function getExpensifyOptions(credentials,  ){
+    const options = {
+        method: method,
+        url: url,
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+
+        },
+        requestJobDescription:{
+            "type":"file",
+            credentials,
+            "onReceive":{
+                "immediateResponse":["returnRandomFileName"]
+            },
+            "inputSettings":{
+                "type":"combinedReportData",
+                "reportState":"APPROVED",
+                "limit":"5",
+                "filters":{
+                    "startDate":"2016-01-01",
+                    "endDate":"2016-02-01",
+                    "markedAsExported":"Expensify Export"
+                }
+            },
+            "outputSettings":{
+                "fileExtension":"json",
+            },
+        }
+    }
+    return options
+}
+
 module.exports = {getOktaOptions, getXeroOptions}
