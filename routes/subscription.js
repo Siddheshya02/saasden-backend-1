@@ -71,12 +71,12 @@ router.post("/employee/remove", async(req, res)=>{
     const appID = req.body.appID
     const usrID = req.body.usrID
     const path =  '/api/v1/apps/'+ appID +'/users/' + usrID
-    const options_Okta = options.getOktaOptions(path, 'POST')
+    const options_Okta = options.getOktaOptions(path, 'DELETE')
     try {
         await axios.request(options_Okta)
         res.sendStatus(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500)
     }
 })
