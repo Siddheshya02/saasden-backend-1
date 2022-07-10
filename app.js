@@ -54,10 +54,10 @@ function checkLogin(req, res, next){
             res.sendStatus(401)
         else{
             if(!req.coookies.oktaAPIKey){ //check for validity of oktaKeys
-                res.json({url: 'domain/okta'})//redirect to okta API key page
+                res.json({url: 'http://localhost:3000/login-sso'})//redirect to okta API key page
             }
             else if(!req.cookies.xero_access_token){ // check for validity of xero keys
-                res.json({url: 'domain/refreshXeroToken'})
+                res.json({url: 'http://localhost:3000/login-exp'})
                 //redirect to xero Refresh Token
             }
             else{
