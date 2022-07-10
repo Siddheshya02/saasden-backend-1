@@ -53,7 +53,9 @@ function checkLogin(req, res, next){
         if(err)
             res.sendStatus(401)
         else{
-            if(!req.coookies.oktaAPIKey){ //check for validity of oktaKeys
+            console.log("Current Cookies")
+            console.log(req.cookies)
+            if(!req.cookies.oktaAPIKey){ //check for validity of oktaKeys
                 res.json({url: 'http://localhost:3000/login-sso'})//redirect to okta API key page
             }
             else if(!req.cookies.xero_access_token){ // check for validity of xero keys
@@ -78,7 +80,7 @@ const visual = require("./routes/visualize")
 
 
 app.use("/", login)
-app.use("/okta", checkLogin, okta) //check here
+app.use("/okta", okta) //check here
 app.use("/xero", xero)
 app.use('/subscription', checkLogin, subscription)
 app.use('/employee', checkLogin, employees)
