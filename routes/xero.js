@@ -53,11 +53,18 @@ router.get("/callback", async(req,res)=>{
         output.data.forEach(tenant => {
             tenantID.push(tenant.tenantId)
         });
-        req.session.tenantID=tenantID
-        console.log(req.session)
-        await mapping.appDB(req.session.token.access_token, req.session.tenantID[0])
-        res.render("success")
-        } catch(error){
+        await mapping.appDB(req.cookies.oktaDomain, req.cookies.oktaAPIKey, token.access_token, tenantID[0])
+
+        res.cookie('xero_access_token', token.access_token,{
+            maxAge: 174000, //29 minutues
+            httpOnly: true,
+        })
+        res.cookie('xero_refresh_token', token.refresh_token,{httpOnly: true})
+        res.cookie('xero_id_token', token.id_token, {httpOnly: true})
+        res.cookie('xero_tenant_id', tenantID,{httpOnly: true})
+
+        res.sendStatus(200)
+    } catch(error){
         console.log(error)
         res.sendStatus(500)
     }
