@@ -12,7 +12,7 @@ router.get("/", async(req, res)=>{
     appList.forEach((app) => {
         promises.push(
             Promise.all([
-                licence.totalAmount(app.contactID, req.cookies.access_token, req.cookies.tenantID[0]),
+                licence.totalAmount(app.contactID, req.cookies.xero_access_token, req.cookies.xero_tenant_id[0]),
                 licence.getActiveLicences(app.appID, req.cookies.oktaDomain, req.cookies.oktaAPIKey)
             ]).then((results)=>{
                 data.push({
@@ -49,7 +49,7 @@ router.post("/app/deactivate", async(req, res)=>{
         await axios.request(options_Okta)
         res.sendStatus(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500)
     }
 })
@@ -62,7 +62,7 @@ router.post("/app/activate", async(req, res)=>{
         await axios.request(options_Okta)
         res.sendStatus(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500)
     }
 })
@@ -76,7 +76,7 @@ router.post("/employee/remove", async(req, res)=>{
         await axios.request(options_Okta)
         res.sendStatus(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500)
     }
 })

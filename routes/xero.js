@@ -44,17 +44,16 @@ router.get("/callback", async(req,res)=>{
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + req.session.token.access_token,
+                'Authorization': 'Bearer ' + token.access_token,
                 'Timeout': 10000
             }            
         }
-  
         let output = await axios.request(options_Xero)
         let tenantID = []
         output.data.forEach(tenant => {
             tenantID.push(tenant.tenantId)
         });
-        await mapping.appDB(token.access_token, tenantID[0])
+        await mapping.appDB(req.cookies.oktaDomain, req.cookies.oktaAPIKey, token.access_token, tenantID[0])
 
         res.cookie('xero_access_token', token.access_token,{
             maxAge: 174000, //29 minutues
