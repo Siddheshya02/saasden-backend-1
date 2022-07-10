@@ -59,7 +59,7 @@ router.get("/callback", async(req,res)=>{
         res.render("success")
         } catch(error){
         console.log(error)
-        res.render("success")
+        res.sendStatus(500)
     }
 })
 
