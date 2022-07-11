@@ -53,8 +53,6 @@ function checkLogin(req, res, next){
         if(err)
             res.sendStatus(401)
         else{
-            console.log("Current Cookies")
-            console.log(req.cookies)
             if(!req.cookies.oktaAPIKey){ //check for validity of oktaKeys
                 res.json({url: 'http://localhost:3000/login-sso'})//redirect to okta API key page
             }

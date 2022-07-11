@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {Issuer}=require('openid-client')
 const axios = require('axios')
-const mapping = require('../JS/mapping')
+const mapping = require('../JS/initDB')
 
 const client_id =process.env.CLIENT_ID;
 const client_secret =process.env.CLIENT_SECRET;
@@ -53,7 +53,7 @@ router.get("/callback", async(req,res)=>{
         output.data.forEach(tenant => {
             tenantID.push(tenant.tenantId)
         });
-        await mapping.appDB(req.cookies.oktaDomain, req.cookies.oktaAPIKey, token.access_token, tenantID[0])
+        mapping.cacheSubscriptions(req.cookies.oktaDomain, req.cookies.oktaAPIKey, token.access_token, tenantID[0])
 
         res.cookie('xero_access_token', token.access_token,{
             maxAge: 174000, //29 minutues
@@ -62,8 +62,7 @@ router.get("/callback", async(req,res)=>{
         res.cookie('xero_refresh_token', token.refresh_token,{httpOnly: true})
         res.cookie('xero_id_token', token.id_token, {httpOnly: true})
         res.cookie('xero_tenant_id', tenantID,{httpOnly: true})
-
-        res.sendStatus(200)
+        res.render("success")
     } catch(error){
         console.log(error)
         res.sendStatus(500)
@@ -83,7 +82,7 @@ router.post("/refreshXeroToken", async(req,res)=>{
         res.sendStatus(200)
     } catch (e) {
         console.log('refreshToken error: ' + e)
-        res.sendStatus(500)
+        res.sendStatus(200)
     }
 })
 

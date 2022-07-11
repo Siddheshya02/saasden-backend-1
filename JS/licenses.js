@@ -1,37 +1,33 @@
 const axios = require('axios')
 const options = require('./utils')
+const subSchema = require('../models/subs')
 
-async function getActiveLicences(appID, oktaDomain, oktaAPIKey){
-    const options_Okta_1 = options.getOktaOptions(oktaDomain, '/api/v1/apps/' + appID, 'GET', oktaAPIKey)
-    const options_Okta_2 = options.getOktaOptions(oktaDomain, '/api/v1/apps/' + appID +'/users', 'GET', oktaAPIKey)
-    const output_1 = await axios.request(options_Okta_1) //make this parallel
-    const output_2 = await axios.request(options_Okta_2)
-    let users = []
-    output_2.data.forEach(user => {
-        users.push({
-            userID : user.id,
-            name: user.profile.name
+async function getData(xero_accessToken, xero_tenant_ID){
+    //Using cached Okta Data
+    let appList = []
+    const apps = await subSchema.find()
+    Promise.all(
+        apps.forEach(async(app) => {
+            const options_Xero = options.getXeroOptions(`https://api.xero.com/api.xro/2.0/Invoices?ContactIDs=${app.contactID}`, 'GET', xero_tenant_ID, xero_accessToken)
+            const output= await axios.request(options_Xero)
+            const data = output.data.Invoices.pop()
+            appList.push({
+                appID             : app.appID,
+                status            : app.status,
+                appName           : app.appName,
+                users             : app.assignedUsers, //JSON -> {userID, name}
+                licences_used     : app.assignedUsers.length,
+                licences_purchased: data.LineItems[0].Quantity,               
+                total_amount      : data.Total,
+                renewalDate       : data.DueDate,
+            })
         })
+    ).then(()=>{
+        console.log(appList)
+        return appList
+    }).catch(error =>{
+        console.log(error)
     })
-    
-    return {
-        status: output_1.data.status,
-        activeLicences: users.length,
-        users:  users
-    }
 }
 
-async function totalAmount(contactID, accessToken, tenantID){
-    const options_Xero=options.getXeroOptions(`https://api.xero.com/api.xro/2.0/Invoices?ContactIDs=${contactID}`,'GET',tenantID, accessToken)
-    const output=await axios.request(options_Xero)
-    const data = output.data.Invoices.pop()
-    return {
-        renewalDate: data.DueDate,
-        txAmount : data.Total,
-        quantity : data.LineItems[0].Quantity
-    }
-}
-
-
-module.exports = {getActiveLicences, totalAmount}
-//Base request url : https://api.xero.com/api.xro/2.0/Invoices?parameters
+module.exports = {getData}
