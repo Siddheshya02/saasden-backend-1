@@ -35,12 +35,9 @@ function cacheSubscriptions(oktaDomain, oktaAPIKey, xero_Access_Token, xero_tena
             })
 
             //cache them to DB
-            subsSchema.insertMany(okta_apps,(error)=>{
-                if(error)
-                    console.log(error)
-                else
-                    console.log("Database updated successfully")
-            })
+            subsSchema.insertMany(okta_apps, {ordered: false})
+            .then(() => console.log("Database updated successfully"))
+            .catch(error => console.log(error))
         }).catch((error)=>{
             console.log(error)
         })
