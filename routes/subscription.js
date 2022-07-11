@@ -6,13 +6,15 @@ const licences = require('../JS/licenses')
 const subSchema = require("../models/subs")
 
 router.get("/", (req, res)=>{
-    try {
-        const data = licences.getData(req.cookies.xero_access_token, req.cookies.xero_tenant_id[0])
-        res.send(JSON.stringify(data))    
-    } catch (error) {
+    licences.getData(req.cookies.xero_access_token, req.cookies.xero_tenant_id[0])
+    .then((data)=>{
+        console.log('Data: '+data)
+        res.send(JSON.stringify(data))
+    })
+    .catch(error => {
         console.log(error)
         res.sendStatus(500)
-    }
+    })
 })
 
 router.post("/app/deactivate", async(req, res)=>{
