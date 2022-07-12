@@ -20,16 +20,21 @@ router.get("/apps", async(req, res)=>{
     const usrID = req.query.usrID
     const options_Okta = options.getOktaOptions(req.cookies.oktaDomain, '/api/v1/apps/?filter=user.id+eq+%22' + usrID + '%22', 'GET', req.cookies.oktaAPIKey)
     console.log(options_Okta)
-    const output = await axios.request(options_Okta)
-    var data = []
-    output.data.forEach(app => {
-        data.push({
-            appID : app.id,
-            name: app.label,
-            status: app.status
+    try {
+        const output = await axios.request(options_Okta)
+        var data = []
+        output.data.forEach(app => {
+            data.push({
+                appID : app.id,
+                name: app.label,
+                status: app.status
+            })
         })
-    })
-    res.send(JSON.stringify(data))
+        res.send(JSON.stringify(data))   
+    } catch (error) {
+        console.log(error)
+        res.sendStatus(500)
+    }
 })
 
 module.exports = router;
