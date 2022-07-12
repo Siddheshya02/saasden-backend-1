@@ -20,6 +20,7 @@ async function getData(xero_access_token, xero_tenant_ID){
         xeroLinks.push(`https://api.xero.com/api.xro/2.0/Invoices?ContactIDs=${app.contactID}`)
     })
 
+    console.log(xeroLinks)
     Promise.all(xeroLinks.map((xeroLink) => axios.get(xeroLink,{
         headers:{
             'Authorization': 'Bearer ' + xero_access_token,
@@ -27,13 +28,12 @@ async function getData(xero_access_token, xero_tenant_ID){
             'Content-Type': 'application/json',
             'xero-tenant-id': xero_tenant_ID
         }}
-    ))).then(data=>{
-        for(let i=0; i<data.length; i++){
-            appList[i].licences_purchased = data[i].licences_purchased
-            appList[i].total_amount = data[i].total_amount
-            appList[i].renewalDate = data[i].renewalDate
+    ))).then(output=>{
+        for(let i=0; i<output.length; i++){
+            appList[i].licences_purchased = output[i].data.licences_purchased
+            appList[i].total_amount = output[i].data.total_amount
+            appList[i].renewalDate = output[i].data.renewalDate
         }
-        console.log("AppLIST: "+appList)
         return appList
     }).catch(error=>{
         console.log(error)
