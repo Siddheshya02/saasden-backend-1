@@ -34,7 +34,6 @@ async function getData(xero_access_token, xero_tenant_ID){
         )
     })
     return Promise.all(promises).then(()=>{
-        console.log(appList)
         return appList
     }).catch(error => console.log(error))
     

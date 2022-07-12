@@ -13,19 +13,7 @@ router.get("/",(req, res)=>{
     }).catch(error =>{
         console.log(error)
         res.sendStatus(500)
-    })
-    
-    
-    
-    // try {
-    //     const data = await licences.getData(req.cookies.xero_access_token, req.cookies.xero_tenant_id[0])
-    //     console.log('Data: '+data)
-    //     res.send(JSON.stringify(data))    
-    // } catch (error) {
-    //     console.log(error)
-    //     res.sendStatus(500)
-    // }
-    
+    })    
 })
 
 router.post("/app/deactivate", async(req, res)=>{
