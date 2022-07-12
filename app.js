@@ -58,9 +58,9 @@ function checkLogin(req, res, next){
             }
             else if(!req.cookies.xero_access_token){ // check for validity of xero keys
                 if(req.session.xero_access_token)
-                    res.json({url: 'http://localhost:3001/xero/refreshXeroToken'})//redirect to refresh token route
+                    res.status(69).json({url: 'http://localhost:3001/xero/refreshXeroToken'})//redirect to refresh token route
                 else
-                    res.json({url: 'http://localhost:3000/login-exp'})//redirect to exp login
+                    res.status(420).json({url: 'http://localhost:3000/login-exp'})//redirect to exp login
             }
             else{
                 next()       
