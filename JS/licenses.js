@@ -29,6 +29,14 @@ async function getData(xero_access_token, xero_tenant_ID){
             'xero-tenant-id': xero_tenant_ID
         }}
     ))).then(output=>{
+        let i = 0
+        output.forEach(contact => {
+            appList[i].licences_purchased = contact.data.licences_purchased
+            appList[i].total_amount = output[i].data.total_amount
+            appList[i].renewalDate = output[i].data.renewalDate
+        });
+
+
         for(let i=0; i<output.length; i++){
             appList[i].licences_purchased = output[i].data.licences_purchased
             appList[i].total_amount = output[i].data.total_amount
