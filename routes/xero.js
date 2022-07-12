@@ -74,7 +74,7 @@ router.post("/refreshXeroToken", async(req,res)=>{
     try {
         client.CLOCK_TOLERANCE = 5; 
         Issuer.defaultHttpOptions = {timeout: 20000};
-        let newToken = await client.refresh(req.cookies.xero_refresh_token)
+        let newToken = await client.refresh(req.session.xero_refresh_token)
         res.cookie('xero_access_token', newToken.access_token,{
             maxAge: 174000, //29 minutues
             httpOnly: true,

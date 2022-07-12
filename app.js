@@ -57,12 +57,15 @@ function checkLogin(req, res, next){
                 res.json({url: 'http://localhost:3000/login-sso'})//redirect to okta API key page
             }
             else if(!req.cookies.xero_access_token){ // check for validity of xero keys
-                res.json({url: 'http://localhost:3000/login-exp'})
-                //redirect to xero Refresh Token
+                if(req.session.xero_access_token)
+                    res.json({url: 'http://localhost:3001/xero/refreshXeroToken'})//redirect to refresh token route
+                else
+                    res.json({url: 'http://localhost:3000/login-exp'})//redirect to exp login
             }
             else{
                 next()       
                 req.session.username = decoded.username
+                req.session.xero_access_token = req.cookies.xero_access_token
             }
         }
     })
