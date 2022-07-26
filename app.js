@@ -102,5 +102,10 @@ app.use("/xero", xero)
 app.use("expensify", exepensify)
 
 
+//Test Route
+app.get("/test",(req, res)=>{
+    res.send("Test Route, backend is working")
+})
+
 const port=process.env.PORT || 3001
 app.listen(port, () => console.log(`Listening on port ${port}...`));
