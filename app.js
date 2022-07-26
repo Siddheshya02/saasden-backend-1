@@ -72,20 +72,34 @@ function checkLogin(req, res, next){
 }
 
 //Routes
-const login = require("./routes/login")
-const okta = require("./routes/okta")
-const xero = require("./routes/xero")
-const subscription = require("./routes/subscription")
-const employees = require('./routes/employee')
-const visual = require("./routes/visualize")
+
+//SSO Routes
+const okta = require("./routes/SSO/okta")
+const azure = require("./routes/SSO/azure")
+const ping = require("./routes/SSO/ping")
+
+//EMS Routes
+const xero = require("./routes/EMS/xero")
+const expensify = require("./routes/EMS/expensify")
+
+//Dashboard Routes
+const login = require("./routes/dashboard/login")
+const subscription = require("./routes/dashboard/subscription")
+const employees = require('./routes/dashboard/employee')
+const visual = require("./routes/dashboard/visualize")
 
 
 app.use("/", login)
-app.use("/okta", okta) //check here
-app.use("/xero", xero)
 app.use('/subscription', checkLogin, subscription)
 app.use('/employee', checkLogin, employees)
 app.use("/viz", checkLogin, visual)
+
+app.use("/okta", okta) //check here
+app.use("/azure",azure)
+app.use("ping", ping)
+
+app.use("/xero", xero)
+app.use("expensify", exepensify)
 
 
 const port=process.env.PORT || 3001
