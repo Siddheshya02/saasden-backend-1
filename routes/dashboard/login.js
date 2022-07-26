@@ -1,5 +1,5 @@
 const passport = require('passport')
-const userModel = require('../models/user')
+const userModel = require('../../models/user')
 const router = require('express').Router()
 const jwt = require('jsonwebtoken')
 

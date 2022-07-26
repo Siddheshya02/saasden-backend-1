@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
-const options = require('../JS/utils')
+const options = require('../../JS/utils')
 
 router.get("/", async(req, res)=>{
     const options_Okta = options.getOktaOptions(req.cookies.oktaDomain, '/api/v1/users/', 'GET', req.cookies.oktaAPIKey)

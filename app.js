@@ -99,7 +99,7 @@ app.use("/azure",azure)
 app.use("ping", ping)
 
 app.use("/xero", xero)
-app.use("expensify", exepensify)
+app.use("expensify", expensify)
 
 
 //Test Route
