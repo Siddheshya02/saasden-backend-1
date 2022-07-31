@@ -1,24 +1,25 @@
 const axios = require('axios')
 
-async function getAuthCode(clientID, tenantID, redirectURI){
+async function getSubs(accessToken){
     try {
-        await axios.get(`
-        https://login.microsoftonline.com/${tenantID}/oauth2/v2.0/authorize?
-        client_id=${clientID}
-        &response_type=code
-        &redirect_uri=${redirectURI}
-        &response_mode=query
-        &scope=offline_access%20user.read%20mail.read
-        &state=9898237`)
-        .then(res =>{
-            return(res.data)
-        })    
+        const data = await axios.get("https://graph.microsoft.com/v1.0/users",{
+            headers:{
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+        console.log(data.data)    
     } catch (error) {
         console.log(error)
-    }    
+    }
+    
+    
 }
 
-module.exports = {getAuthCode};
+async function getEmps(accessToken){
+    
+}
 
 
-getAuthCode()
+module.exports = {getSubs, getEmps};
+
+

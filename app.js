@@ -89,17 +89,17 @@ const employees = require('./routes/dashboard/employee')
 const visual = require("./routes/dashboard/visualize")
 
 
-app.use("/", login)
-app.use('/subscription', checkLogin, subscription)
-app.use('/employee', checkLogin, employees)
-app.use("/viz", checkLogin, visual)
+app.use("/api/v1", login)
+app.use('/api/v1/subscription', checkLogin, subscription)
+app.use('/api/v1/employee', checkLogin, employees)
+app.use("/api/v1/viz", checkLogin, visual)
 
-app.use("/okta", okta) //check here
-app.use("/azure",azure)
-app.use("ping", ping)
+app.use("/api/v1/okta", okta) //check here
+app.use("/api/v1/azure",azure)
+app.use("/api/v1/ping", ping)
 
-app.use("/xero", xero)
-app.use("expensify", expensify)
+app.use("/api/v1//xero", xero)
+app.use("/api/v1/expensify", expensify)
 
 
 //Test Route

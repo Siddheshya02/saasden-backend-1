@@ -5,4 +5,15 @@ router.get("/",(req, res)=>{
     res.send("Under Development")
 })
 
+router.get("/subscription",(req, res)=>{
+    
+    
+    
+    res.send("Under Development")
+})
+
+router.get("/employee",(req, res)=>{
+    res.send("Under Development")
+})
+
 module.exports = router;
