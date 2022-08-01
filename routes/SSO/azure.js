@@ -24,10 +24,14 @@ router.get("/", (req, res)=>{
     })        
 })
 
-router.get("/getUsers")
+router.get("/getUsers", (req, res)=>{
+    res.send("Page in Development")
+})
 
 
-router.get("/")
+router.get("/getEmployees", (req, res)=>{
+    res.send("Page in Development")
+})
 
 
 module.exports = router;
