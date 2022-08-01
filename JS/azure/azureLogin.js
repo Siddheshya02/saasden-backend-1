@@ -11,8 +11,6 @@ async function getSubs(accessToken){
     } catch (error) {
         console.log(error)
     }
-    
-    
 }
 
 async function getEmps(accessToken){

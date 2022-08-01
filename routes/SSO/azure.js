@@ -24,7 +24,7 @@ router.get("/", (req, res)=>{
     })        
 })
 
-router.get("/getUsers", (req, res)=>{
+router.get("/getApps", (req, res)=>{
     res.send("Page in Development")
 })
 

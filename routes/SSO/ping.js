@@ -5,10 +5,7 @@ router.get("/",(req, res)=>{
     res.send("Under Development")
 })
 
-router.get("/subscription",(req, res)=>{
-    
-    
-    
+router.get("/getApps",(req, res)=>{
     res.send("Under Development")
 })
 
