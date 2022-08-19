@@ -19,7 +19,7 @@
   "homepage": "https://github.com/nishit-saasden/saasden-backend#readme",
   "dependencies": {
     "@azure/msal-browser": "^2.28.0",
-    "@azure/msal-node": "^1.12.0",
+    "@azure/msal-node": "^1.12.1",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "axios": "^0.27.2",
     "base-64": "^1.0.0",
