@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 Schema = mongoose.Schema
 passportLocalMongoose = require('passport-local-mongoose')
 
-const User = new Schema({
+const userSchema = new Schema({
     name : {
         type: String,
         required: true,
@@ -17,14 +17,7 @@ const User = new Schema({
         required: true,
         unique: true
     },
-    oktaDomain : {
-        type: String
-    },
-    oktaAPIKey : {
-        type: String
-    }
 });
 
 User.plugin(passportLocalMongoose);
-
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('userSchema', userSchema);
