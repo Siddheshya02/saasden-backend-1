@@ -1,13 +1,5 @@
 # saasden-backend
 
+Developer(s) died, RIP
 
-## Current Routes
-
-### /
-For Xero API
-
-### /login
-For login/signup purposes
-
-### /viz
-For fetching visualizations(under devpt)
+LOL
