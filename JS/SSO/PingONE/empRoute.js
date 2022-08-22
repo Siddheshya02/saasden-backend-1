@@ -1,5 +1,6 @@
 const axios = require("axios")
 
+//get list of all apps along with their associated group ids
 async function getPingAppList(envID, ping_access_token){
     const options = {
         'method': 'GET',
@@ -25,6 +26,7 @@ async function getPingAppList(envID, ping_access_token){
     }
 }
 
+//Get list of all employees
 async function getPingEmployees(envID, ping_access_token){
     const options = {
         'method': 'GET',
@@ -44,6 +46,7 @@ async function getPingEmployees(envID, ping_access_token){
     return userList
 }
 
+//Get list of all employees along with their associated apps
 async function getEmployeesApps(envID, ping_access_token, userID){
     let options = {
         'method': 'GET',
@@ -74,12 +77,3 @@ async function getEmployeesApps(envID, ping_access_token, userID){
     })
     return userApps
 }
-
-var token = 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImRlZmF1bHQifQ.eyJjbGllbnRfaWQiOiI2YzI0NGZiZS1hZGMwLTQzODgtYjY0NC05Y2ZlODg1ZGYyYmMiLCJpc3MiOiJodHRwczovL2F1dGgucGluZ29uZS5ldS8wMzlmZWNiYi1lMjljLTQxNGItYTc2My1mODA1MmQ1YWViNDMvYXMiLCJpYXQiOjE2NjEwODc4NjEsImV4cCI6MTY2MTA5MTQ2MSwiYXVkIjpbImh0dHBzOi8vYXBpLnBpbmdvbmUuZXUiXSwiZW52IjoiMDM5ZmVjYmItZTI5Yy00MTRiLWE3NjMtZjgwNTJkNWFlYjQzIiwib3JnIjoiNGYwZTI4ZGEtMzJjZS00N2Q2LWIxNDUtOTI1MTJhMzUzZmYwIn0.WTvMd1d40w1xFil0LHtXeweQrOk0WaXlnDIEmiOPot28LkyT2YK4VnoiBYY_YUIoH9JuKofBjELEi7U4d9p0Bugn947rV8-iYKwXGzmD_JXTtIokHxovZxDJZ6ony4Di-HrvIrWUxEA5j6VyBjLLTy2j2cWyHa_uZ0_wX7XItXBG8SBKll71PxVXTa7PRzDczy-6FLj3diV4Mx_Pu2x6XcajXpL91lylg0oYn2R-U5Kb0i9JkMv8klcOl9cx303GsutGWuXRuQ4cbRJ1ufjNscw9cO7mfw6uWfRoq2yusfLEbTJUmR6xzJkg08puylw27IRieQKg0KCT4aZ_7lD8yw'
-var env = '039fecbb-e29c-414b-a763-f8052d5aeb43'
-
-getEmployeesApps(env, token, 'ae84ac4d-be79-4f01-b792-e21db2bde07a').then(data =>{
-    console.log(data)
-}).catch(error=>{
-    console.log(error)
-})

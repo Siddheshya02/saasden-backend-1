@@ -59,6 +59,7 @@ async function getUsers(envID, ping_access_token, groupIDs){
     })
 }
 
+//Get list of all apps along with their associted users
 async function getSubData(envID, ping_access_token){
     const appList = await getPingApps(envID, ping_access_token)
     let promiseList = []
@@ -75,7 +76,7 @@ async function getSubData(envID, ping_access_token){
                 id   : appList[i][0],
                 status  : appList[i][2],
                 name : appList[i][1],
-                emp: data[i]
+                emps: data[i]
                 })
             }
         })
