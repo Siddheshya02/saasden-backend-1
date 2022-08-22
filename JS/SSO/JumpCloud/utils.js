@@ -4,29 +4,35 @@ const subSchema = require("../../../models/subscription")
 const empSchema = require("../../../models/employee")
 
 async function getApps(apiToken){
-    const res = await axios.get('https://console.jumpcloud.com/api/applications', {}, {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'x-api-key': `${apiToken}`
+    const res = await axios.get('https://console.jumpcloud.com/api/applications', {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-api-key': `${apiToken}`
+        }
     })
     return res.data.results
 }
 
 async function getUsers(apiToken){
-    const res = await axios.get('https://console.jumpcloud.com/api/systemusers', {}, {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'x-api-key': `${apiToken}`
+    const res = await axios.get('https://console.jumpcloud.com/api/systemusers', {
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-api-key': `${apiToken}`
+        }
     })
 
     return res.data.results
 }
 
 async function getUserData(apiToken, userID){
-    const res = await axios.get(`https://console.jumpcloud.com/api/systemusers/${userID}`, {}, {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'x-api-key': `${apiToken}`
+    const res = await axios.get(`https://console.jumpcloud.com/api/systemusers/${userID}`, {
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-api-key': `${apiToken}`
+        }
     })
     let userData = res.data
     return {
@@ -39,10 +45,12 @@ async function getUserData(apiToken, userID){
 }
 
 async function getAppUsers(appID, apiToken){
-    const res = await axios.get(`https://console.jumpcloud.com/api/v2/applications/${appID}/users`, {}, {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'x-api-key': `${apiToken}`
+    const res = await axios.get(`https://console.jumpcloud.com/api/v2/applications/${appID}/users`, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-api-key': `${apiToken}`
+        }
     })
 
     let userList = []
@@ -55,10 +63,12 @@ async function getAppUsers(appID, apiToken){
 }
 
 async function getUserApps(userID, apiToken, appMap){    
-    const res = await axios.get(`https://console.jumpcloud.com/api/v2/users/${userID}/applications`, {}, {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'x-api-key': `${apiToken}`
+    const res = await axios.get(`https://console.jumpcloud.com/api/v2/users/${userID}/applications`, {
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-api-key': `${apiToken}`
+        }
     })
     
     let appList = []
@@ -98,7 +108,7 @@ function getSubs(apiToken, user_saasden_id){
     })
 }
 
-function getEmps(apiToken, user_saasden_id){
+async function getEmps(apiToken, user_saasden_id){
     const apps = await getApps(apiToken)
     let appMap={}
     apps.forEach(app => {
@@ -129,6 +139,13 @@ function getEmps(apiToken, user_saasden_id){
         console.log(error)
     })
 }
+
+
+getUsers('ccbc361c249d05245e00394f9f4d201771a61335').then(res => {
+    console.log(res)
+}).catch(error => {
+    consoel.log(error)
+})
 
 
 module.exports = {getSubs, getEmps}

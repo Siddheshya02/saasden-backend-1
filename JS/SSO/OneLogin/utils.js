@@ -24,15 +24,19 @@ async function getoneLoginApps(subdomain, accessToken){
 }
 
 async function getOneLoginUsers(subdomain, accessToken){
-	const res = axios.get(`https://${subdomain}/api/2/users`,{},{
-        'Authorization' : `Bearer ${accessToken}`
+	const res = axios.get(`https://${subdomain}/api/2/users`, {
+		headers:{
+        	'Authorization' : `Bearer ${accessToken}`
+		}
 	})
   	return res.data
 }
 
 async function getOneLoginUserApps(userID, subdomain, accessToken){
-	const res=await axios.get(`https://${subdomain}/api/2/users/${userID}/apps`,{},{
-		'Authorization' : `Bearer ${accessToken}`,   
+	const res=await axios.get(`https://${subdomain}/api/2/users/${userID}/apps`, {
+		headers:{
+			'Authorization' : `Bearer ${accessToken}`
+		}  
 	})
   	return res.data
 }
@@ -43,8 +47,10 @@ function getSubs(subdomain, accessToken, user_saasden_id){
 		let subList = []
 		appList.forEach(app =>{
 			promiseList.push(
-				axios.get(`https://${subdomain}/api/2/apps/${app.id}/users`,{},{
-					'Authorization' : `Bearer ${accessToken}`
+				axios.get(`https://${subdomain}/api/2/apps/${app.id}/users`, {
+					headers: {
+						'Authorization' : `Bearer ${accessToken}`
+					}
 				})
 			)
 			subList.push({
@@ -119,30 +125,3 @@ module.exports={getToken, getSubs, getEmps}
 // const clientID = '45bba86eec3e9d1b3643175ce317ead17596f66e30fdd7a0f8a2c9fbf9411690'
 // const clientSecret = '754a02f204451ed03e2b996803cc4e4a19366a7f41db3eedb8fa8e31bb338e2c'
 // getToken(url, clientID, clientSecret)
-
-
-
-// 	let appInfo={
-		// 		"name":name,
-		// 		"id":id
-		// 	}
-		// })
-		
-		
-		// appData.forEach((data)=>{
-		// 	const {id,name=name.toLowerCase()}=data
-		// 	let appInfo={
-		// 		"name":name,
-		// 		"id":id
-		// 	}
-		// 	apps.push(appInfo)
-		// })
-		// let em={
-		// 	"id":id,
-		// 	"email":email,
-		// 	"firstname":firstname,
-		// 	"userName":username,
-		// 	"lastname":lastname,
-		// 	"apps":apps
-		// }
-		// emps.push(em)
