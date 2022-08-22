@@ -4,7 +4,6 @@ function getOktaOptions(oktaDomain, path, method, oktaAPIKey){
         url: oktaDomain + path,
         headers:{
             Authorization: oktaAPIKey,
-            Accept: 'application/json',
             ContentType: 'application/json',
         }
     }
