@@ -11,11 +11,11 @@ const subsSchema = new Schema({
     apps:[{
         name: String,
         id: String,
-        emp:[{
+        emps:[{
             id:String,
             email:String,
             firstname:String,
-            userName:String,
+            username:String,
             lastname:String
         }]
     }] 

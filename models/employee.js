@@ -12,7 +12,7 @@ const empSchema = new Schema({
         id:String,
         email:String,
         firstname:String,
-        userName:String,
+        username:String,
         lastname:String,
         apps:[{
             id:String,

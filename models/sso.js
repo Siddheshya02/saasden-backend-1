@@ -1,10 +1,11 @@
 const mongoose = require('mongoose'),
 Schema = mongoose.Schema
+const userSchema = require("./user")
 
 const ssoSchema = new Schema({
     user_saasden_id:{
         type: Schema.Types.ObjectId, 
-        ref: 'USER',
+        ref: userSchema,
         required : true
     },
     domain:{
