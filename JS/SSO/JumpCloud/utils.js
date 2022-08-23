@@ -1,5 +1,4 @@
 const axios=require('axios')
-
 const subSchema = require("../../../models/subscription")
 const empSchema = require("../../../models/employee")
 
@@ -22,7 +21,6 @@ async function getUsers(apiToken){
             'x-api-key': `${apiToken}`
         }
     })
-
     return res.data.results
 }
 
@@ -53,12 +51,11 @@ async function getAppUsers(appID, apiToken){
         }
     })
 
-    let userList = []
-    res.data.forEach(user => {
-        getUserData(apiToken, user.id).then(userData => {
-            userList.push(userData)
-        })
-    })
+    const userList=[];
+    for (const user of res.data) {
+        const userData=await getUserData(apiToken, user.id)
+        userList.push(userData)
+    }
     return userList
 }
 
@@ -72,40 +69,27 @@ async function getUserApps(userID, apiToken, appMap){
     })
     
     let appList = []
-    
-    res.data.forEach(app => {
+    for (const app of res.data) {
         appList.push({
             id : app.id,
             name: appMap[app.id],
         })
-    })
-        
+    }
     return appList
 }
 
-function getSubs(apiToken, user_saasden_id){
-    getApps(apiToken).then(appList => {
-        let subList = []
-        appList.forEach(app => {
-            getAppUsers(app.id, apiToken).then(emps => {
-                subList.push({
-                    id : app.id,
-                    name: app.name,
-                    emps: emps 
-                })
-            }).catch(error => {
-                console.log(error)
-            })
+async function getSubs(apiToken, user_saasden_id){
+    let subList = []
+    const appList=await getApps(apiToken)
+    for (const app of appList) {
+        const emps=await getAppUsers(app.id,apiToken)
+        subList.push({
+            id : app.id,
+            name: app.name,
+            emps: emps 
         })
-    }).then(async() => {
-        await subSchema.insertOne({
-            user_saasden_id: user_saasden_id,
-            apps: subList,
-        })
-        console.log("Jumpcloud Subscription data updated successfully")
-    }).catch(error => {
-        console.log(error)
-    })
+    }
+    return subList
 }
 
 async function getEmps(apiToken, user_saasden_id){
@@ -115,37 +99,20 @@ async function getEmps(apiToken, user_saasden_id){
         appMap[app.id]=app.name
     })
 
-    getUsers(apiToken).then(userList => {
-        let empList = []
-        userList.forEach(user => {
-            getUserApps(user.id, apiToken, appMap).then(appList => {
-                empList.push({
-                    id: user.id,
-                    email: user.email,
-                    firstname: user.firstname,
-                    username: user.username,
-                    lastname: user.lastname,
-                    apps: appList
-                })
-            })
+    let empList = []
+    const userList=await getUsers(apiToken)
+    for (const user of userList) {
+        const appList=await getUserApps(user.id,apiToken,appMap)
+        empList.push({
+            id: user.id,
+            email: user.email,
+            firstname: user.firstname,
+            username: user.username,
+            lastname: user.lastname,
+            apps: appList
         })
-    }).then(async()=>{
-        await empSchema.insertOne({
-            user_saasden_id: user_saasden_id,
-            emps: emps
-        })
-        console.log("JumpCloud employee data updated Succesfully")
-    }).catch(error=>{
-        console.log(error)
-    })
+    }
+    return empList
 }
-
-
-getUsers('ccbc361c249d05245e00394f9f4d201771a61335').then(res => {
-    console.log(res)
-}).catch(error => {
-    consoel.log(error)
-})
-
 
 module.exports = {getSubs, getEmps}
