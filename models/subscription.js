@@ -17,7 +17,10 @@ const subsSchema = new Schema({
             firstname:String,
             username:String,
             lastname:String
-        }]
+        }],
+        licences: Number,
+        currentCost: Number, 
+        amountSaved: Number
     }] 
 })
 
