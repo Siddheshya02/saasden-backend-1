@@ -1,5 +1,4 @@
 const axios = require('axios')
-const { resolve } = require('path')
 const subSchema = require('../models/subs')
 
 async function getData(xero_access_token, xero_tenant_ID){

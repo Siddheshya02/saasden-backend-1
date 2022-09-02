@@ -69,8 +69,7 @@ router.get("/callback", async(req,res)=>{
     }
 })
 
-
-router.post("/refreshXeroToken", async(req,res)=>{
+router.post("/refreshToken", async(req,res)=>{
     try {
         client.CLOCK_TOLERANCE = 5; 
         Issuer.defaultHttpOptions = {timeout: 20000};
