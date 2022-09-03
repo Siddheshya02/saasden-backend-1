@@ -10,7 +10,7 @@ const subsSchema = new Schema({
     },
     apps:[{
         name: String,
-        ssoID: String,
+        id: String,
         emsID: String,
         emps:[{
             id:String,
@@ -21,8 +21,7 @@ const subsSchema = new Schema({
         }],
         licences: Number,
         currentCost: Number, 
-        amountSaved: Number,
-        dueData: String,
+        amountSaved: Number
     }] 
 })
 
