@@ -13,20 +13,22 @@ function getZohoOptions(orgId,accessToken,method,uri){
     return zohoOptions
 }
 
-async function getZohoAccessTokens(method,uri){
+async function getZohoAccessTokens(code){
     const zohoCallBackOptions={
-        method:method,
-        uri:uri,
+        method:"POST",
+        uri:`https://accounts.zoho.in/oauth/v2/token?code=${code}&client_id=${process.env.client_id}&client_secret=${process.env.client_secret}&redirect_uri=http://localhost:3000/callback&grant_type=authorization_code`,
         headers:{
             "Content-type":"application/x-www-form-urlencoded"
         }
     }
+    const uri=`https://accounts.zoho.in/oauth/v2/token?code=${code}&client_id=${process.env.client_id}&client_secret=${process.env.client_secret}&redirect_uri=http://localhost:3000/callback&grant_type=authorization_code`
     const response=await axios.request(uri,zohoCallBackOptions)
     let accessToken=response.data.access_token
     return accessToken
 }
 
-async function getZohoOrgIds(accessToken,orgIds){
+async function getZohoOrgIds(accessToken){
+    let orgIds=[]
     const options={
      method:"GET",
      headers:{
@@ -38,5 +40,6 @@ async function getZohoOrgIds(accessToken,orgIds){
        orgIds.push(orgs.data.organizations[i].organization_id)
     }
 }
+
 
 module.exports={getZohoOptions,getZohoAccessTokens,getZohoOrgIds}
