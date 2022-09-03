@@ -114,5 +114,10 @@ async function getEmps(apiToken, user_saasden_id){
     }
     return empList
 }
-
+async function test()
+{
+    const testResult=await getEmps('ccbc361c249d05245e00394f9f4d201771a61335','12')
+    console.log(testResult[0].apps)
+}
+test()
 module.exports = {getSubs, getEmps}
