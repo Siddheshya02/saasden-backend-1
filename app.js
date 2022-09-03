@@ -69,14 +69,14 @@ app.use('/api/v1/expensify', expensify)
 
 // Dashboard Routes
 const login = require('./routes/dashboard/login')
-const subscription = require('./routes/dashboard/subscription')
-const employees = require('./routes/dashboard/employee')
-const visual = require('./routes/dashboard/visualize')
+// const subscription = require('./routes/dashboard/subscription')
+// const employees = require('./routes/dashboard/employee')
+// const visual = require('./routes/dashboard/visualize')
 
 app.use('/api/v1', login)
-app.use('/api/v1/subscription', subscription)
-app.use('/api/v1/employee', employees)
-app.use('/api/v1/viz', visual)
+// app.use('/api/v1/subscription', subscription)
+// app.use('/api/v1/employee', employees)
+// app.use('/api/v1/viz', visual)
 
 // Test Route
 app.get('/test', (req, res) => {

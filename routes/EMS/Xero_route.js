@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const { Issuer } = require('openid-client')
 const axios = require('axios')
-const mapping = require('../../JS/initDB')
 
 const client_id = process.env.CLIENT_ID
 const client_secret = process.env.CLIENT_SECRET
@@ -53,7 +52,6 @@ router.get('/callback', async (req, res) => {
     output.data.forEach(tenant => {
       tenantID.push(tenant.tenantId)
     })
-    mapping.cacheSubscriptions(req.cookies.oktaDomain, req.cookies.oktaAPIKey, token.access_token, tenantID[0])
 
     res.cookie('xero_access_token', token.access_token, {
       maxAge: 174000, // 29 minutues

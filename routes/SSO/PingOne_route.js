@@ -5,7 +5,7 @@ const ssoSchema = require('../../models/sso')
 const subSchema = require('../../models/subscription')
 const empSchema = require('../../models/employee')
 
-router('/auth', async (req, res) => {
+router.get('/auth', async (req, res) => {
   // need to add a cookie with _id from user schema
   const clientID = req.cookie.user_saasden_id
   const filter = { clientID }
@@ -23,7 +23,7 @@ router('/auth', async (req, res) => {
   }
 })
 
-router('/subs', async (req, res) => {
+router.get('/subs', async (req, res) => {
   try {
     const subData = await subSchema.find({ user_saasden_id: req.cookie.user_saasden_id })
     res.send(JSON.stringify(subData))
@@ -33,7 +33,7 @@ router('/subs', async (req, res) => {
   }
 })
 
-router('/emps', async (req, res) => {
+router.get('/emps', async (req, res) => {
   try {
     const empData = await empSchema.find({ user_saasden_id: req.cookie.user_saasden_id })
     res.send(JSON.stringify(empData))
