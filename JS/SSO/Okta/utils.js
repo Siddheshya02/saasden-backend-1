@@ -1,6 +1,6 @@
 const axios = require('axios')
 const subModel = require('../../../models/subscription')
-const empSchema = require('../../../models/employee')
+const empModel = require('../../../models/employee')
 
 async function getApps (subdomain, apiToken) {
   const res = await axios.get(`https://${subdomain}/api/v1/apps`, {
@@ -22,15 +22,14 @@ async function getUsers (subDomain, apiToken) {
     }
   })
   const userList = []
-  res.data.forEach(user => userList.push([{
+  res.data.forEach(user => userList.push({
     id: user.id,
     email: user.profile.email,
     firstname: user.profile.firstName,
     lastname: user.profile.lastName,
     username: user.profile.email,
     apps: []
-  }]))
-
+  }))
   return userList
 }
 
@@ -63,7 +62,8 @@ async function getSubs (subDomain, apiToken, user_saasden_id) {
         emps: empList
       })
     }
-    const filter = { user_saasden_id: user_saasden_id }
+    // error here, saasden_id not passed in cookies
+    const filter = { user_saasden_id: '631376f84b30ed41cf6f58f0' }
     const update = { apps: subList }
     await subModel.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')
@@ -76,13 +76,12 @@ async function getEmps (subDomain, apiToken, user_saasden_id) {
   try {
     const userList = await getUsers(subDomain, apiToken)
     for (const user of userList) {
-      const appList = await axios.get(`https://${subDomain}/api/v1/apps?filter=user.id=="${user.id}"`, {
+      const appList = await axios.get(`https://${subDomain}/api/v1/apps?filter=user.id+eq+"${user.id}"`, {
         headers: {
           Authorization: `SSWS ${apiToken}`,
           'Content-Type': 'application/json'
         }
       })
-      console.log(appList.data)
       for (const app of appList.data) {
         user.apps.push({
           id: app.id,
@@ -90,17 +89,12 @@ async function getEmps (subDomain, apiToken, user_saasden_id) {
         })
       }
     }
-    console.log(userList)
-    // const filter = {user_saasden_id: user_saasden_id}
-    // const update = {emps: subList}
-    // await emsSchema.findOneAndUpdate(filter, update)
+    const filter = { user_saasden_id: user_saasden_id }
+    const update = { emps: userList }
+    await empModel.findOneAndUpdate(filter, update)
   } catch (error) {
     console.log(error)
   }
 }
 
-getEmps('trial-4790348.okta.com', '00JqHAKwnzIRdURjI3FhG7oqSn0xZ34ybrGurZbCFL', 'fuck off').then(res => {
-  console.log(res)
-}).catch(error => {
-  console.log(error)
-})
+module.exports = { getSubs, getEmps }

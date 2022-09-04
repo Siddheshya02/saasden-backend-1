@@ -1,6 +1,6 @@
 const axios = require('axios')
-const subSchema = require('../../../models/subscription')
-const empSchema = require('../../../models/employee')
+const subModel = require('../../../models/subscription')
+const empModel = require('../../../models/employee')
 
 async function getApps (apiToken) {
   const res = await axios.get('https://console.jumpcloud.com/api/applications', {
@@ -89,6 +89,10 @@ async function getSubs (apiToken, user_saasden_id) {
       emps
     })
   }
+  const filter = { user_saasden_id: user_saasden_id }
+  const update = { apps: subList }
+  await subModel.findOneAndUpdate(filter, update)
+  console.log('Okta subscription data updated successfully')
   return subList
 }
 
@@ -112,7 +116,9 @@ async function getEmps (apiToken, user_saasden_id) {
       apps: appList
     })
   }
-  return empList
+  const filter = { user_saasden_id: user_saasden_id }
+  const update = { emps: userList }
+  await empModel.findOneAndUpdate(filter, update)
 }
 
 module.exports = { getSubs, getEmps }

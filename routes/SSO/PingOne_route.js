@@ -7,7 +7,7 @@ const empSchema = require('../../models/employee')
 
 router.get('/auth', async (req, res) => {
   // need to add a cookie with _id from user schema
-  const clientID = req.cookie.user_saasden_id
+  const clientID = req.cookies.user_saasden_id
   const filter = { clientID }
   const update = {
     envID: req.body.envID,
@@ -25,7 +25,7 @@ router.get('/auth', async (req, res) => {
 
 router.get('/subs', async (req, res) => {
   try {
-    const subData = await subSchema.find({ user_saasden_id: req.cookie.user_saasden_id })
+    const subData = await subSchema.find({ user_saasden_id: req.cookies.user_saasden_id })
     res.send(JSON.stringify(subData))
   } catch (error) {
     console.log(error)
@@ -35,7 +35,7 @@ router.get('/subs', async (req, res) => {
 
 router.get('/emps', async (req, res) => {
   try {
-    const empData = await empSchema.find({ user_saasden_id: req.cookie.user_saasden_id })
+    const empData = await empSchema.find({ user_saasden_id: req.cookies.user_saasden_id })
     res.send(JSON.stringify(empData))
   } catch (error) {
     console.log(error)

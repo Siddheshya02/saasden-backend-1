@@ -1,6 +1,9 @@
 const passport = require('passport')
 const router = require('express').Router()
 const userModel = require('../../models/user')
+const ssoModel = require('../../models/sso')
+const subModel = require('../../models/subscription')
+const empModel = require('../../models/employee')
 
 router.post('/signup', (req, res, next) => {
   console.log(req.body)
@@ -25,6 +28,17 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '' }), a
   const user = await userModel.findOne({ username: req.body.username })
   res.cookie('username', req.body.username)
   res.cookie('user_saasden_id', user._id)
+
+  const query = { user_saasden_id: user._id }
+  const update = { user_saasden_id: user._id }
+  const options = {
+    upsert: true,
+    new: true,
+    setDefaultsOnInsert: true
+  }
+  await ssoModel.findOneAndUpdate(query, update, options)
+  await subModel.findOneAndUpdate(query, update, options)
+  await empModel.findOneAndUpdate(query, update, options)
   res.sendStatus(200)
 })
 
