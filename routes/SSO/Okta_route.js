@@ -6,7 +6,7 @@ const subSchema = require('../../models/subscription')
 const empSchema = require('../../models/employee')
 const util = require('../../JS/SSO/Okta/utils')
 
-router.get('/auth', async (req, res) => {
+router.post('/auth', async (req, res) => {
   // need to add a cookie with _id from user schema
   const saasdenID = req.cookies.user_saasden_id
   const filter = { user_saasden_id: saasdenID }

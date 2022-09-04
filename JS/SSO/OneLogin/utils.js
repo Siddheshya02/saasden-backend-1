@@ -10,7 +10,7 @@ async function getToken (subDomain, client_id, client_secret) {
   }, {
     'Content-Type': 'application/x-www-form-urlencoded'
   })
-  return res.data
+  return res.data.access_token
 }
 
 async function getoneLoginApps (subDomain, accessToken) {
