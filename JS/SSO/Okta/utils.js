@@ -58,12 +58,13 @@ async function getSubs (subDomain, apiToken, user_saasden_id) {
 
       subList.push({
         name: app[1],
-        id: app[0],
+        ssoID: app[0],
+        emsID: 'emsID goes here',
         emps: empList
       })
     }
     // error here, saasden_id not passed in cookies
-    const filter = { user_saasden_id: '631376f84b30ed41cf6f58f0' }
+    const filter = { user_saasden_id: user_saasden_id }
     const update = { apps: subList }
     await subModel.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')

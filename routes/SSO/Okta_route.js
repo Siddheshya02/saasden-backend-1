@@ -4,9 +4,9 @@ const router = express.Router()
 const ssoSchema = require('../../models/sso')
 const subSchema = require('../../models/subscription')
 const empSchema = require('../../models/employee')
-const util = require('../../JS/SSO/Okta/utils')
+const utils = require('../../JS/SSO/Okta/utils')
 
-router.get('/auth', async (req, res) => {
+router.post('/auth', async (req, res) => {
   // need to add a cookie with _id from user schema
   const saasdenID = req.cookies.user_saasden_id
   const filter = { user_saasden_id: saasdenID }
@@ -17,8 +17,9 @@ router.get('/auth', async (req, res) => {
   try {
     await ssoSchema.findOneAndUpdate(filter, update)
     console.log('Okta Credentials saved succesfully')
-    await util.getSubs(req.body.envID, req.body.apiToken, saasdenID)
-    await util.getEmps(req.body.envID, req.body.apiToken, saasdenID)
+    // Rate limit exceeded here
+    // await utils.getSubs(req.body.envID, req.body.apiToken, saasdenID)
+    // await utils.getEmps(req.body.envID, req.body.apiToken, saasdenID)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

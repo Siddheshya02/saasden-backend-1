@@ -5,7 +5,7 @@ const ssoSchema = require('../../models/sso')
 const subSchema = require('../../models/subscription')
 const empSchema = require('../../models/employee')
 
-router.get('/auth', async (req, res) => {
+router.post('/auth', async (req, res) => {
   // need to add a cookie with _id from user schema
   const clientID = req.cookies.user_saasden_id
   const filter = { clientID }
