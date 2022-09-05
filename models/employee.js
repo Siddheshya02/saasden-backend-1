@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 const userSchema = require('./user')
 
 const empSchema = new Schema({
-  user_saasden_id: {
+  saasdenID: {
     type: Schema.Types.ObjectId,
     ref: userSchema,
     required: true

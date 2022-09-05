@@ -2,6 +2,7 @@ const passport = require('passport')
 const router = require('express').Router()
 const userModel = require('../../models/user')
 const ssoModel = require('../../models/sso')
+const emsModel = require('../../models/ems')
 const subModel = require('../../models/subscription')
 const empModel = require('../../models/employee')
 
@@ -27,16 +28,17 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '' }), a
   console.log(req.body)
   const user = await userModel.findOne({ username: req.body.username })
   res.cookie('username', req.body.username)
-  res.cookie('user_saasden_id', user._id)
+  res.cookie('saasdenID', user._id)
 
-  const query = { user_saasden_id: user._id }
-  const update = { user_saasden_id: user._id }
+  const query = { saasdenID: user._id }
+  const update = { saasdenID: user._id }
   const options = {
     upsert: true,
-    new: true,
     setDefaultsOnInsert: true
   }
+  // creating user profiles for sso, ems, subscription and employee models
   await ssoModel.findOneAndUpdate(query, update, options)
+  await emsModel.findOneAndUpdate(query, update, options)
   await subModel.findOneAndUpdate(query, update, options)
   await empModel.findOneAndUpdate(query, update, options)
   res.sendStatus(200)

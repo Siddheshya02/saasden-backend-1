@@ -78,7 +78,7 @@ async function getUserApps (userID, apiToken, appMap) {
   return appList
 }
 
-async function getSubs (apiToken, user_saasden_id) {
+async function getSubs (apiToken, saasdenID) {
   const subList = []
   const appList = await getApps(apiToken)
   for (const app of appList) {
@@ -89,14 +89,14 @@ async function getSubs (apiToken, user_saasden_id) {
       emps
     })
   }
-  const filter = { user_saasden_id: user_saasden_id }
+  const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
-  console.log('Okta subscription data updated successfully')
+  console.log('Jumcloud subscription data updated successfully')
   return subList
 }
 
-async function getEmps (apiToken, user_saasden_id) {
+async function getEmps (apiToken, saasdenID) {
   const apps = await getApps(apiToken)
   const appMap = {}
   apps.forEach(app => {
@@ -116,7 +116,7 @@ async function getEmps (apiToken, user_saasden_id) {
       apps: appList
     })
   }
-  const filter = { user_saasden_id: user_saasden_id }
+  const filter = { saasdenID: saasdenID }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
 }

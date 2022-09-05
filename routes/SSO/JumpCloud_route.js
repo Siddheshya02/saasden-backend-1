@@ -1,22 +1,30 @@
 const express = require('express')
 const router = express.Router()
 
-const ssoSchema = require('../../models/sso')
-const subSchema = require('../../models/subscription')
-const empSchema = require('../../models/employee')
+const ssoModel = require('../../models/sso')
+const subModel = require('../../models/subscription')
+const empModel = require('../../models/employee')
 const utils = require('../../JS/SSO/JumpCloud/utils')
+
 router.post('/auth', async (req, res) => {
-  // need to add a cookie with _id from user schema
-  const saasdenID = req.cookies.user_saasden_id
-  const filter = { user_saasden_id: saasdenID }
-  const update = {
-    apiToken: req.body.apiToken
-  }
+  const filter = { saasdenID: req.cookies.saasdenID }
+  const update = { apiToken: req.body.apiToken }
   try {
-    await ssoSchema.findOneAndDelete(filter, update)
+    await ssoModel.findOneAndDelete(filter, update)
     console.log('JumpCloud Credentials saved succesfully')
-    await utils.getSubs(req.body.apiToken, saasdenID)
-    await utils.getEmps(req.body.apiToken, saasdenID)
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.get('/refreshData', async (req, res) => {
+  try {
+    // fetch SSO Data from the DB
+    const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
+    await utils.getSubs(ssoData.apiToken, ssoData.saasdenID)
+    await utils.getEmps(ssoData.apiToken, ssoData.saasdenID)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -26,7 +34,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/subs', async (req, res) => {
   try {
-    const subData = await subSchema.find({ user_saasden_id: req.cookies.user_saasden_id })
+    const subData = await subModel.find({ saasdenID: req.cookies.saasdenID })
     res.send(JSON.stringify(subData))
   } catch (error) {
     console.log(error)
@@ -36,7 +44,7 @@ router.get('/subs', async (req, res) => {
 
 router.get('/emps', async (req, res) => {
   try {
-    const empData = await empSchema.find({ user_saasden_id: req.cookies.user_saasden_id })
+    const empData = await empModel.find({ saasdenID: req.cookies.saasdenID })
     res.send(JSON.stringify(empData))
   } catch (error) {
     console.log(error)

@@ -78,7 +78,7 @@ async function getUsers (envID, accessToken, groupList) {
 }
 
 // Get list of all apps along with their associted users
-async function getSubs (envID, accessToken, user_saasden_id) {
+async function getSubs (envID, accessToken, saasdenID) {
   const subList = []
   const appList = await getPingApps(envID, accessToken)
 
@@ -92,13 +92,13 @@ async function getSubs (envID, accessToken, user_saasden_id) {
     })
   }
   console.log(subList)
-  const filter = { user_saasden_id: user_saasden_id }
+  const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
 }
 
 // Get list of all employees along with their associated apps
-async function getEmps (envID, accessToken, user_saasden_id) {
+async function getEmps (envID, accessToken, saasdenID) {
   const appList = await getPingApps(envID, accessToken)
   const userList = await getPingEmployees(envID, accessToken)
 
@@ -125,7 +125,7 @@ async function getEmps (envID, accessToken, user_saasden_id) {
     }
   }
   console.log(userList)
-  const filter = { user_saasden_id: user_saasden_id }
+  const filter = { saasdenID: saasdenID }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
 }

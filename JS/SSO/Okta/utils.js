@@ -2,6 +2,7 @@ const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
 
+// get list of applications
 async function getApps (subdomain, apiToken) {
   const res = await axios.get(`https://${subdomain}/api/v1/apps`, {
     headers: {
@@ -14,6 +15,7 @@ async function getApps (subdomain, apiToken) {
   return appList
 }
 
+// get list of users
 async function getUsers (subDomain, apiToken) {
   const res = await axios.get(`https://${subDomain}/api/v1/users`, {
     headers: {
@@ -33,7 +35,8 @@ async function getUsers (subDomain, apiToken) {
   return userList
 }
 
-async function getSubs (subDomain, apiToken, user_saasden_id) {
+// get app -> user mapping
+async function getSubs (subDomain, apiToken, saasdenID) {
   try {
     const appData = await getApps(subDomain, apiToken)
     const subList = []
@@ -63,8 +66,7 @@ async function getSubs (subDomain, apiToken, user_saasden_id) {
         emps: empList
       })
     }
-    // error here, saasden_id not passed in cookies
-    const filter = { user_saasden_id: user_saasden_id }
+    const filter = { saasdenID: saasdenID }
     const update = { apps: subList }
     await subModel.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')
@@ -73,7 +75,8 @@ async function getSubs (subDomain, apiToken, user_saasden_id) {
   }
 }
 
-async function getEmps (subDomain, apiToken, user_saasden_id) {
+// get user -> app mapping
+async function getEmps (subDomain, apiToken, saasdenID) {
   try {
     const userList = await getUsers(subDomain, apiToken)
     for (const user of userList) {
@@ -90,7 +93,7 @@ async function getEmps (subDomain, apiToken, user_saasden_id) {
         })
       }
     }
-    const filter = { user_saasden_id: user_saasden_id }
+    const filter = { saasdenID: saasdenID }
     const update = { emps: userList }
     await empModel.findOneAndUpdate(filter, update)
   } catch (error) {

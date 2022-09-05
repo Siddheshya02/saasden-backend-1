@@ -11,7 +11,8 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-        "camelcase" : ["warn"],
-        "no-unused-vars" : ["warn"]
+        "camelcase" : "warn",
+        "no-unused-vars" : "warn",
+        "object-shorthand": "off"
     }
 }

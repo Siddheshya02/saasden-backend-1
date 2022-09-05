@@ -2,48 +2,33 @@ const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
 
-async function getToken (subDomain, client_id, client_secret) {
-  const res = await axios.post(`https://${subDomain}/auth/oauth2/v2/token`, {
-    client_id: client_id,
-    client_secret: client_secret,
+async function getToken (domain, clientID, clientSecret) {
+  const res = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
+    client_id: clientID,
+    client_secret: clientSecret,
     grant_type: 'client_credentials'
   }, {
     'Content-Type': 'application/x-www-form-urlencoded'
   })
+  console.log('access token generated')
   return res.data.access_token
 }
 
-async function getoneLoginApps (subDomain, accessToken) {
-  const OneLoginoptions = {
-    method: 'GET',
-    uri: `https://${subDomain}/api/2/apps`,
+async function getApps (domain, accessToken) {
+  const res = await axios.get(`https://${domain}/api/2/apps`, {
     headers: {
       Authorization: `Bearer ${accessToken}`
     }
-  }
-  const response = await axios.request(`https://${subDomain}/api/2/apps`, OneLoginoptions)
-  const apps = response.data
-  apps.forEach(element => {
-    element.name = element.name.toLowerCase()
   })
+  const apps = res.data
+  for (const app of apps) {
+    app.name = app.name.toLowerCase()
+  }
   return apps
 }
 
-async function getOneLoginUsers (subDomain, accessToken) {
-  const OneLoginoptions = {
-    method: 'GET',
-    uri: `https://${subDomain}/api/2/users`,
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  }
-  const response = await axios.request(`https://${subDomain}/api/2/users`, OneLoginoptions)
-  const emps = response.data
-  return emps
-}
-
-async function getOneLoginUserApps (userID, subDomain, accessToken) {
-  const res = await axios.get(`https://${subDomain}/api/2/users/${userID}/apps`, {
+async function getUsers (domain, accessToken) {
+  const res = await axios.get(`https://${domain}/api/2/users`, {
     headers: {
       Authorization: `Bearer ${accessToken}`
     }
@@ -51,45 +36,56 @@ async function getOneLoginUserApps (userID, subDomain, accessToken) {
   return res.data
 }
 
-async function getSubs (subDomain, accessToken, user_saasden_id) {
-  const appList = await getoneLoginApps(subDomain, accessToken)
+async function getUserApps (userID, domain, accessToken) {
+  const res = await axios.get(`https://${domain}/api/2/users/${userID}/apps`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
+  return res.data
+}
+
+async function getSubs (domain, accessToken, saasdenID) {
   const subList = []
+  const appList = await getApps(domain, accessToken)
+
   for (const app of appList) {
-    const options = {
-      method: 'GET',
-      uri: `https://${subDomain}/api/2/apps/${app.id}/users`,
+    const res = await axios.get(`https://${domain}/api/2/apps/${app.id}/users`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
-    }
-    const res = await axios.request(`https://${subDomain}/api/2/apps/${app.id}/users`, options)
+    })
+
     const emps = []
     for (const user of res.data) {
-      const { id, firstname, lastname, email, username } = user
       emps.push({
-        id,
-        firstname,
-        lastname,
-        username,
-        email
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        username: user.username,
+        email: user.email
       })
     }
+
     subList.push({
       id: app.id,
       name: app.name,
-      emps
+      emps: emps
     })
   }
-  const filter = { user_saasden_id: user_saasden_id }
+
+  const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
+  console.log('OneLogin subscription data updated successfully')
 }
 
-async function getEmps (subDomain, accessToken, user_saasden_id) {
-  const empList = await getOneLoginUsers(subDomain, accessToken)
+async function getEmps (domain, accessToken, saasdenID) {
   const userList = []
+  const empList = await getUsers(domain, accessToken)
+
   for (const emp of empList) {
-    const appList = await getOneLoginUserApps(emp.id, subDomain, accessToken)
+    const appList = await getUserApps(emp.id, domain, accessToken)
     const userAppList = []
     for (const app of appList) {
       userAppList.push({
@@ -106,9 +102,11 @@ async function getEmps (subDomain, accessToken, user_saasden_id) {
       apps: userAppList
     })
   }
-  const filter = { user_saasden_id: user_saasden_id }
+
+  const filter = { saasdenID: saasdenID }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
+  console.log('OneLogin employee data updated successfully')
 }
 
 module.exports = { getToken, getSubs, getEmps }
