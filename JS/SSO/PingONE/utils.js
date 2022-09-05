@@ -87,8 +87,13 @@ async function getSubs (envID, accessToken, saasdenID) {
     subList.push({
       name: app[1],
       ssoID: app[0],
-      emsID: 'emsID goes here',
       emps: res
+      // data to be fetched from EMS
+      // emsID: String,
+      // licences: Number,
+      // currentCost: Number,
+      // amountSaved: Number,
+      // dueData: String
     })
   }
   console.log(subList)

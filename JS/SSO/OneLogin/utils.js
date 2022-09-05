@@ -2,6 +2,7 @@ const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
 
+// get onelogin access token
 async function getToken (domain, clientID, clientSecret) {
   const res = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
     client_id: clientID,
@@ -14,6 +15,7 @@ async function getToken (domain, clientID, clientSecret) {
   return res.data.access_token
 }
 
+// get list of apps used by the org
 async function getApps (domain, accessToken) {
   const res = await axios.get(`https://${domain}/api/2/apps`, {
     headers: {
@@ -27,6 +29,7 @@ async function getApps (domain, accessToken) {
   return apps
 }
 
+// get list of users in the org
 async function getUsers (domain, accessToken) {
   const res = await axios.get(`https://${domain}/api/2/users`, {
     headers: {
@@ -36,6 +39,7 @@ async function getUsers (domain, accessToken) {
   return res.data
 }
 
+// get apps used by a user
 async function getUserApps (userID, domain, accessToken) {
   const res = await axios.get(`https://${domain}/api/2/users/${userID}/apps`, {
     headers: {
@@ -68,9 +72,15 @@ async function getSubs (domain, accessToken, saasdenID) {
     }
 
     subList.push({
-      id: app.id,
+      ssoID: app.id,
       name: app.name,
       emps: emps
+      // data to be fetched from EMS
+      // emsID: String,
+      // licences: Number,
+      // currentCost: Number,
+      // amountSaved: Number,
+      // dueData: String
     })
   }
 

@@ -26,7 +26,6 @@ router.get('/refreshData', async (req, res) => {
   try {
     // fetch SSO Data from the DB
     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-    // Rate limit exceeded here
     await utils.getSubs(ssoData.envID, ssoData.apiToken, ssoData.saasdenID)
     await utils.getEmps(ssoData.envID, ssoData.apiToken, ssoData.saasdenID)
     res.sendStatus(200)

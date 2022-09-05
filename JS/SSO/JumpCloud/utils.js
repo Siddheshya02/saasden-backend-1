@@ -71,8 +71,14 @@ async function getUserApps (userID, apiToken, appMap) {
   const appList = []
   for (const app of res.data) {
     appList.push({
-      id: app.id,
+      ssoID: app.id,
       name: appMap[app.id]
+      // data to be fetched from EMS
+      // emsID: String,
+      // licences: Number,
+      // currentCost: Number,
+      // amountSaved: Number,
+      // dueData: String
     })
   }
   return appList
