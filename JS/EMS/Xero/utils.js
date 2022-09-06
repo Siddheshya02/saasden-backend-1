@@ -32,22 +32,25 @@ async function getTxData (tenantID, accessToken, sub) {
 }
 
 async function getXeroData (tenantID, accessToken, subList) {
-  const res = await axios.get('https://api.xero.com/api.xro/2.0/contacts?summaryOnly=True', {
-    headers: {
-      Authorization: 'Bearer ' + accessToken,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'xero-tenant-id': tenantID
-    }
-  })
-
-  for (let i = 0; i < subList.length; i++) {
-    for (const emsApp in res.data) {
-      if (subList[i].name === emsApp.Name) {
-        subList[i].emsID = emsApp.ContactID
-        subList[i] = await getTxData(tenantID, accessToken, subList[i])
+  try {
+    const res = await axios.get('https://api.xero.com/api.xro/2.0/contacts?summaryOnly=True', {
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'xero-tenant-id': tenantID
+      }
+    })
+    for (let i = 0; i < subList.length; i++) {
+      for (const emsApp in res.data) {
+        if (subList[i].name === emsApp.Name) {
+          subList[i].emsID = emsApp.ContactID
+          subList[i] = await getTxData(tenantID, accessToken, subList[i])
+        }
       }
     }
+  } catch (error) {
+    console.log(error)
   }
 
   return subList

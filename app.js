@@ -45,11 +45,12 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
 
 function checkLogin (req, res, next) {
-  if (req.cookies.username && req.cookies.saasdenID) {
-    next()
-  } else {
-    res.sendStatus(403)
-  }
+  next()
+  // if (req.cookies.username && req.cookies.saasdenID) {
+  //   next()
+  // } else {
+  //   res.sendStatus(403)
+  // }
 }
 // Routes
 

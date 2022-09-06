@@ -25,9 +25,7 @@ router.get('/', (req, res) => {
       })
       Issuer.defaultHttpOptions = { timeout: 20000 }
       client.CLOCK_TOLERANCE = 5
-      res.json({
-        url: consentUrl
-      })
+      res.redirect(consentUrl)
     })
     .catch((e) => {
       console.log(e)
@@ -61,7 +59,7 @@ router.get('/callback', async (req, res) => {
     // res.cookie('xero_refresh_token', token.refresh_token, { httpOnly: true })
     // res.cookie('xero_id_token', token.id_token, { httpOnly: true })
     // res.cookie('xero_tenant_id', tenantID, { httpOnly: true })
-    const filter = { saasdenID: req.cookies.saasdenID }
+    const filter = { saasdenID: '63174b86fc994b7a0d08cc21' }
     const update = {
       tenantID: tenantID[0],
       accessToken: token.access_token
