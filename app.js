@@ -43,6 +43,13 @@ mongoose.connect(process.env.MONGODB_URI, {
   if (err) { console.log('Error Connecting to mongoDB') } else { console.log('MongoDB Connected') }
 })
 
+function checkLogin (req, res, next) {
+  if (req.cookies.username && req.cookies.saasdenID) {
+    next()
+  } else {
+    res.sendStatus(403)
+  }
+}
 // Routes
 
 // SSO Routes
@@ -52,20 +59,20 @@ const pingone = require('./routes/SSO/PingOne_route')
 const onelogin = require('./routes/SSO/OneLogin_route')
 const jumpcloud = require('./routes/SSO/JumpCloud_route')
 
-app.use('/api/v1/okta', okta)
-app.use('/api/v1/azure', azure)
-app.use('/api/v1/pingone', pingone)
-app.use('/api/v1/onelogin', onelogin)
-app.use('/api/v1/jumpcloud', jumpcloud)
+app.use('/api/v1/okta', checkLogin, okta)
+app.use('/api/v1/azure', checkLogin, azure)
+app.use('/api/v1/pingone', checkLogin, pingone)
+app.use('/api/v1/onelogin', checkLogin, onelogin)
+app.use('/api/v1/jumpcloud', checkLogin, jumpcloud)
 
 // EMS Routes
 const xero = require('./routes/EMS/Xero_route')
 const zoho = require('./routes/EMS/Zoho_route')
 const expensify = require('./routes/EMS/Expensify_route')
 
-app.use('/api/v1/xero', xero)
-app.use('/api/v1/zoho', zoho)
-app.use('/api/v1/expensify', expensify)
+app.use('/api/v1/xero', checkLogin, xero)
+app.use('/api/v1/zoho', checkLogin, zoho)
+app.use('/api/v1/expensify', checkLogin, expensify)
 
 // Dashboard Routes
 const login = require('./routes/dashboard/login')
