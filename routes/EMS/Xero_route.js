@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const { Issuer } = require('openid-client')
 const axios = require('axios')
+const emsModel = require('../../models/ems')
 
 const client_id = process.env.CLIENT_ID
 const client_secret = process.env.CLIENT_SECRET
@@ -53,13 +54,20 @@ router.get('/callback', async (req, res) => {
       tenantID.push(tenant.tenantId)
     })
 
-    res.cookie('xero_access_token', token.access_token, {
-      maxAge: 174000, // 29 minutues
-      httpOnly: true
-    })
-    res.cookie('xero_refresh_token', token.refresh_token, { httpOnly: true })
-    res.cookie('xero_id_token', token.id_token, { httpOnly: true })
-    res.cookie('xero_tenant_id', tenantID, { httpOnly: true })
+    // res.cookie('xero_access_token', token.access_token, {
+    //   maxAge: 174000, // 29 minutues
+    //   httpOnly: true
+    // })
+    // res.cookie('xero_refresh_token', token.refresh_token, { httpOnly: true })
+    // res.cookie('xero_id_token', token.id_token, { httpOnly: true })
+    // res.cookie('xero_tenant_id', tenantID, { httpOnly: true })
+    const filter = { saasdenID: req.cookies.saasdenID }
+    const update = {
+      tenantID: tenantID[0],
+      accessToken: token.access_token
+    }
+    await emsModel.findOneAndUpdate(filter, update)
+    console.log('Xero token updated successfully')
     res.render('success')
   } catch (error) {
     console.log(error)

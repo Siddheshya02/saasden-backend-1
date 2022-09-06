@@ -22,6 +22,12 @@ const emsSchema = new Schema({
   },
   apiToken: {
     type: String
+  },
+  tenantID: {
+    types: String
+  },
+  accessToken: {
+    types: String
   }
 })
 
