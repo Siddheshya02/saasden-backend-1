@@ -73,12 +73,6 @@ async function getUserApps (userID, apiToken, appMap) {
     appList.push({
       ssoID: app.id,
       name: appMap[app.id]
-      // data to be fetched from EMS
-      // emsID: String,
-      // licences: Number,
-      // currentCost: Number,
-      // amountSaved: Number,
-      // dueData: String
     })
   }
   return appList
@@ -90,9 +84,9 @@ async function getSubs (apiToken, saasdenID) {
   for (const app of appList) {
     const emps = await getAppUsers(app.id, apiToken)
     subList.push({
-      id: app.id,
+      ssoID: app.id,
       name: app.name,
-      emps
+      emps: emps
     })
   }
   const filter = { saasdenID: saasdenID }
@@ -123,7 +117,7 @@ async function getEmps (apiToken, saasdenID) {
     })
   }
   const filter = { saasdenID: saasdenID }
-  const update = { emps: userList }
+  const update = { emps: empList }
   await empModel.findOneAndUpdate(filter, update)
   console.log('Jumpcloud employee data updated successfully')
 }
