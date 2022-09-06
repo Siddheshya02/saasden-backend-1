@@ -1,34 +1,18 @@
 const axios = require('axios')
 
 function convertTimestamp (timestamp) {
-  const d = new Date(timestamp) // Convert the passed timestamp to milliseconds
+  const d = new Date(timestamp)
   const yyyy = d.getFullYear()
-  const mm = ('0' + (d.getMonth() + 1)).slice(-2) // Months are zero based. Add leading 0.
-  const dd = ('0' + d.getDate()).slice(-2) // Add leading 0.
-  // hh = d.getHours(),
-  // h = hh,
-  // min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
-  // ampm = 'AM',
-  // time;
-
-  // if (hh > 12) {
-  //     h = hh - 12;
-  //     ampm = 'PM';
-  // } else if (hh === 12) {
-  //     h = 12;
-  //     ampm = 'PM';
-  // } else if (hh == 0) {
-  //     h = 12;
-  // }
-
+  const mm = ('0' + (d.getMonth() + 1)).slice(-2)
+  const dd = ('0' + d.getDate()).slice(-2)
   const time = dd + '-' + mm + '-' + yyyy
   return time
 }
 
-async function getContacts (tenantID, access_token, subList) {
+async function getContacts (tenantID, accessToken, subList) {
   const res = await axios.get('https://api.xero.com/api.xro/2.0/contacts?summaryOnly=True', {
     headers: {
-      Authorization: 'Bearer ' + access_token,
+      Authorization: 'Bearer ' + accessToken,
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'xero-tenant-id': tenantID
@@ -36,9 +20,9 @@ async function getContacts (tenantID, access_token, subList) {
   })
 
   for (const app in subList) {
-    for (const ems_app in res.data) {
-      if (app.name === ems_app.Name) {
-        app.emsID = ems_app.ContactID
+    for (const emsApp in res.data) {
+      if (app.name === emsApp.Name) {
+        app.emsID = emsApp.ContactID
       }
     }
   }
@@ -46,11 +30,11 @@ async function getContacts (tenantID, access_token, subList) {
   return subList
 }
 
-async function getData (tenantID, access_token, sub) {
+async function getData (tenantID, accessToken, sub) {
   try {
     const res = await axios.get(`https://api.xero.com/api.xro/2.0/Invoices?ContactIDs=${sub.emsID}`, {
       headers: {
-        Authorization: 'Bearer ' + access_token,
+        Authorization: 'Bearer ' + accessToken,
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'xero-tenant-id': tenantID
@@ -67,3 +51,5 @@ async function getData (tenantID, access_token, sub) {
     console.log(error)
   }
 }
+
+module.exports = { getContacts, getData }

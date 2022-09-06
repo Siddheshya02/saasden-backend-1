@@ -58,6 +58,8 @@ async function getSubs (subDomain, apiToken, saasdenID) {
         })
       }
 
+      // ems data call
+
       subList.push({
         name: app[1],
         ssoID: app[0],
