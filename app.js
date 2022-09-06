@@ -1,9 +1,10 @@
 require('dotenv').config()
-const cors = require('cors')
-const sessions = require('express-session')
+
 const cookieParser = require('cookie-parser')
+const sessions = require('express-session')
 const express = require('express')
 const path = require('path')
+const cors = require('cors')
 const app = express()
 
 app.set('view engine', 'ejs')
