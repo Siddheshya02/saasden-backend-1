@@ -41,7 +41,6 @@ async function getSubs (subDomain, apiToken, saasdenID) {
     const appData = await getApps(subDomain, apiToken)
     const subList = []
     for (const app of appData) {
-      console.log('running for ' + app[1])
       const userData = await axios.get(app[3], {
         headers: {
           Authorization: `SSWS ${apiToken}`,
@@ -101,6 +100,7 @@ async function getEmps (subDomain, apiToken, saasdenID) {
     const filter = { saasdenID: saasdenID }
     const update = { emps: userList }
     await empModel.findOneAndUpdate(filter, update)
+    console.log('Okta employee data updated successfully')
   } catch (error) {
     console.log(error)
   }

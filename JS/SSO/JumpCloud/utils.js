@@ -98,7 +98,7 @@ async function getSubs (apiToken, saasdenID) {
   const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
-  console.log('Jumcloud subscription data updated successfully')
+  console.log('Jumpcloud subscription data updated successfully')
   return subList
 }
 
@@ -125,6 +125,7 @@ async function getEmps (apiToken, saasdenID) {
   const filter = { saasdenID: saasdenID }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
+  console.log('Jumpcloud employee data updated successfully')
 }
 
 module.exports = { getSubs, getEmps }

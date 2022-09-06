@@ -11,7 +11,7 @@ async function getToken (domain, clientID, clientSecret) {
   }, {
     'Content-Type': 'application/x-www-form-urlencoded'
   })
-  console.log('access token generated')
+  console.log('oneLogin access token generated')
   return res.data.access_token
 }
 

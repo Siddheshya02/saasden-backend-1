@@ -14,7 +14,8 @@ router.post('/auth', async (req, res) => {
     domain: req.body.domain
   }
   try {
-    await ssoModel.findOneAndDelete(filter, update)
+    await ssoModel.findOneAndUpdate(filter, update)
+    console.log('OneLogin credentials saved successfully')
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -26,9 +27,9 @@ router.get('/refreshData', async (req, res) => {
   try {
     // fetch SSO Data from the DB
     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-    const accessToken = await utils.getToken(ssoData.domain, ssoData.client_id, ssoData.client_secret)
-    await utils.getSubs(req.body.subdomain, accessToken, ssoData.saasdenID)
-    await utils.getEmps(req.body.subdomain, accessToken, ssoData.saasdenID)
+    const accessToken = await utils.getToken(ssoData.domain, ssoData.clientID, ssoData.clientSecret)
+    await utils.getSubs(ssoData.domain, accessToken, ssoData.saasdenID)
+    await utils.getEmps(ssoData.domain, accessToken, ssoData.saasdenID)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -39,7 +40,7 @@ router.get('/refreshData', async (req, res) => {
 router.get('/subs', async (req, res) => {
   try {
     const subData = await subModel.find({ saasdenID: req.cookies.saasdenID })
-    res.send(JSON.stringify(subData))
+    res.json(subData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)
@@ -49,7 +50,7 @@ router.get('/subs', async (req, res) => {
 router.get('/emps', async (req, res) => {
   try {
     const empData = await empModel.find({ saasdenID: req.cookies.saasdenID })
-    res.send(JSON.stringify(empData))
+    res.json(empData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)

@@ -10,7 +10,7 @@ router.post('/auth', async (req, res) => {
   const filter = { saasdenID: req.cookies.saasdenID }
   const update = { apiToken: req.body.apiToken }
   try {
-    await ssoModel.findOneAndDelete(filter, update)
+    await ssoModel.findOneAndUpdate(filter, update)
     console.log('JumpCloud Credentials saved succesfully')
     res.sendStatus(200)
   } catch (error) {
@@ -35,7 +35,7 @@ router.get('/refreshData', async (req, res) => {
 router.get('/subs', async (req, res) => {
   try {
     const subData = await subModel.find({ saasdenID: req.cookies.saasdenID })
-    res.send(JSON.stringify(subData))
+    res.json(subData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)
@@ -45,7 +45,7 @@ router.get('/subs', async (req, res) => {
 router.get('/emps', async (req, res) => {
   try {
     const empData = await empModel.find({ saasdenID: req.cookies.saasdenID })
-    res.send(JSON.stringify(empData))
+    res.json(empData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)

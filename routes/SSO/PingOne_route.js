@@ -38,7 +38,7 @@ router.get('/refreshData', async (req, res) => {
 router.get('/subs', async (req, res) => {
   try {
     const subData = await subModel.find({ saasdenID: req.cookies.saasdenID })
-    res.send(JSON.stringify(subData))
+    res.json(subData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)
@@ -48,7 +48,7 @@ router.get('/subs', async (req, res) => {
 router.get('/emps', async (req, res) => {
   try {
     const empData = await empModel.find({ saasdenID: req.cookies.saasdenID })
-    res.send(JSON.stringify(empData))
+    res.json(empData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)

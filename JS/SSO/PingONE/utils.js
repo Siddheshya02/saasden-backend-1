@@ -96,10 +96,10 @@ async function getSubs (envID, accessToken, saasdenID) {
       // dueData: String
     })
   }
-  console.log(subList)
   const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
+  console.log('PingOne subscription data saved successfully')
 }
 
 // Get list of all employees along with their associated apps
@@ -129,10 +129,10 @@ async function getEmps (envID, accessToken, saasdenID) {
       }
     }
   }
-  console.log(userList)
   const filter = { saasdenID: saasdenID }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
+  console.log('PingOne Emp data saved successfully')
 }
 
 module.exports = { getSubs, getEmps }
