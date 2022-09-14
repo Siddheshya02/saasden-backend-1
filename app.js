@@ -13,7 +13,8 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(sessions({
   secret: 'HighlysecretSauce',
   saveUninitialized: true,
-  resave: false
+  resave: false,
+  maxAge: 86400000 // 1 Day
 }))
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: false }))
