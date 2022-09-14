@@ -65,6 +65,7 @@ router.get('/callback', async (req, res) => {
       accessToken: token.access_token
     }
     await emsModel.findOneAndUpdate(filter, update)
+    console.log(tenantID)
     console.log('Xero token updated successfully')
     res.render('success')
   } catch (error) {

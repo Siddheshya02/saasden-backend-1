@@ -38,7 +38,7 @@ async function getUsers (subDomain, apiToken) {
 }
 
 // get app -> user mapping
-async function getSubs (subDomain, apiToken, saasdenID, tenantID, xeroToken) {
+async function getSubs (subDomain, apiToken, saasdenID) {
   try {
     const appData = await getApps(subDomain, apiToken)
     let subList = []
@@ -54,8 +54,8 @@ async function getSubs (subDomain, apiToken, saasdenID, tenantID, xeroToken) {
         empList.push({
           id: user.id,
           email: user.profile.email,
-          firstname: user.profile.firstName,
-          lastname: user.profile.lastName,
+          firstname: user.profile.name,
+          lastname: '',
           username: user.profile.email
         })
       }
@@ -68,11 +68,11 @@ async function getSubs (subDomain, apiToken, saasdenID, tenantID, xeroToken) {
         licences: null,
         currentCost: null,
         amountSaved: null,
-        dueData: ''
+        dueDate: ''
       })
     }
     const emsData = await emsModel.findOne({ saasdenID: saasdenID })
-    subList = xeroUtil.getXeroData(emsData.tenantID, emsData.xeroToken, subList)
+    subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
     const filter = { saasdenID: saasdenID }
     const update = { apps: subList }
     await subModel.findOneAndUpdate(filter, update)
