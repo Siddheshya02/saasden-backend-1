@@ -33,11 +33,7 @@ const sess_config = {
   maxAge: 86400000 // 1 Day
 }
 
-const cors_config = {
-  origin: ['http://127.0.0.1:3000', 'http://localhost:3000', 'https://login.xero.com'],
-  methods: ['GET', 'POST', 'DELETE'],
-  credentials: true
-}
+const cors_config = {}
 
 app.use(express.urlencoded({ extended: false }))
 
@@ -109,5 +105,5 @@ app.get('/test', (req, res) => {
   res.send('Test Route, backend is working')
 })
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
