@@ -8,6 +8,9 @@ const emsSchema = new Schema({
     ref: userSchema,
     required: true
   },
+  emsName: {
+    type: String
+  },
   domain: {
     type: String
   },

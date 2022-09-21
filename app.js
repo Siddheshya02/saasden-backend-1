@@ -1,7 +1,10 @@
 require('dotenv').config()
 
+const { auth, requiresAuth } = require('express-openid-connect')
 const cookieParser = require('cookie-parser')
 const sessions = require('express-session')
+const mongoose = require('mongoose')
+const passport = require('passport')
 const express = require('express')
 const path = require('path')
 const cors = require('cors')
@@ -10,25 +13,35 @@ const app = express()
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
-app.use(sessions({
-  secret: 'HighlysecretSauce',
+const iam_config = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: 'a long, randomly-generated string stored in env',
+  baseURL: 'http://localhost:3000',
+  clientID: 'I0gB3abCqH18QSXKyNPy40VWRPsWq9fn',
+  issuerBaseURL: 'https://saasden1.us.auth0.com'
+}
+
+const sess_config = {
+  secret: 'a long, randomly-generated string stored in env',
   saveUninitialized: true,
   resave: false,
   maxAge: 86400000 // 1 Day
-}))
-app.use(cookieParser())
-app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
-app.use(cors({
+}
+
+const cors_config = {
   origin: ['http://127.0.0.1:3000', 'http://localhost:3000', 'https://login.xero.com'],
   methods: ['GET', 'POST', 'DELETE'],
   credentials: true
-}))
+}
 
-// mongoose passport crap
-const mongoose = require('mongoose')
-const passport = require('passport')
+app.use(express.urlencoded({ extended: false }))
 
+app.use(sessions(sess_config))
+app.use(cors(cors_config))
+app.use(auth(iam_config)) // auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(cookieParser())
+app.use(express.json())
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -42,18 +55,26 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, (err) => {
-  if (err) { console.log('Error Connecting to mongoDB') } else { console.log('MongoDB Connected') }
+  if (err) {
+    console.log('Error Connecting to mongoDB')
+  } else {
+    console.log('MongoDB Connected')
+  }
 })
 
-function checkLogin (req, res, next) {
-  next()
-  // if (req.cookies.username && req.cookies.saasdenID) {
-  //   next()
-  // } else {
-  //   res.sendStatus(403)
-  // }
-}
 // Routes
+
+// IAM Routes
+
+// req.isAuthenticated is provided from the auth router
+app.get('/', (req, res) => {
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
+})
+
+app.get('/profile', requiresAuth(), (req, res) => {
+  console.log(req.session)
+  res.send(JSON.stringify(req.oidc.user))
+})
 
 // SSO Routes
 const okta = require('./routes/SSO/Okta_route')
@@ -62,20 +83,20 @@ const pingone = require('./routes/SSO/PingOne_route')
 const onelogin = require('./routes/SSO/OneLogin_route')
 const jumpcloud = require('./routes/SSO/JumpCloud_route')
 
-app.use('/api/v1/okta', checkLogin, okta)
-app.use('/api/v1/azure', checkLogin, azure)
-app.use('/api/v1/pingone', checkLogin, pingone)
-app.use('/api/v1/onelogin', checkLogin, onelogin)
-app.use('/api/v1/jumpcloud', checkLogin, jumpcloud)
+app.use('/api/v1/okta', okta)
+app.use('/api/v1/azure', azure)
+app.use('/api/v1/pingone', pingone)
+app.use('/api/v1/onelogin', onelogin)
+app.use('/api/v1/jumpcloud', jumpcloud)
 
 // EMS Routes
 const xero = require('./routes/EMS/Xero_route')
 const zoho = require('./routes/EMS/Zoho_route')
 const expensify = require('./routes/EMS/Expensify_route')
 
-app.use('/api/v1/xero', checkLogin, xero)
-app.use('/api/v1/zoho', checkLogin, zoho)
-app.use('/api/v1/expensify', checkLogin, expensify)
+app.use('/api/v1/xero', xero)
+app.use('/api/v1/zoho', zoho)
+app.use('/api/v1/expensify', expensify)
 
 // Dashboard Routes
 const login = require('./routes/dashboard/login')
@@ -93,5 +114,5 @@ app.get('/test', (req, res) => {
   res.send('Test Route, backend is working')
 })
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 app.listen(port, () => console.log(`Listening on port ${port}...`))

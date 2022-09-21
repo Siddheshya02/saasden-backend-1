@@ -93,6 +93,7 @@ async function getSubs (apiToken, saasdenID) {
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
   console.log('Jumpcloud subscription data updated successfully')
+  // EMS Code to fetch remaining details
   return subList
 }
 

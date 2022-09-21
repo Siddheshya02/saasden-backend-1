@@ -22,7 +22,7 @@ const subsSchema = new Schema({
     licences: Number,
     currentCost: Number,
     amountSaved: Number,
-    dueData: String
+    dueDate: String
   }]
 })
 

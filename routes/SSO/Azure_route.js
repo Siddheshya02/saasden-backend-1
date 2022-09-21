@@ -23,20 +23,10 @@ router.get('/auth', async (req, res) => {
   }
 })
 
-router.get('/subs', async (req, res) => {
+router.get('/refreshData', async (req, res) => {
   try {
-    const subData = await subSchema.find({ user_saasden_id: req.cookies.user_saasden_id })
-    res.send(JSON.stringify(subData))
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(500)
-  }
-})
-
-router.get('/emps', async (req, res) => {
-  try {
-    const empData = await empSchema.find({ user_saasden_id: req.cookies.user_saasden_id })
-    res.send(JSON.stringify(empData))
+    // fetch SSO Data from the DB
+    res.sendStatus(200)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)
