@@ -1,11 +1,12 @@
 require('dotenv').config()
 
-const { auth, requiresAuth } = require('express-openid-connect')
+const { expressjwt: jwt } = require('express-jwt')
 const cookieParser = require('cookie-parser')
 const sessions = require('express-session')
 const mongoose = require('mongoose')
 const passport = require('passport')
 const express = require('express')
+const jwks = require('jwks-rsa')
 const path = require('path')
 const cors = require('cors')
 const app = express()
@@ -13,14 +14,17 @@ const app = express()
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
-const iam_config = {
-  authRequired: false,
-  auth0Logout: true,
-  secret: 'a long, randomly-generated string stored in env',
-  baseURL: 'http://localhost:3000',
-  clientID: 'I0gB3abCqH18QSXKyNPy40VWRPsWq9fn',
-  issuerBaseURL: 'https://saasden1.us.auth0.com'
-}
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: 'https://saasden1.us.auth0.com/.well-known/jwks.json'
+  }),
+  audience: 'https://www.saasden.club',
+  issuer: 'https://saasden1.us.auth0.com/',
+  algorithms: ['RS256']
+})
 
 const sess_config = {
   secret: 'a long, randomly-generated string stored in env',
@@ -39,7 +43,6 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use(sessions(sess_config))
 app.use(cors(cors_config))
-app.use(auth(iam_config)) // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(cookieParser())
 app.use(express.json())
 app.use(passport.initialize())
@@ -64,16 +67,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Routes
 
-// IAM Routes
-
-// req.isAuthenticated is provided from the auth router
-app.get('/', (req, res) => {
-  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
-})
-
-app.get('/profile', requiresAuth(), (req, res) => {
-  console.log(req.session)
-  res.send(JSON.stringify(req.oidc.user))
+app.get('/authorized', jwtCheck, (req, res) => {
+  res.send('Secured Resource')
 })
 
 // SSO Routes
