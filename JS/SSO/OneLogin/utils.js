@@ -1,7 +1,8 @@
 const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
-
+const emsModel = require('../../../models/ems')
+const xeroUtil = require('../../EMS/Xero/utils')
 // get onelogin access token
 async function getToken (domain, clientID, clientSecret) {
   const res = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
@@ -50,7 +51,7 @@ async function getUserApps (userID, domain, accessToken) {
 }
 
 async function getSubs (domain, accessToken, saasdenID) {
-  const subList = []
+  let subList = []
   const appList = await getApps(domain, accessToken)
 
   for (const app of appList) {
@@ -74,16 +75,17 @@ async function getSubs (domain, accessToken, saasdenID) {
     subList.push({
       ssoID: app.id,
       name: app.name,
-      emps: emps
+      emps: emps,
       // data to be fetched from EMS
-      // emsID: String,
-      // licences: Number,
-      // currentCost: Number,
-      // amountSaved: Number,
-      // dueData: String
+      emsID: '',
+      licences: null,
+      currentCost: null,
+      amountSaved: null,
+      dueDate: ''
     })
   }
-
+  const emsData = await emsModel.findOne({ saasdenID: saasdenID })
+  subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
   const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)

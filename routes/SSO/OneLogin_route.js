@@ -12,8 +12,8 @@ router.post('/auth', async (req, res) => {
     domain: req.body.domain
   }
   try {
-    await ssoModel.findOneAndUpdate(filter, update)
-    console.log('OneLogin credentials saved successfully')
+    const user = await ssoModel.findOneAndUpdate(filter, update)
+    console.log('OneLogin credentials saved successfully', user)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
