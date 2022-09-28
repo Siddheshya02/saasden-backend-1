@@ -1,6 +1,6 @@
 import axios from 'axios'
-import orgSchema from '../../models/organization'
-const express = require('express')
+import express from 'express'
+import orgSchema from '../../models/organization.js'
 const router = express.Router()
 
 // Send Link to Login
@@ -64,4 +64,4 @@ router.get('/auth', async (req, res) => {
   }
 })
 
-module.exports = router
+export { router }

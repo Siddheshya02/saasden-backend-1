@@ -1,9 +1,10 @@
-const router = require('express').Router()
-const empModel = require('../../models/employee')
+import empSchema from '../../models/employee.js'
+import express from 'express'
+const router = express.Router()
 
 router.get('/emps', async (req, res) => {
   try {
-    const empData = await empModel.find({ saasdenID: req.cookies.saasdenID })
+    const empData = await empSchema.find({ saasdenID: req.cookies.saasdenID })
     res.json(empData)
   } catch (error) {
     console.log(error)
@@ -11,4 +12,4 @@ router.get('/emps', async (req, res) => {
   }
 })
 
-module.exports = router
+export { router }

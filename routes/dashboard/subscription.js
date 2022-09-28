@@ -1,9 +1,10 @@
-const router = require('express').Router()
-const subModel = require('../../models/subscription')
+import express from 'express'
+import subSchema from '../../models/subscription.js'
+const router = express.Router()
 
 router.get('/subs', async (req, res) => {
   try {
-    const subData = await subModel.findOne({ saasdenID: req.cookies.saasdenID })
+    const subData = await subSchema.findOne({ name: req.session.orgName })
     res.json(subData)
   } catch (error) {
     console.log(error)
@@ -11,4 +12,4 @@ router.get('/subs', async (req, res) => {
   }
 })
 
-module.exports = router
+export { router }

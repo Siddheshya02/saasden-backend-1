@@ -1,16 +1,32 @@
-require('dotenv').config()
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import dotenv from 'dotenv'
+import { router as emps } from './routes/dashboard/employee.js'
+import express from 'express'
+import { expressjwt } from 'express-jwt'
+import { fileURLToPath } from 'url'
+import { router as jumpcloud } from './routes/SSO/JumpCloud_route.js'
+import jwks from 'jwks-rsa'
+import mongoose from 'mongoose'
+// SSO Routes
+import { router as okta } from './routes/SSO/Okta_route.js'
+import { router as onelogin } from './routes/SSO/OneLogin_route.js'
+import path from 'path'
+// import azure from './routes/SSO/Azure_route.mjs'
+import { router as pingone } from './routes/SSO/PingOne_route.js'
+import sessions from 'express-session'
+// Dashboard Routes
+import { router as subs } from './routes/dashboard/subscription.js'
+// EMS Routes
+import { router as xero } from './routes/EMS/Xero_route.js'
+import { router as zoho } from './routes/EMS/Zoho_route.js'
+dotenv.config()
 
-const { expressjwt: jwt } = require('express-jwt')
-const cookieParser = require('cookie-parser')
-const sessions = require('express-session')
-const mongoose = require('mongoose')
-const express = require('express')
-const jwks = require('jwks-rsa')
-const path = require('path')
-const cors = require('cors')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const app = express()
 
-const jwtCheck = jwt({
+const jwtCheck = expressjwt({
   secret: jwks.expressJwtSecret({
     cache: true,
     rateLimit: true,
@@ -55,33 +71,17 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(jwtCheck)
 
-// Routes
-
 // SSO Routes
-const okta = require('./routes/SSO/Okta_route')
-const azure = require('./routes/SSO/Azure_route')
-const pingone = require('./routes/SSO/PingOne_route')
-const onelogin = require('./routes/SSO/OneLogin_route')
-const jumpcloud = require('./routes/SSO/JumpCloud_route')
-
 app.use('/api/v1/okta', okta)
-app.use('/api/v1/azure', azure)
+// app.use('/api/v1/azure', azure)
 app.use('/api/v1/pingone', pingone)
 app.use('/api/v1/onelogin', onelogin)
 app.use('/api/v1/jumpcloud', jumpcloud)
 
 // EMS Routes
-const xero = require('./routes/EMS/Xero_route')
-const zoho = require('./routes/EMS/Zoho_route')
-const expensify = require('./routes/EMS/Expensify_route')
-
 app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
-app.use('/api/v1/expensify', expensify)
 
-// Dashboard Routes
-const subs = require('./routes/dashboard/subscription')
-const emps = require('./routes/dashboard/employee')
 // const visual = require('./routes/dashboard/visualize')
 
 app.use('/api/v1', subs)
