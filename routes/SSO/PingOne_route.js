@@ -47,6 +47,11 @@ router.post('/auth', async (req, res) => {
   }
 })
 
+// access_token => req.sesion.sso_accessToken
+// client ID => req.session.sso_clientID
+// client Secret => req.session.sso_clientSecret
+// tenant ID => req.session.sso_tenantID
+
 // This needs to be checked
 // router.get('/refreshData', async (req, res) => {
 //   try {
