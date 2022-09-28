@@ -3,6 +3,18 @@ import express from 'express'
 
 const router = express.Router()
 
+router.get('/', async (req, res) => {
+  try {
+    const orgData = await orgSchema.find({ name: req.session.orgName })
+    req.session.domain = orgData.ssoData.ssoName
+    req.session.apiToken = orgData.ssoData.apiToken
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 router.post('/auth', async (req, res) => {
   const filter = { name: req.session.orgName }
   const update = {
