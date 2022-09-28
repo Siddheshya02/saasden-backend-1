@@ -14,20 +14,33 @@ async function getExpense (reports, name, orgIds, accessToken) {
     }
   }
   const uri = `https://expense.zoho.in/api/v1/expensereports/${id}`
-  const results = []
+  let results={}
+  let liscenses=0,currentCost=0,report_id=id,dueDate
   for (const org of orgIds) {
     const options = getZohoOptions(org, accessToken, 'GET', uri)
     const data = await getExpenseReport(uri, options)
     const e = data.expense_report.expenses[0]
-    results.push({
-      subscriptions: e.line_items.length,
-      total: e.total,
-      PerSubscription: e.total / e.line_items.length
-    })
+    liscenses+=e.line_items.length
+    currentCost+=e.total
+    dueDate=data.expense_report.due_date
   }
+  results={report_id:report_id,liscenses:liscenses,currentCost:currentCost,PerSubscription:currentCost/liscenses,dueDate:dueDate}
   return results
 }
-
+async function getZohoOrgIds (accessToken) {
+  const orgIds = []
+  const options = {
+    method: 'GET',
+    headers: {
+      Authorization: 'Zoho-oauthtoken ' + accessToken
+    }
+  }
+  const orgs = await axios.request('https://expense.zoho.in/api/v1/organizations', options)
+  for (let i = 0; i < orgs.data.organizations.length; i++) {
+    orgIds.push(orgs.data.organizations[i].organization_id)
+  }
+  return orgIds
+}
 async function getAllExpenseReports (orgIds, accessToken) {
   let reports
   for (let i = 0; i < orgIds.length; i++) {
@@ -43,4 +56,19 @@ async function getAllExpenseReports (orgIds, accessToken) {
   }
   return reports
 }
-module.exports = { getExpenseReport, getExpense, getAllExpenseReports }
+async function getZohoData(accessToken,subList)
+{
+     const orgIds=await getZohoOrgIds(accessToken)
+     const allExpenses=await getAllExpenseReports(orgIds,accessToken)
+     for (const sub of subList) {
+          const expense=await getExpense(allExpenses,sub.name,orgIds,accessToken)
+          sub.emsID=expense.report_id
+          sub.licences=expense.liscenses
+          sub.currentCost=expense.currentCost
+          let PerSubscription=expense.PerSubscription
+          sub.amountSaved=sub.currentCost-sub.emps.length*PerSubscription
+          sub.dueDate=expense.dueDate
+     }
+     return subList
+}
+module.exports = { getExpenseReport, getExpense, getAllExpenseReports,getZohoData}

@@ -3,6 +3,7 @@ const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
 const emsModel = require('../../../models/ems')
 const xeroUtil = require('../../EMS/Xero/utils')
+const zohoUtil = require('../../EMS/Zoho Expenses/getzohoData')
 // get onelogin access token
 async function getToken (domain, clientID, clientSecret) {
   const res = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
@@ -86,6 +87,7 @@ async function getSubs (domain, accessToken, saasdenID) {
   }
   const emsData = await emsModel.findOne({ saasdenID: saasdenID })
   subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
+  subList = await zohoUtil.getZohoData(emsData.accessToken, subList)
   const filter = { saasdenID: saasdenID }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
