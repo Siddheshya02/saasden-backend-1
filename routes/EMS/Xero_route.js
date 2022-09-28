@@ -1,6 +1,7 @@
-import orgSchema from '../../models/organization'
-import { XeroClient } from 'xero-node'
 import express, { json } from 'express'
+
+import { XeroClient } from 'xero-node'
+import orgSchema from '../../models/organization.js'
 
 const router = express.Router()
 let xero
@@ -59,4 +60,4 @@ router.post('/auth', async (req, res) => {
   }
 })
 
-module.exports = router
+export { router }
