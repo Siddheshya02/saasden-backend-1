@@ -8,18 +8,15 @@ import { fileURLToPath } from 'url'
 import { router as jumpcloud } from './routes/SSO/JumpCloud_route.js'
 import jwks from 'jwks-rsa'
 import mongoose from 'mongoose'
-// SSO Routes
 import { router as okta } from './routes/SSO/Okta_route.js'
 import { router as onelogin } from './routes/SSO/OneLogin_route.js'
 import path from 'path'
-// import azure from './routes/SSO/Azure_route.mjs'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import sessions from 'express-session'
-// Dashboard Routes
 import { router as subs } from './routes/dashboard/subscription_route.js'
-// EMS Routes
 import { router as xero } from './routes/EMS/Xero_route.js'
 import { router as zoho } from './routes/EMS/Zoho_route.js'
+
 dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
@@ -82,11 +79,8 @@ app.use('/api/v1/jumpcloud', jumpcloud)
 app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
-// const visual = require('./routes/dashboard/visualize')
-
 app.use('/api/v1', subs)
 app.use('/api/v1', emps)
-// app.use('/api/v1/viz', visual)
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
