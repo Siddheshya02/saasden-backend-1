@@ -27,18 +27,4 @@ async function getZohoAccessTokens (code) {
   return accessToken
 }
 
-async function getZohoOrgIds (accessToken) {
-  const orgIds = []
-  const options = {
-    method: 'GET',
-    headers: {
-      Authorization: 'Zoho-oauthtoken ' + accessToken
-    }
-  }
-  const orgs = await axios.request('https://expense.zoho.in/api/v1/organizations', options)
-  for (let i = 0; i < orgs.data.organizations.length; i++) {
-    orgIds.push(orgs.data.organizations[i].organization_id)
-  }
-}
-
-module.exports = { getZohoOptions, getZohoAccessTokens, getZohoOrgIds }
+module.exports = { getZohoOptions, getZohoAccessTokens }

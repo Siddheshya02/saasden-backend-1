@@ -3,7 +3,7 @@ const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
 const emsModel = require('../../../models/ems')
 const xeroUtil = require('../../EMS/Xero/utils')
-
+const zohoUtil = require('../../EMS/Zoho Expenses/getzohoData')
 // get list of applications
 async function getApps (subdomain, apiToken) {
   const res = await axios.get(`https://${subdomain}/api/v1/apps`, {
@@ -73,6 +73,7 @@ async function getSubs (subDomain, apiToken, saasdenID) {
     }
     const emsData = await emsModel.findOne({ saasdenID: saasdenID })
     subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
+    subList = await zohoUtil.getZohoData(emsData.accessToken, subList)
     const filter = { saasdenID: saasdenID }
     const update = { apps: subList }
     await subModel.findOneAndUpdate(filter, update)
