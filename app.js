@@ -1,3 +1,4 @@
+import { router as azure } from './routes/SSO/Azure_route.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -70,7 +71,7 @@ app.use(jwtCheck)
 
 // SSO Routes
 app.use('/api/v1/okta', okta)
-// app.use('/api/v1/azure', azure)
+app.use('/api/v1/azure', azure)
 app.use('/api/v1/pingone', pingone)
 app.use('/api/v1/onelogin', onelogin)
 app.use('/api/v1/jumpcloud', jumpcloud)
