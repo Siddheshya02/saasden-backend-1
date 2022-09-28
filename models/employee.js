@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import orgSchema from './organization.js'
 const Schema = mongoose.Schema
 
 const empModel = new Schema({

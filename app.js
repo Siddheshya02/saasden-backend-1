@@ -1,7 +1,7 @@
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { router as emps } from './routes/dashboard/employee.js'
+import { router as emps } from './routes/dashboard/employee_route.js'
 import express from 'express'
 import { expressjwt } from 'express-jwt'
 import { fileURLToPath } from 'url'
@@ -16,7 +16,7 @@ import path from 'path'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import sessions from 'express-session'
 // Dashboard Routes
-import { router as subs } from './routes/dashboard/subscription.js'
+import { router as subs } from './routes/dashboard/subscription_route.js'
 // EMS Routes
 import { router as xero } from './routes/EMS/Xero_route.js'
 import { router as zoho } from './routes/EMS/Zoho_route.js'
