@@ -1,11 +1,11 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import orgSchema from './organization.js'
 const Schema = mongoose.Schema
-const userSchema = require('./user')
 
-const subsSchema = new Schema({
-  saasdenID: {
+const subModel = new Schema({
+  name: {
     type: Schema.Types.ObjectId,
-    ref: userSchema,
+    ref: 'organization',
     required: true
   },
   apps: [{
@@ -26,4 +26,5 @@ const subsSchema = new Schema({
   }]
 })
 
-module.exports = mongoose.model('subSchema', subsSchema)
+const subSchema = mongoose.model('subSchema', subModel)
+export default { subSchema }

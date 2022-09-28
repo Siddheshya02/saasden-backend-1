@@ -1,11 +1,11 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import orgSchema from './organization.js'
 const Schema = mongoose.Schema
-const userSchema = require('./user')
 
-const empSchema = new Schema({
-  saasdenID: {
+const empModel = new Schema({
+  name: {
     type: Schema.Types.ObjectId,
-    ref: userSchema,
+    ref: 'organization',
     required: true
   },
   emps: [{
@@ -21,4 +21,5 @@ const empSchema = new Schema({
   }]
 })
 
-module.exports = mongoose.model('empSchema', empSchema)
+const empSchema = mongoose.model('empSchema', empModel)
+export default { empSchema }

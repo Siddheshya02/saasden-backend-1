@@ -1,7 +1,7 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
-const orgSchema = new Schema({
+const orgModel = new Schema({
   name: {
     type: String
   },
@@ -26,4 +26,5 @@ const orgSchema = new Schema({
   }
 })
 
-module.exports = mongoose.model('orgSchema', orgSchema)
+const orgSchema = mongoose.model('orgSchema', orgModel)
+export default { orgSchema }
