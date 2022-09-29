@@ -22,6 +22,7 @@ const orgModel = new Schema({
     emsName: String,
     clientID: String,
     clientSecret: String,
+    tenantID: String,
     domain: String,
     apiToken: String
   }
