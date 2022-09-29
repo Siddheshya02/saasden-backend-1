@@ -52,6 +52,24 @@ router.post('/auth', async (req, res) => {
 // client Secret => req.session.sso_clientSecret
 // tenant ID => req.session.sso_tenantID
 
+/* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
+      ems_creds = {
+        name,
+        domain,
+        tenantID,
+        accessToken,
+        apiToken
+      }
+
+      sso_creds = {
+        name,
+        domain,
+        tenantID,
+        accessToken,
+        apiToken
+      }
+*/
+
 // This needs to be checked
 // router.get('/refreshData', async (req, res) => {
 //   try {
