@@ -1,7 +1,7 @@
 import axios from 'axios'
 import empSchema from '../../../models/employee.js'
-import getXeroData from '../../EMS/Xero'
-import getZohoData from '../../EMS/Zoho'
+import { getXeroData } from '../../EMS/Xero/utils.js'
+import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
 // get list of applications
