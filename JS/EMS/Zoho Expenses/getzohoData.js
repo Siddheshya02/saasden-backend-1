@@ -42,7 +42,7 @@ async function getZohoOrgIds (accessToken) {
   return orgIds
 }
 async function getAllExpenseReports (orgIds, accessToken) {
-  let reports
+  let reports=[]
   for (let i = 0; i < orgIds.length; i++) {
     const options = {
       method: 'GET',
@@ -52,7 +52,7 @@ async function getAllExpenseReports (orgIds, accessToken) {
       }
     }
     const response = await axios.request('https://expense.zoho.in/api/v1/expensereports', options)
-    reports = response.data.expense_reports
+    reports.push(response.data.expense_reports)
   }
   return reports
 }
