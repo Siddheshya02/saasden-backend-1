@@ -1,3 +1,6 @@
+import { getXeroData } from '../../EMS/Xero/utils.js'
+import { getZohoData } from '../../EMS/Zoho/utils.js'
+import subSchema from '../../../models/subscription.js'
 const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
@@ -78,36 +81,50 @@ async function getUserApps (userID, apiToken, appMap) {
   return appList
 }
 
-async function getSubs (apiToken, saasdenID) {
-  const subList = []
-  const appList = await getApps(apiToken)
+export async function getSubs (orgName, sso_creds, ems_creds) {
+  let subList = []
+  const appList = await getApps(sso_creds.apiToken)
   for (const app of appList) {
-    const emps = await getAppUsers(app.id, apiToken)
+    const emps = await getAppUsers(app.id, sso_creds.apiToken)
     subList.push({
       ssoID: app.id,
       name: app.name,
-      emps: emps
+      emps: emps,
+      // ems data to be updated
+      emsID: '',
+      licences: null,
+      currentCost: null,
+      amountSaved: null,
+      dueDate: ''
     })
   }
-  const filter = { saasdenID: saasdenID }
-  const update = { apps: subList }
-  await subModel.findOneAndUpdate(filter, update)
-  console.log('Jumpcloud subscription data updated successfully')
   // EMS Code to fetch remaining details
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+  }
+  const filter = { name: orgName }
+  const update = { apps: subList }
+  await subSchema.findOneAndUpdate(filter, update)
+  console.log('Jumpcloud subscription data updated successfully')
   return subList
 }
 
-async function getEmps (apiToken, saasdenID) {
-  const apps = await getApps(apiToken)
+export async function getEmps (orgName, sso_creds) {
+  const apps = await getApps(sso_creds.apiToken)
   const appMap = {}
   apps.forEach(app => {
     appMap[app.id] = app.name
   })
 
   const empList = []
-  const userList = await getUsers(apiToken)
+  const userList = await getUsers(sso_creds.apiToken)
   for (const user of userList) {
-    const appList = await getUserApps(user.id, apiToken, appMap)
+    const appList = await getUserApps(user.id, sso_creds.apiToken, appMap)
     empList.push({
       id: user.id,
       email: user.email,
@@ -117,10 +134,8 @@ async function getEmps (apiToken, saasdenID) {
       apps: appList
     })
   }
-  const filter = { saasdenID: saasdenID }
+  const filter = { name: orgName }
   const update = { emps: empList }
   await empModel.findOneAndUpdate(filter, update)
   console.log('Jumpcloud employee data updated successfully')
 }
-
-module.exports = { getSubs, getEmps }

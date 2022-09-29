@@ -1,6 +1,6 @@
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-
+import { getSubs, getEmps } from '../../JS/SSO/JumpCloud/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
@@ -27,31 +27,29 @@ router.post('/auth', async (req, res) => {
 // client Secret => req.session.sso_clientSecret
 // tenant ID => req.session.sso_tenantID
 
-/* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
-      ems_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-
-      sso_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-*/
+// NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
 
 // this needs to be checked
 // router.get('/refreshData', async (req, res) => {
 //   try {
-//     // fetch SSO Data from the DB
-//     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-//     await utils.getSubs(ssoData.apiToken, ssoData.saasdenID)
-//     await utils.getEmps(ssoData.apiToken, ssoData.saasdenID)
+//     //     // fetch SSO Data from the DB
+//     //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgName })
+//     const sso_creds = {
+//       name: req.session.sso_name,
+//       domain: null,
+//       tenantID: null,
+//       accessToken: null,
+//       apiToken: req.session.apiToken
+//     }
+//     const ems_creds = {
+//       name: req.session.ems_name,
+//       domain: null,
+//       tenantID: req.session.tenantID,
+//       accessToken: req.session.accessToken,
+//       apiToken: null
+//     }
+//     await getSubs(req.session.orgName, sso_creds, ems_creds)
+//     await getEmps(req.session.orgName, sso_creds )
 //     res.sendStatus(200)
 //   } catch (error) {
 //     console.log(error)

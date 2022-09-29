@@ -1,3 +1,6 @@
+import { getXeroData } from '../../EMS/Xero/utils.js'
+import { getZohoData } from '../../EMS/Zoho/utils.js'
+import subSchema from '../../../models/subscription.js'
 const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
@@ -51,14 +54,14 @@ async function getUserApps (userID, domain, accessToken) {
   return res.data
 }
 
-async function getSubs (domain, accessToken, saasdenID) {
+export async function getSubs (orgName, sso_creds, ems_creds) {
   let subList = []
-  const appList = await getApps(domain, accessToken)
+  const appList = await getApps(sso_creds.domain, sso_creds.accessToken)
 
   for (const app of appList) {
-    const res = await axios.get(`https://${domain}/api/2/apps/${app.id}/users`, {
+    const res = await axios.get(`https://${sso_creds.domain}/api/2/apps/${app.id}/users`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${sso_creds.accessToken}`
       }
     })
 
@@ -85,21 +88,29 @@ async function getSubs (domain, accessToken, saasdenID) {
       dueDate: ''
     })
   }
-  const emsData = await emsModel.findOne({ saasdenID: saasdenID })
-  subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
-  subList = await zohoUtil.getZohoData(emsData.accessToken, subList)
-  const filter = { saasdenID: saasdenID }
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+  }
+  // const emsData = await emsModel.findOne({ saasdenID: saasdenID })
+  // subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
+  // subList = await zohoUtil.getZohoData(emsData.accessToken, subList)
+  const filter = { name: orgName }
   const update = { apps: subList }
-  await subModel.findOneAndUpdate(filter, update)
+  await subSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin subscription data updated successfully')
 }
 
-async function getEmps (domain, accessToken, saasdenID) {
+export async function getEmps (orgName, sso_creds) {
   const userList = []
-  const empList = await getUsers(domain, accessToken)
+  const empList = await getUsers(sso_creds.domain, sso_creds.accessToken)
 
   for (const emp of empList) {
-    const appList = await getUserApps(emp.id, domain, accessToken)
+    const appList = await getUserApps(emp.id, sso_creds.domain, sso_creds.accessToken)
     const userAppList = []
     for (const app of appList) {
       userAppList.push({
@@ -117,10 +128,8 @@ async function getEmps (domain, accessToken, saasdenID) {
     })
   }
 
-  const filter = { saasdenID: saasdenID }
+  const filter = { name: orgName }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
   console.log('OneLogin employee data updated successfully')
 }
-
-module.exports = { getToken, getSubs, getEmps }

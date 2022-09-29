@@ -77,7 +77,7 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
         subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
         break
       case 'zoho':
-        subList = await getZohoData(/* relevant zoho parameters */)
+        subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
         break
     }
 

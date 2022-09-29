@@ -25,18 +25,15 @@ async function getZohoOrgIds (accessToken) {
   return orgIds
 }
 
-async function getAllExpenseReports (orgIds, accessToken) {
+async function getAllExpenseReports (orgId, accessToken) {
   const reports = []
-  for (let i = 0; i < orgIds.length; i++) {
-    const response = await axios.get('https://expense.zoho.in/api/v1/expensereports', {
-      headers: {
-        'X-com-zoho-expense-organizationid': orgIds[i],
-        Authorization: `Zoho-oauthtoken ${accessToken}`
-      }
-    })
-    reports.push(response.data.expense_reports)
-  }
-
+  const response = await axios.get('https://expense.zoho.in/api/v1/expensereports', {
+    headers: {
+      'X-com-zoho-expense-organizationid': orgId,
+      Authorization: `Zoho-oauthtoken ${accessToken}`
+    }
+  })
+  reports.push(response.data.expense_reports)
   return reports
 }
 
@@ -67,12 +64,11 @@ async function getExpense (reports, name, orgIds, accessToken) {
   results = { report_id: report_id, liscenses: liscenses, currentCost: currentCost, PerSubscription: currentCost / liscenses, dueDate: dueDate }
   return results
 }
-
-export async function getZohoData (accessToken, subList) {
-  const orgIds = await getZohoOrgIds(accessToken)
-  const allExpenses = await getAllExpenseReports(orgIds, accessToken)
+// updated this function as  orgId is passed as arguement to the function
+export async function getZohoData (orgId, accessToken, subList) {
+  const allExpenses = await getAllExpenseReports(orgId, accessToken)
   for (const sub of subList) {
-    const expense = await getExpense(allExpenses, sub.name, orgIds, accessToken)
+    const expense = await getExpense(allExpenses, sub.name, orgId, accessToken)
     sub.emsID = expense.report_id
     sub.licences = expense.liscenses
     sub.currentCost = expense.currentCost
