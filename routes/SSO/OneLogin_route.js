@@ -9,7 +9,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.find({ name: req.session.orgName })
-    req.session.sso_apiDomain = orgData.ssoData.apiDomain
+    req.session.sso_apiDomain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
 
@@ -75,18 +75,38 @@ router.post('/auth', async (req, res) => {
 */
 
 // needs to be changed
-// router.get('/refreshData', async (req, res) => {
-//   try {
-//     // fetch SSO Data from the DB
-//     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-//     const accessToken = await utils.getToken(ssoData.domain, ssoData.clientID, ssoData.clientSecret)
-//     await utils.getSubs(ssoData.domain, accessToken, ssoData.saasdenID)
-//     await utils.getEmps(ssoData.domain, accessToken, ssoData.saasdenID)
-//     res.sendStatus(200)
-//   } catch (error) {
-//     console.log(error)
-//     res.sendStatus(500)
-//   }
-// })
+router.get('/refreshData', async (req, res) => {
+  console.log('Fetching Okta Data')
+  const ems_creds={
+    name:req.session.ems_name,
+    domain:undefined,
+    tenantID:undefined,
+    accessToken:req.session.ems_accessToken,
+    apiToken:req.session.ems_IDToken
+  }
+  const sso_creds = {
+    name:undefined,
+    domain:req.session.sso_apiDomain,
+    tenantID:undefined,
+    accessToken:req.session.sso_accessToken,
+    apiToken:undefined
+  }
+  const orgName = req.session.orgName
+  // const domain = req.session.sso_domain
+  // const apiToken = req.session.sso_apiToken
+  try {
+    // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
+    await getSubs(orgName, sso_creds, ems_creds)
+    await getEmps(orgName, sso_creds)
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+
+
+// domain query
 
 export { router }

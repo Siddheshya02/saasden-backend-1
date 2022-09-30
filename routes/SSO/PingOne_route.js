@@ -52,6 +52,8 @@ router.post('/auth', async (req, res) => {
 // client Secret => req.session.sso_clientSecret
 // tenant ID => req.session.sso_tenantID
 
+// envID not found
+
 /* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
       ems_creds = {
         name,
@@ -71,17 +73,34 @@ router.post('/auth', async (req, res) => {
 */
 
 // This needs to be checked
-// router.get('/refreshData', async (req, res) => {
-//   try {
-//     // fetch SSO Data from the DB
-//     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-//     await utils.getSubs(ssoData.envID, ssoData.apiToken, ssoData.saasdenID)
-//     await utils.getEmps(ssoData.envID, ssoData.apiToken, ssoData.saasdenID)
-//     res.sendStatus(200)
-//   } catch (error) {
-//     console.log(error)
-//     res.sendStatus(500)
-//   }
-// })
+router.get('/refreshData', async (req, res) => {
+  console.log('Fetching Okta Data')
+  const ems_creds={
+    name:req.session.ems_name,
+    domain:undefined,
+    tenantID:undefined,
+    accessToken:req.session.ems_accessToken,
+    apiToken:req.session.ems_IDToken
+  }
+  const sso_creds = {
+    name:undefined,
+    domain:req.session.domain,
+    tenantID:undefined,
+    accessToken:req.session.accessToken,
+    apiToken:undefined
+  }
+  const orgName = req.session.orgName
+  // const domain = req.session.sso_domain
+  // const apiToken = req.session.sso_apiToken
+  try {
+    // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
+    await getSubs(orgName, sso_creds, ems_creds)
+    await getEmps(orgName, sso_creds)
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
 
 export { router }

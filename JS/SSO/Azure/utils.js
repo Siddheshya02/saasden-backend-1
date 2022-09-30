@@ -70,9 +70,9 @@ async function getUsers (accessToken) {
   return finalUserDetails
 }
 
-async function getSubs (accessToken, saasdenID) {
+async function getSubs (orgName, sso_creds, ems_creds) {
   const subList = []
-  const appList = await getApps(accessToken)
+  const appList = await getApps(sso_creds.accessToken)
 
   for (const app of appList) {
     const emps = []
@@ -86,25 +86,34 @@ async function getSubs (accessToken, saasdenID) {
     subList.push({
       ssoID: app.appID,
       name: app.appName,
-      emps: emps
+      emps: emps,
       // data to be fetched from EMS
-      // emsID: String,
-      // licences: Number,
-      // currentCost: Number,
-      // amountSaved: Number,
-      // dueData: String
+      emsID: '',
+      licences: null,
+      currentCost: null,
+      amountSaved: null,
+      dueDate: ''
     })
   }
 
-  const filter = { saasdenID: saasdenID }
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(/* relevant zoho parameters */)
+      break
+  }
+
+  const filter = { name: orgName }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
   console.log('Azure subscription data updated successfully')
 }
 
-async function getEmps (accessToken, saasdenID) {
+async function getEmps (orgName, sso_creds) {
   const userList = []
-  const empList = await getUsers(accessToken)
+  const empList = await getUsers(sso_creds.accessToken)
 
   for (const emp of empList) {
     const appList = emp.apps
@@ -125,10 +134,13 @@ async function getEmps (accessToken, saasdenID) {
     })
   }
 
-  const filter = { saasdenID: saasdenID }
+  const filter = { name: orgName }
   const update = { emps: userList }
   await empModel.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')
 }
 
 module.exports = { getToken, getSubs, getEmps }
+
+
+// remove getToken

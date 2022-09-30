@@ -61,9 +61,23 @@ router.post('/auth', async (req, res) => {
 
 router.get('/refreshData', async (req, res) => {
   console.log('Fetching Okta Data')
+  const ems_creds={
+    name:req.session.ems_name,
+    domain:undefined,
+    tenantID:req.session.ems_IDToken,
+    accessToken:req.session.ems_accessToken,
+    apiToken:undefined
+  }
+  const sso_creds = {
+    name:undefined,
+    domain:req.session.domain,
+    tenantID:undefined,
+    accessToken:undefined,
+    apiToken:req.session.apiToken
+  }
   const orgName = req.session.orgName
-  const domain = req.session.sso_domain
-  const apiToken = req.session.sso_apiToken
+  // const domain = req.session.sso_domain
+  // const apiToken = req.session.sso_apiToken
   try {
     // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
     await getSubs(orgName, sso_creds, ems_creds)

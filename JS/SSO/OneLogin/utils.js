@@ -51,14 +51,14 @@ async function getUserApps (userID, domain, accessToken) {
   return res.data
 }
 
-async function getSubs (domain, accessToken, saasdenID) {
+async function getSubs (orgName, sso_creds, ems_creds) {
   let subList = []
-  const appList = await getApps(domain, accessToken)
+  const appList = await getApps(sso_creds.domain, sso_creds.accessToken)
 
   for (const app of appList) {
-    const res = await axios.get(`https://${domain}/api/2/apps/${app.id}/users`, {
+    const res = await axios.get(`https://${sso_creds.domain}/api/2/apps/${app.id}/users`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${sso_creds.accessToken}`
       }
     })
 
@@ -85,10 +85,17 @@ async function getSubs (domain, accessToken, saasdenID) {
       dueDate: ''
     })
   }
-  const emsData = await emsModel.findOne({ saasdenID: saasdenID })
-  subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
-  subList = await zohoUtil.getZohoData(emsData.accessToken, subList)
-  const filter = { saasdenID: saasdenID }
+
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(/* relevant zoho parameters */)
+      break
+  }
+
+  const filter = { name: orgName }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
   console.log('OneLogin subscription data updated successfully')
