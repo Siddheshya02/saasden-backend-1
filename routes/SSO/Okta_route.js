@@ -8,7 +8,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.find({ name: req.session.orgName })
-    req.session.domain = orgData.ssoData.ssoName
+    req.session.domain = orgData.ssoData.domain
     req.session.apiToken = orgData.ssoData.apiToken
     res.sendStatus(200)
   } catch (error) {

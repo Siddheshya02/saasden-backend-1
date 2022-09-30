@@ -1,6 +1,8 @@
 import { router as azure } from './routes/SSO/Azure_route.js'
+import connectRedis from 'connect-redis'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import { createClient } from 'redis'
 import dotenv from 'dotenv'
 import { router as emps } from './routes/dashboard/employee_route.js'
 import express from 'express'
@@ -22,6 +24,10 @@ dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+// NOTE: Check this config of redis
+const RedisStore = connectRedis(sessions)
+const redisClient = createClient({ legacyMode: true })
+redisClient.connect().catch(console.error)
 const app = express()
 
 const jwtCheck = expressjwt({
@@ -38,9 +44,15 @@ const jwtCheck = expressjwt({
 
 const sess_config = {
   secret: process.env.sessionSecret,
-  saveUninitialized: true,
   resave: false,
-  maxAge: 86400000 // 1 Day
+  saveUninitialized: false,
+  cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
+  store: new RedisStore({
+    host: process.env.REDIS_URI,
+    port: process.env.REDIS_PORT,
+    client: redisClient,
+    ttl: 2592000 // 30 days validity
+  })
 }
 
 const cors_config = {}
