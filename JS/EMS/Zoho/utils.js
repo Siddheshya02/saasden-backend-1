@@ -42,7 +42,7 @@ async function getExpenseReport (uri, options) {
   return expenses.data
 }
 
-async function getExpense (reports, name, orgIds, accessToken) {
+async function getExpense (reports, name, orgId, accessToken) {
   let id
   for (const report of reports) {
     if (report.report_name.toLowerCase().includes(name.toLowerCase())) {
@@ -52,15 +52,15 @@ async function getExpense (reports, name, orgIds, accessToken) {
   }
   const uri = `https://expense.zoho.in/api/v1/expensereports/${id}`
   let results = {}
-  let liscenses = 0; let currentCost = 0; const report_id = id; let dueDate
-  for (const org of orgIds) {
-    const options = getZohoOptions(org, accessToken, 'GET', uri)
-    const data = await getExpenseReport(uri, options)
-    const e = data.expense_report.expenses[0]
-    liscenses += e.line_items.length
-    currentCost += e.total
-    dueDate = data.expense_report.due_date
-  }
+  let liscenses = 0; let currentCost = 0; const report_id = id
+
+  const options = getZohoOptions(orgId, accessToken, 'GET', uri)
+  const data = await getExpenseReport(uri, options)
+  const e = data.expense_report.expenses[0]
+  liscenses += e.line_items.length
+  currentCost += e.total
+  const dueDate = data.expense_report.due_date
+
   results = { report_id: report_id, liscenses: liscenses, currentCost: currentCost, PerSubscription: currentCost / liscenses, dueDate: dueDate }
   return results
 }
