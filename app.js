@@ -8,6 +8,7 @@ import { router as emps } from './routes/dashboard/employee_route.js'
 import express from 'express'
 import { expressjwt } from 'express-jwt'
 import { fileURLToPath } from 'url'
+import { handleErrors } from './middleware/middleware.js'
 import { router as jumpcloud } from './routes/SSO/JumpCloud_route.js'
 import jwks from 'jwks-rsa'
 import mongoose from 'mongoose'
@@ -79,7 +80,8 @@ app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-// app.use(jwtCheck)
+app.use(handleErrors)
+app.use(jwtCheck)
 
 // SSO Routes
 app.use('/api/v1/okta', okta)
