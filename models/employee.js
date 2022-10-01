@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const empModel = new Schema({
-  name: {
+  ID: {
     type: Schema.Types.ObjectId,
     ref: 'organization',
     required: true
