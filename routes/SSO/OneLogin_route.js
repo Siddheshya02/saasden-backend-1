@@ -1,6 +1,7 @@
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
+import { getSubs, getEmps } from '../../JS/SSO/OneLogin/utils.js'
 const router = express.Router()
 
 // const utils = require('../../JS/SSO/OneLogin/utils')
@@ -75,18 +76,31 @@ router.post('/auth', async (req, res) => {
 */
 
 // needs to be changed
-// router.get('/refreshData', async (req, res) => {
-//   try {
-//     // fetch SSO Data from the DB
-//     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-//     const accessToken = await utils.getToken(ssoData.domain, ssoData.clientID, ssoData.clientSecret)
-//     await utils.getSubs(ssoData.domain, accessToken, ssoData.saasdenID)
-//     await utils.getEmps(ssoData.domain, accessToken, ssoData.saasdenID)
-//     res.sendStatus(200)
-//   } catch (error) {
-//     console.log(error)
-//     res.sendStatus(500)
-//   }
-// })
+router.get('/refreshData', async (req, res) => {
+  try {
+  //     // fetch SSO Data from the DB
+  //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgName })
+    const sso_creds = {
+      name: req.session.sso_name,
+      domain: req.session.domain,
+      tenantID: null,
+      accessToken: req.session.accessToken,
+      apiToken: null
+    }
+    const ems_creds = {
+      name: req.session.ems_name,
+      domain: null,
+      tenantID: req.session.tenantID,
+      accessToken: req.session.accessToken,
+      apiToken: null
+    }
+    await getSubs(req.session.orgName, sso_creds, ems_creds)
+    await getEmps(req.session.orgName, sso_creds)
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
 
 export { router }

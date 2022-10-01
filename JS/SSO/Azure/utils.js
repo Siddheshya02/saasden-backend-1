@@ -1,3 +1,5 @@
+import { getXeroData } from '../../EMS/Xero/utils.js'
+import { getZohoData } from '../../EMS/Zoho/utils.js'
 const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
@@ -70,9 +72,9 @@ async function getUsers (accessToken) {
   return finalUserDetails
 }
 
-async function getSubs (accessToken, saasdenID) {
-  const subList = []
-  const appList = await getApps(accessToken)
+async function getSubs (orgName, sso_creds, ems_creds) {
+  let subList = []
+  const appList = await getApps(sso_creds.accessToken)
 
   for (const app of appList) {
     const emps = []
@@ -86,17 +88,24 @@ async function getSubs (accessToken, saasdenID) {
     subList.push({
       ssoID: app.appID,
       name: app.appName,
-      emps: emps
+      emps: emps,
       // data to be fetched from EMS
-      // emsID: String,
-      // licences: Number,
-      // currentCost: Number,
-      // amountSaved: Number,
-      // dueData: String
+      emsID: '',
+      licences: null,
+      currentCost: null,
+      amountSaved: null,
+      dueDate: ''
     })
   }
-
-  const filter = { saasdenID: saasdenID }
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+  }
+  const filter = { name: orgName }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
   console.log('Azure subscription data updated successfully')

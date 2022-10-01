@@ -1,3 +1,5 @@
+import { getXeroData } from '../../EMS/Xero/utils.js'
+import { getZohoData } from '../../EMS/Zoho/utils.js'
 const axios = require('axios')
 const subModel = require('../../../models/subscription')
 const empModel = require('../../../models/employee')
@@ -78,25 +80,33 @@ async function getUsers (envID, accessToken, groupList) {
 }
 
 // Get list of all apps along with their associted users
-async function getSubs (envID, accessToken, saasdenID) {
-  const subList = []
-  const appList = await getPingApps(envID, accessToken)
+async function getSubs (orgName, sso_creds, ems_creds) {
+  let subList = []
+  const appList = await getPingApps(sso_creds.envID, sso_creds.accessToken)
 
   for (const app of appList) {
-    const res = await getUsers(envID, accessToken, app[3])
+    const res = await getUsers(sso_creds.envID, sso_creds.accessToken, app[3])
     subList.push({
       name: app[1],
       ssoID: app[0],
-      emps: res
+      emps: res,
       // data to be fetched from EMS
-      // emsID: String,
-      // licences: Number,
-      // currentCost: Number,
-      // amountSaved: Number,
-      // dueData: String
+      emsID: '',
+      licences: null,
+      currentCost: null,
+      amountSaved: null,
+      dueDate: ''
     })
   }
-  const filter = { saasdenID: saasdenID }
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+  }
+  const filter = { name: orgName }
   const update = { apps: subList }
   await subModel.findOneAndUpdate(filter, update)
   console.log('PingOne subscription data saved successfully')
