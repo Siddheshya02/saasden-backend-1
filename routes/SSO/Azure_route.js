@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgName })
+    const orgData = await orgSchema.find({ name: req.session.orgID })
     req.session.sso_tenantID = orgData.ssoData.tenantID
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgName }
+  const filter = { name: req.session.orgID }
   const update = {
     ssoData: {
       clientID: req.body.clientID,

@@ -49,6 +49,7 @@ async function getExpense (reports, name, orgId, accessToken) {
   results = { report_id: report_id, liscenses: liscenses, currentCost: currentCost, PerSubscription: currentCost / liscenses, dueDate: dueDate }
   return results
 }
+
 // updated this function as  orgId is passed as arguement to the function
 export async function getZohoData (orgId, accessToken, subList) {
   const allExpenses = await getAllExpenseReports(orgId, accessToken)

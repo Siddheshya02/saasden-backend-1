@@ -1,7 +1,8 @@
+import { getEmps, getSubs } from '../../JS/SSO/OneLogin/utils.js'
+
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { getSubs, getEmps } from '../../JS/SSO/OneLogin/utils.js'
 const router = express.Router()
 
 // const utils = require('../../JS/SSO/OneLogin/utils')
@@ -9,7 +10,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgName })
+    const orgData = await orgSchema.find({ name: req.session.orgID })
     req.session.sso_apiDomain = orgData.ssoData.apiDomain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -33,7 +34,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgName }
+  const filter = { name: req.session.orgID }
   const update = {
     ssoData: {
       clientID: req.body.clientID,
@@ -79,7 +80,7 @@ router.post('/auth', async (req, res) => {
 router.get('/refreshData', async (req, res) => {
   try {
   //     // fetch SSO Data from the DB
-  //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgName })
+  //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgID })
     const sso_creds = {
       name: req.session.sso_name,
       domain: req.session.domain,
@@ -94,8 +95,8 @@ router.get('/refreshData', async (req, res) => {
       accessToken: req.session.accessToken,
       apiToken: null
     }
-    await getSubs(req.session.orgName, sso_creds, ems_creds)
-    await getEmps(req.session.orgName, sso_creds)
+    await getSubs(req.session.orgID, sso_creds, ems_creds)
+    await getEmps(req.session.orgID, sso_creds)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

@@ -80,7 +80,7 @@ async function getUsers (envID, accessToken, groupList) {
 }
 
 // Get list of all apps along with their associted users
-async function getSubs (orgName, sso_creds, ems_creds) {
+async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getPingApps(sso_creds.envID, sso_creds.accessToken)
 
@@ -106,22 +106,22 @@ async function getSubs (orgName, sso_creds, ems_creds) {
       subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
       break
   }
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('PingOne subscription data saved successfully')
 }
 
 // Get list of all employees along with their associated apps
-async function getEmps (envID, accessToken, saasdenID) {
-  const appList = await getPingApps(envID, accessToken)
-  const userList = await getPingEmployees(envID, accessToken)
+async function getEmps (orgID, sso_creds) {
+  const appList = await getPingApps(sso_creds.tenantID, sso_creds.accessToken)
+  const userList = await getPingEmployees(sso_creds.tenantID, sso_creds.accessToken)
 
   for (let i = 0; i < userList.length; i++) {
     const groupList = []
-    const res = await axios.get(`https://api.pingone.eu/v1/environments/${envID}/users/${userList[i].id}/memberOfGroups?limit=100&expand=group`, {
+    const res = await axios.get(`https://api.pingone.eu/v1/environments/${sso_creds.tenantID}/users/${userList[i].id}/memberOfGroups?limit=100&expand=group`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${sso_creds.accessToken}`
       }
     })
 
@@ -139,7 +139,7 @@ async function getEmps (envID, accessToken, saasdenID) {
       }
     }
   }
-  const filter = { saasdenID: saasdenID }
+  const filter = { ID: orgID }
   const update = { emps: userList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('PingOne Emp data saved successfully')

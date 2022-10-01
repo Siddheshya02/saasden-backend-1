@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const orgModel = new Schema({
-  id: {
+  ID: {
     type: String,
     require: true
   },

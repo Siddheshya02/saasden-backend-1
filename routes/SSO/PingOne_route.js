@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgName })
+    const orgData = await orgSchema.find({ name: req.session.orgID })
     req.session.domain = orgData.ssoData.domain
 
     const client_creds = base64.encode(`${orgData.ssoData.clientID}:${orgData.ssoData.clientSecret}`)
@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgName }
+  const filter = { name: req.session.orgID }
   const update = {
     ssoData: {
       domain: req.body.domain, // pingone domain here

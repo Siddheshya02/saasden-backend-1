@@ -1,10 +1,11 @@
+import { getEmps, getSubs } from '../../JS/SSO/JumpCloud/utils.js'
+
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { getSubs, getEmps } from '../../JS/SSO/JumpCloud/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgName }
+  const filter = { name: req.session.orgID }
   const update = {
     ssoData: {
       domain: 'https://console.jumpcloud.com', // jumpcloud domain here
@@ -33,7 +34,7 @@ router.post('/auth', async (req, res) => {
 // router.get('/refreshData', async (req, res) => {
 //   try {
 //     //     // fetch SSO Data from the DB
-//     //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgName })
+//     //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgID })
 //     const sso_creds = {
 //       name: req.session.sso_name,
 //       domain: null,
@@ -48,8 +49,8 @@ router.post('/auth', async (req, res) => {
 //       accessToken: req.session.accessToken,
 //       apiToken: null
 //     }
-//     await getSubs(req.session.orgName, sso_creds, ems_creds)
-//     await getEmps(req.session.orgName, sso_creds )
+//     await getSubs(req.session.orgID, sso_creds, ems_creds)
+//     await getEmps(req.session.orgID, sso_creds )
 //     res.sendStatus(200)
 //   } catch (error) {
 //     console.log(error)

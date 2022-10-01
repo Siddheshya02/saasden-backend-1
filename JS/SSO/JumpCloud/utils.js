@@ -80,7 +80,7 @@ async function getUserApps (userID, apiToken, appMap) {
   return appList
 }
 
-export async function getSubs (orgName, sso_creds, ems_creds) {
+export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getApps(sso_creds.apiToken)
   for (const app of appList) {
@@ -108,14 +108,14 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
       break
   }
 
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('Jumpcloud subscription data updated successfully')
   return subList
 }
 
-export async function getEmps (orgName, sso_creds) {
+export async function getEmps (orgID, sso_creds) {
   const apps = await getApps(sso_creds.apiToken)
   const appMap = {}
   apps.forEach(app => {
@@ -135,7 +135,7 @@ export async function getEmps (orgName, sso_creds) {
       apps: appList
     })
   }
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { emps: empList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Jumpcloud employee data updated successfully')

@@ -38,7 +38,7 @@ async function getUserApps (userID, domain, accessToken) {
   return res.data
 }
 
-export async function getSubs (orgName, sso_creds, ems_creds) {
+export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getApps(sso_creds.domain, sso_creds.accessToken)
 
@@ -82,13 +82,13 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
       break
   }
 
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin subscription data updated successfully')
 }
 
-export async function getEmps (orgName, sso_creds) {
+export async function getEmps (orgID, sso_creds) {
   const userList = []
   const empList = await getUsers(sso_creds.domain, sso_creds.accessToken)
 
@@ -111,7 +111,7 @@ export async function getEmps (orgName, sso_creds) {
     })
   }
 
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { emps: userList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin employee data updated successfully')

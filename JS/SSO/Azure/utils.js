@@ -73,7 +73,7 @@ async function getUsers (accessToken) {
   return finalUserDetails
 }
 
-async function getSubs (orgName, sso_creds, ems_creds) {
+async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getApps(sso_creds.accessToken)
 
@@ -108,7 +108,7 @@ async function getSubs (orgName, sso_creds, ems_creds) {
       break
   }
 
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('Azure subscription data updated successfully')

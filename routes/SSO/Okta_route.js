@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgName })
+    const orgData = await orgSchema.find({ name: req.session.orgID })
     req.session.domain = orgData.ssoData.domain
     req.session.apiToken = orgData.ssoData.apiToken
     res.sendStatus(200)
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgName }
+  const filter = { name: req.session.orgID }
   const update = {
     ssoData: {
       domain: req.body.domain, // okta domain here
@@ -61,7 +61,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/refreshData', async (req, res) => {
   console.log('Fetching Okta Data')
-  const orgName = req.session.orgName
+  const orgID = req.session.orgID
   const domain = req.session.sso_domain
   const apiToken = req.session.sso_apiToken
   try {
@@ -80,8 +80,8 @@ router.get('/refreshData', async (req, res) => {
       accessToken: req.session.accessToken,
       apiToken: null
     }
-    await getSubs(orgName, sso_creds, ems_creds)
-    await getEmps(orgName, sso_creds)
+    await getSubs(orgID, sso_creds, ems_creds)
+    await getEmps(orgID, sso_creds)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
