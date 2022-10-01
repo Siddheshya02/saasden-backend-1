@@ -2,8 +2,13 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const orgModel = new Schema({
+  id: {
+    type: String,
+    require: true
+  },
   name: {
-    type: String
+    type: String,
+    require: true
   },
   users: [{
     name: String,
