@@ -1,9 +1,8 @@
+import axios from 'axios'
+import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
-const axios = require('axios')
-const subModel = require('../../../models/subscription')
-const empModel = require('../../../models/employee')
 
 async function getApps (apiToken) {
   const res = await axios.get('https://console.jumpcloud.com/api/applications', {
@@ -98,6 +97,7 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
       dueDate: ''
     })
   }
+
   // EMS Code to fetch remaining details
   switch ((ems_creds.name).toLowerCase()) {
     case 'xero':
@@ -107,6 +107,7 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
       subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
       break
   }
+
   const filter = { name: orgName }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
@@ -136,6 +137,6 @@ export async function getEmps (orgName, sso_creds) {
   }
   const filter = { name: orgName }
   const update = { emps: empList }
-  await empModel.findOneAndUpdate(filter, update)
+  await empSchema.findOneAndUpdate(filter, update)
   console.log('Jumpcloud employee data updated successfully')
 }

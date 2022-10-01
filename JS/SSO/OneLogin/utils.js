@@ -1,24 +1,8 @@
+import axios from 'axios'
+import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
-const axios = require('axios')
-const subModel = require('../../../models/subscription')
-const empModel = require('../../../models/employee')
-const emsModel = require('../../../models/ems')
-const xeroUtil = require('../../EMS/Xero/utils')
-const zohoUtil = require('../../EMS/Zoho Expenses/getzohoData')
-// get onelogin access token
-async function getToken (domain, clientID, clientSecret) {
-  const res = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
-    client_id: clientID,
-    client_secret: clientSecret,
-    grant_type: 'client_credentials'
-  }, {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  })
-  console.log('oneLogin access token generated')
-  return res.data.access_token
-}
 
 // get list of apps used by the org
 async function getApps (domain, accessToken) {
@@ -88,6 +72,7 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
       dueDate: ''
     })
   }
+
   switch ((ems_creds.name).toLowerCase()) {
     case 'xero':
       subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
@@ -96,9 +81,7 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
       subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
       break
   }
-  // const emsData = await emsModel.findOne({ saasdenID: saasdenID })
-  // subList = await xeroUtil.getXeroData(emsData.tenantID, emsData.accessToken, subList)
-  // subList = await zohoUtil.getZohoData(emsData.accessToken, subList)
+
   const filter = { name: orgName }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
@@ -130,6 +113,6 @@ export async function getEmps (orgName, sso_creds) {
 
   const filter = { name: orgName }
   const update = { emps: userList }
-  await empModel.findOneAndUpdate(filter, update)
+  await empSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin employee data updated successfully')
 }

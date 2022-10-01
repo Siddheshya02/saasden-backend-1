@@ -1,8 +1,8 @@
+import axios from 'axios'
+import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
-const axios = require('axios')
-const subModel = require('../../../models/subscription')
-const empModel = require('../../../models/employee')
+import subSchema from '../../../models/subscription.js'
 
 // Get List of Applications with their associated groups
 async function getPingApps (envID, accessToken) {
@@ -108,7 +108,7 @@ async function getSubs (orgName, sso_creds, ems_creds) {
   }
   const filter = { name: orgName }
   const update = { apps: subList }
-  await subModel.findOneAndUpdate(filter, update)
+  await subSchema.findOneAndUpdate(filter, update)
   console.log('PingOne subscription data saved successfully')
 }
 
@@ -141,7 +141,7 @@ async function getEmps (envID, accessToken, saasdenID) {
   }
   const filter = { saasdenID: saasdenID }
   const update = { emps: userList }
-  await empModel.findOneAndUpdate(filter, update)
+  await empSchema.findOneAndUpdate(filter, update)
   console.log('PingOne Emp data saved successfully')
 }
 
