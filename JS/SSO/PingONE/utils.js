@@ -78,8 +78,7 @@ async function getUsers (domain, envID, accessToken, groupList) {
   }
   return [...new Set(userList)]
 }
-// envID  not recieved
-// Get list of all apps along with their associted users
+
 export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   console.log(sso_creds)
@@ -99,14 +98,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       dueDate: ''
     })
   }
-  // switch ((ems_creds.name).toLowerCase()) {
-  //   case 'xero':
-  //     subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
-  //     break
-  //   case 'zoho':
-  //     subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
-  //     break
-  // }
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+  }
   const filter = { ID: orgID }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
