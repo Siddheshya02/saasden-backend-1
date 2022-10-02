@@ -1,6 +1,9 @@
+import { getEmps, getSubs } from '../../JS/SSO/Azure/utils.js'
+
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
+
 const router = express.Router()
 
 router.get('/', async (req, res) => {
