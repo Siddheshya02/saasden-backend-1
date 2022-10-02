@@ -12,7 +12,8 @@ router.post('/auth', async (req, res) => {
       apiToken: req.body.apiToken
     }
   }
-
+  req.session.apiToken = req.body.apiToken
+  req.session.sso_name = 'jumpcloud'
   try {
     await orgSchema.findOneAndUpdate(filter, update)
     console.log('Jumpcloud Credentials saved succesfully')

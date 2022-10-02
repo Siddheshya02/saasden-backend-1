@@ -4,9 +4,7 @@ import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
-export async function getNewToken(domain, clientID, clientSecret, envID){
-  
-}
+export async function getNewToken(domain, clientID, clientSecret, envID){ }
 
 // Get List of Applications with their associated groups
 async function getPingApps (domain, envID, accessToken) {

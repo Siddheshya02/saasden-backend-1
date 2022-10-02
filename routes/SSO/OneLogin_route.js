@@ -8,7 +8,8 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgID })
+    const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+    console.log(orgData)
     req.session.sso_apiDomain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -20,10 +21,8 @@ router.get('/', async (req, res) => {
     }, {
       'Content-Type': 'application/x-www-form-urlencoded'
     })
-
-    req.session.sso_accessToken = tokenSet.access_token // access token
-    req.session.sso_refreshToken = tokenSet.refresh_token // refresh token
-
+    req.session.sso_accessToken = tokenSet.data.access_token // access token
+    req.session.sso_refreshToken = tokenSet.data.refresh_token // refresh token
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -67,7 +66,8 @@ router.get('/refreshData', async (req, res) => {
     accessToken: req.session.ems_accessToken,
     apiToken: req.session.ems_apiToken
   }
-
+  console.log(sso_creds)
+  console.log(ems_creds)
   try {
     await getSubs(req.session.orgID, sso_creds, ems_creds)
     await getEmps(req.session.orgID, sso_creds)
