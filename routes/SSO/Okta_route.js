@@ -7,8 +7,9 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgID })
+    const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     req.session.domain = orgData.ssoData.domain
+    // console.log("data ",orgData.ssoData)
     req.session.apiToken = orgData.ssoData.apiToken
     res.sendStatus(200)
   } catch (error) {
@@ -18,14 +19,19 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgID }
+  req.session.orgID = 'org_ioaseunclsd'
+  const filter = { ID: req.session.orgID }
+
   const update = {
     ssoData: {
       domain: req.body.domain, // okta domain here
       apiToken: req.body.apiToken // okta api token here, long lived
     }
   }
-
+  req.session.domain = req.body.domain
+  // console.log("domain",req.body.domain);
+  req.session.apiToken = req.body.apiToken
+  // console.log("domain",req.body.apiToken);
   try {
     await orgSchema.findOneAndUpdate(filter, update) // save the domain and api token in the db
     console.log('Okta Credentials saved succesfully')

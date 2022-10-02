@@ -1,11 +1,12 @@
 import axios from 'axios'
+import { getSubs, getEmps } from '../../JS/SSO/Azure/utils.js'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
 const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgID })
+    const orgData = await orgSchema.find({ ID: req.session.orgID })
     req.session.sso_tenantID = orgData.ssoData.tenantID
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -30,7 +31,8 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgID }
+  req.session.orgID = 'org_ioaseunclsd'
+  const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
       clientID: req.body.clientID,
@@ -74,27 +76,27 @@ router.post('/auth', async (req, res) => {
 
 router.get('/refreshData', async (req, res) => {
   console.log('Fetching Okta Data')
-  const ems_creds={
-    name:req.session.ems_name,
-    domain:undefined,
-    tenantID:undefined,
-    accessToken:req.session.ems_accessToken,
-    apiToken:req.session.ems_IDToken
+  const ems_creds = {
+    name: req.session.ems_name,
+    domain: undefined,
+    tenantID: undefined,
+    accessToken: req.session.ems_accessToken,
+    apiToken: req.session.ems_IDToken
   }
   const sso_creds = {
-    name:undefined,
-    domain:undefined,
-    tenantID:undefined,
-    accessToken:req.session.sso_accessToken,
-    apiToken:undefined
+    name: undefined,
+    domain: undefined,
+    tenantID: undefined,
+    accessToken: req.session.sso_accessToken,
+    apiToken: undefined
   }
-  const orgName = req.session.orgName
+  const orgID = req.session.orgID
   // const domain = req.session.sso_domain
   // const apiToken = req.session.sso_apiToken
   try {
     // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
-    await getSubs(orgName, sso_creds, ems_creds)
-    await getEmps(orgName, sso_creds)
+    await getSubs(orgID, sso_creds, ems_creds)
+    await getEmps(orgID, sso_creds)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
