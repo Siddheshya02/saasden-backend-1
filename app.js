@@ -97,5 +97,10 @@ app.use('/api/v1/zoho', zoho)
 app.use('/api/v1', subs)
 app.use('/api/v1', emps)
 
+app.get('/api/v1/test', (req, res) => {
+  req.session.orgID = 'org_Zr9RLZMYVdE9Zm0P'
+  res.sendStatus(200)
+})
+
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
