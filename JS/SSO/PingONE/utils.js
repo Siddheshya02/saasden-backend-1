@@ -5,10 +5,10 @@ import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
 // Get List of Applications with their associated groups
-async function getPingApps (envID, accessToken) {
+async function getPingApps (domain, envID, accessToken) {
   const appList = []
   try {
-    const res = await axios.get(`https://api.pingone.eu/v1/environments/${envID}/applications`, {
+    const res = await axios.get(`https://api.${domain}/v1/environments/${envID}/applications`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
@@ -30,9 +30,9 @@ async function getPingApps (envID, accessToken) {
 }
 
 // Get list of all employees
-async function getPingEmployees (envID, accessToken) {
+async function getPingEmployees (domain, envID, accessToken) {
   try {
-    const res = await axios.get(`https://api.pingone.eu/v1/environments/${envID}/users`, {
+    const res = await axios.get(`https://api.${domain}/v1/environments/${envID}/users`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
@@ -56,11 +56,11 @@ async function getPingEmployees (envID, accessToken) {
 }
 
 // Get List of users in the groups associated with an app
-async function getUsers (envID, accessToken, groupList) {
+async function getUsers (domain, envID, accessToken, groupList) {
   const userList = []
   for (const group of groupList) {
     try {
-      const res = await axios.get(`https://api.pingone.eu/v1/environments/${envID}/users?filter=memberOfGroups[id%20eq%20%22${group.id}%22]`, {
+      const res = await axios.get(`https://api.${domain}/v1/environments/${envID}/users?filter=memberOfGroups[id%20eq%20%22${group.id}%22]`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
@@ -80,12 +80,13 @@ async function getUsers (envID, accessToken, groupList) {
 }
 
 // Get list of all apps along with their associted users
-async function getSubs (orgID, sso_creds, ems_creds) {
+export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
-  const appList = await getPingApps(sso_creds.envID, sso_creds.accessToken)
+  console.log(sso_creds)
+  const appList = await getPingApps(sso_creds.domain, sso_creds.tenantID, sso_creds.accessToken)
 
   for (const app of appList) {
-    const res = await getUsers(sso_creds.envID, sso_creds.accessToken, app[3])
+    const res = await getUsers(sso_creds.domain, sso_creds.tenantID, sso_creds.accessToken, app[3])
     subList.push({
       name: app[1],
       ssoID: app[0],
@@ -98,14 +99,14 @@ async function getSubs (orgID, sso_creds, ems_creds) {
       dueDate: ''
     })
   }
-  switch ((ems_creds.name).toLowerCase()) {
-    case 'xero':
-      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
-      break
-    case 'zoho':
-      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
-      break
-  }
+  // switch ((ems_creds.name).toLowerCase()) {
+  //   case 'xero':
+  //     subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+  //     break
+  //   case 'zoho':
+  //     subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+  //     break
+  // }
   const filter = { ID: orgID }
   const update = { apps: subList }
   await subSchema.findOneAndUpdate(filter, update)
@@ -113,13 +114,13 @@ async function getSubs (orgID, sso_creds, ems_creds) {
 }
 
 // Get list of all employees along with their associated apps
-async function getEmps (orgID, sso_creds) {
-  const appList = await getPingApps(sso_creds.tenantID, sso_creds.accessToken)
-  const userList = await getPingEmployees(sso_creds.tenantID, sso_creds.accessToken)
+export async function getEmps (orgID, sso_creds) {
+  const appList = await getPingApps(sso_creds.domain, sso_creds.tenantID, sso_creds.accessToken)
+  const userList = await getPingEmployees(sso_creds.domain, sso_creds.tenantID, sso_creds.accessToken)
 
   for (let i = 0; i < userList.length; i++) {
     const groupList = []
-    const res = await axios.get(`https://api.pingone.eu/v1/environments/${sso_creds.tenantID}/users/${userList[i].id}/memberOfGroups?limit=100&expand=group`, {
+    const res = await axios.get(`https://api.${sso_creds.domain}/v1/environments/${sso_creds.tenantID}/users/${userList[i].id}/memberOfGroups?limit=100&expand=group`, {
       headers: {
         Authorization: `Bearer ${sso_creds.accessToken}`
       }
@@ -128,6 +129,7 @@ async function getEmps (orgID, sso_creds) {
     for (const group of res.data._embedded.groupMemberships) {
       groupList.push(group.id)
     }
+
     for (const app of appList) {
       for (const group of app[3]) {
         if (groupList.includes(group.id)) {
@@ -139,10 +141,9 @@ async function getEmps (orgID, sso_creds) {
       }
     }
   }
+
   const filter = { ID: orgID }
   const update = { emps: userList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('PingOne Emp data saved successfully')
 }
-
-module.exports = { getSubs, getEmps }

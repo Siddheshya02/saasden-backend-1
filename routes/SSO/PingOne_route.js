@@ -1,3 +1,5 @@
+import { getEmps, getSubs } from '../../JS/SSO/PingONE/utils.js'
+
 import axios from 'axios'
 import base64 from 'nodejs-base64-converter'
 import express from 'express'
@@ -8,18 +10,19 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgID })
-    req.session.domain = orgData.ssoData.domain
+    const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+    req.session.sso_domain = orgData.ssoData.domain
+    req.session.sso_tenantID = orgData.ssoData.tenantID
 
     const client_creds = base64.encode(`${orgData.ssoData.clientID}:${orgData.ssoData.clientSecret}`)
     const params = new url.URLSearchParams({ grant_type: 'client_credentials' })
-    const tokenSet = await axios.post(`${req.session.domain}/as/token`, params.toString(), {
+    const tokenSet = await axios.post(`https://auth.${req.session.sso_domain}/${req.session.sso_tenantID}/as/token`, params.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Basic ${client_creds}`
       }
     })
-    req.session.accessToken = tokenSet.access_token
+    req.session.sso_accessToken = tokenSet.data.access_token
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -28,10 +31,12 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgID }
+  req.session.orgID = 'org_Zr9RLZMYVdE9Zm0P'
+  const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
-      domain: req.body.domain, // pingone domain here
+      domain: req.body.domain,
+      tenantID: req.body.tenantID,
       clientID: req.body.clientID,
       clientSecret: req.body.clientSecret
     }
@@ -47,41 +52,32 @@ router.post('/auth', async (req, res) => {
   }
 })
 
-// access_token => req.sesion.sso_accessToken
-// client ID => req.session.sso_clientID
-// client Secret => req.session.sso_clientSecret
-// tenant ID => req.session.sso_tenantID
+router.get('/refreshData', async (req, res) => {
+  // fetch SSO Data from the DB
 
-/* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
-      ems_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
+  const sso_creds = {
+    domain: req.session.sso_domain,
+    tenantID: req.session.sso_tenantID,
+    accessToken: req.session.sso_accessToken,
+    apiToken: req.session.sso_apiToken
+  }
 
-      sso_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-*/
+  const ems_creds = {
+    name: req.session.ems_name,
+    domain: req.session.ems_domain,
+    tenantID: req.session.ems_tenantID,
+    accessToken: req.session.ems_accessToken,
+    apiToken: req.session.ems_apiToken
+  }
 
-// This needs to be checked
-// router.get('/refreshData', async (req, res) => {
-//   try {
-//     // fetch SSO Data from the DB
-//     const ssoData = await ssoModel.findOne({ saasdenID: req.cookies.saasdenID })
-//     await utils.getSubs(ssoData.envID, ssoData.apiToken, ssoData.saasdenID)
-//     await utils.getEmps(ssoData.envID, ssoData.apiToken, ssoData.saasdenID)
-//     res.sendStatus(200)
-//   } catch (error) {
-//     console.log(error)
-//     res.sendStatus(500)
-//   }
-// })
+  try {
+    await getSubs(req.session.orgID, sso_creds, ems_creds)
+    await getEmps(req.session.orgID, sso_creds)
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
 
 export { router }
