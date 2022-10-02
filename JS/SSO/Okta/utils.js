@@ -41,7 +41,7 @@ async function getUsers (domain, apiToken) {
 export async function getSubs (orgID, sso_creds, ems_creds) {
   try {
     const appData = await getApps(sso_creds.domain, sso_creds.apiToken)
-    const subList = []
+    let subList = []
     for (const app of appData) {
       const userData = await axios.get(app[3], {
         headers: {
@@ -72,14 +72,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       })
     }
 
-    // switch ((ems_creds.name).toLowerCase()) {
-    //   case 'xero':
-    //     subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
-    //     break
-    //   case 'zoho':
-    //     subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
-    //     break
-    // }
+    switch ((ems_creds.name).toLowerCase()) {
+      case 'xero':
+        subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+        break
+      case 'zoho':
+        subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+        break
+    }
 
     const filter = { ID: orgID }
     const update = { apps: subList }
