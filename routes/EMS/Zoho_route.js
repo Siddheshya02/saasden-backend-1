@@ -8,7 +8,6 @@ router.get('/', async (req, res) => {
   const orgData = await orgSchema.findOne({ ID: req.session.orgID })
   req.session.ems_clientID = orgData.emsData.clientID
   req.session.ems_clientSecret = orgData.emsData.clientSecret
-  console.log(req.session.ems_clientID, req.session.ems_clientSecret)
   const url = new URL('https://accounts.zoho.com/oauth/v2/auth')
   url.searchParams.append('scope', 'ZohoExpense.fullaccess.ALL')
   url.searchParams.append('client_id', req.session.ems_clientID)
