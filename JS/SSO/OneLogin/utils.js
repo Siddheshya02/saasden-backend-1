@@ -86,14 +86,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     })
   }
 
-  // switch ((ems_creds.name).toLowerCase()) {
-  //   case 'xero':
-  //     subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
-  //     break
-  //   case 'zoho':
-  //     subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
-  //     break
-  // }
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+    case 'zoho':
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
+      break
+  }
 
   const filter = { ID: orgID }
   const update = { apps: subList }

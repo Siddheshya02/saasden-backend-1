@@ -1,10 +1,22 @@
 import axios from 'axios'
+import base64 from 'nodejs-base64-converter'
 import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
+import url from 'url'
 
-export async function getNewToken(domain, clientID, clientSecret, envID){ }
+export async function getNewToken (domain, clientID, clientSecret, envID) {
+  const client_creds = base64.encode(`${clientID}:${clientSecret}`)
+  const params = new url.URLSearchParams({ grant_type: 'client_credentials' })
+  const tokenSet = await axios.post(`https://auth.${domain}/${envID}/as/token`, params.toString(), {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${client_creds}`
+    }
+  })
+  return tokenSet.data.access_token
+}
 
 // Get List of Applications with their associated groups
 async function getPingApps (domain, envID, accessToken) {

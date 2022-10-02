@@ -1,5 +1,19 @@
 import axios from 'axios'
 
+export async function getNewToken (refreshToken, clientID, clientSecret, redirectUri) {
+  const url = new URL('https://accounts.zoho.in/oauth/v2/token')
+  url.searchParams.append('client_id', clientID)
+  url.searchParams.append('client_secret', clientSecret)
+  url.searchParams.append('redirect_uri', `${process.env.domain}/api/v1/zoho/callback`)
+  url.searchParams.append('grant_type', 'refres_token')
+  const tokenSet = await axios.post(url.toString(), {
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded'
+    }
+  })
+  return tokenSet.data.access_token
+}
+
 function getZohoOptions (orgId, accessToken, method, uri) {
   const zohoOptions = {
     headers: {

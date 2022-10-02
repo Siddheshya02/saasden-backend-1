@@ -1,4 +1,18 @@
 import axios from 'axios'
+import base64 from 'nodejs-base64-converter'
+
+export async function getNewToken (clientID, clientSecret, refreshToken) {
+  const tokenSet = await axios.post('https://identity.xero.com/connect/token', {
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken
+  }, {
+    headers: {
+      authorization: 'Basic ' + base64(`${clientID} : ${clientSecret}`),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+  return tokenSet.data.access_token
+}
 
 async function getTxData (tenantID, accessToken, sub) {
   try {
