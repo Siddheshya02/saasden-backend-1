@@ -2,9 +2,9 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const subModel = new Schema({
-  name: {
-    type: Schema.Types.ObjectId,
-    ref: 'organization',
+  ID: {
+    type: String,
+    unique: true,
     required: true
   },
   apps: [{
@@ -26,4 +26,4 @@ const subModel = new Schema({
 })
 
 const subSchema = mongoose.model('subSchema', subModel)
-export default { subSchema }
+export default subSchema

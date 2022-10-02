@@ -2,9 +2,9 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const empModel = new Schema({
-  name: {
-    type: Schema.Types.ObjectId,
-    ref: 'organization',
+  ID: {
+    type: String,
+    unique: true,
     required: true
   },
   emps: [{
@@ -21,4 +21,4 @@ const empModel = new Schema({
 })
 
 const empSchema = mongoose.model('empSchema', empModel)
-export default { empSchema }
+export default empSchema

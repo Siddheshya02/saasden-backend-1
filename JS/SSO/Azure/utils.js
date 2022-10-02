@@ -1,6 +1,9 @@
-const axios = require('axios')
-const subModel = require('../../../models/subscription')
-const empModel = require('../../../models/employee')
+import axios from 'axios'
+import empSchema from '../../../models/employee.js'
+import { getXeroData } from '../../EMS/Xero/utils.js'
+import { getZohoData } from '../../EMS/Zoho/utils.js'
+import subSchema from '../../../models/subscription.js'
+
 const domain = 'https://graph.microsoft.com/.default'
 // get onelogin access token
 async function getToken (clientID, clientSecret, tenantId) {
@@ -70,8 +73,8 @@ async function getUsers (accessToken) {
   return finalUserDetails
 }
 
-async function getSubs (orgName, sso_creds, ems_creds) {
-  const subList = []
+async function getSubs (orgID, sso_creds, ems_creds) {
+  let subList = []
   const appList = await getApps(sso_creds.accessToken)
 
   for (const app of appList) {
@@ -101,13 +104,13 @@ async function getSubs (orgName, sso_creds, ems_creds) {
       subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
       break
     case 'zoho':
-      subList = await getZohoData(/* relevant zoho parameters */)
+      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
       break
   }
 
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { apps: subList }
-  await subModel.findOneAndUpdate(filter, update)
+  await subSchema.findOneAndUpdate(filter, update)
   console.log('Azure subscription data updated successfully')
 }
 
@@ -136,11 +139,8 @@ async function getEmps (orgName, sso_creds) {
 
   const filter = { name: orgName }
   const update = { emps: userList }
-  await empModel.findOneAndUpdate(filter, update)
+  await empSchema.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')
 }
 
 module.exports = { getToken, getSubs, getEmps }
-
-
-// remove getToken

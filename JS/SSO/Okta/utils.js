@@ -38,7 +38,7 @@ async function getUsers (domain, apiToken) {
 }
 
 // get app -> user mapping
-export async function getSubs (orgName, sso_creds, ems_creds) {
+export async function getSubs (orgID, sso_creds, ems_creds) {
   try {
     const appData = await getApps(sso_creds.domain, sso_creds.apiToken)
     let subList = []
@@ -77,11 +77,11 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
         subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
         break
       case 'zoho':
-        subList = await getZohoData(/* relevant zoho parameters */)
+        subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
         break
     }
 
-    const filter = { name: orgName }
+    const filter = { ID: orgID }
     const update = { apps: subList }
     await subSchema.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')
@@ -91,7 +91,7 @@ export async function getSubs (orgName, sso_creds, ems_creds) {
 }
 
 // get user -> app mapping
-export async function getEmps (orgName, sso_creds) {
+export async function getEmps (orgID, sso_creds) {
   try {
     const userList = await getUsers(sso_creds.domain, sso_creds.apiToken)
     for (const user of userList) {
@@ -108,7 +108,7 @@ export async function getEmps (orgName, sso_creds) {
         })
       }
     }
-    const filter = { name: orgName }
+    const filter = { ID: orgID }
     const update = { emps: userList }
     await empSchema.findOneAndUpdate(filter, update)
     console.log('Okta employee data updated successfully')
