@@ -73,7 +73,7 @@ async function getUsers (accessToken) {
   return finalUserDetails
 }
 
-async function getSubs (orgID, sso_creds, ems_creds) {
+export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getApps(sso_creds.accessToken)
 
@@ -114,7 +114,7 @@ async function getSubs (orgID, sso_creds, ems_creds) {
   console.log('Azure subscription data updated successfully')
 }
 
-async function getEmps (orgName, sso_creds) {
+export async function getEmps (orgID, sso_creds) {
   const userList = []
   const empList = await getUsers(sso_creds.accessToken)
 
@@ -137,10 +137,10 @@ async function getEmps (orgName, sso_creds) {
     })
   }
 
-  const filter = { name: orgName }
+  const filter = { ID: orgID }
   const update = { emps: userList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')
 }
 
-module.exports = { getToken, getSubs, getEmps }
+// module.exports = { getSubs, getEmps }
