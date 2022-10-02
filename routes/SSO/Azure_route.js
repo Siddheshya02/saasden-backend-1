@@ -1,7 +1,6 @@
 import { getEmps, getSubs } from '../../JS/SSO/Azure/utils.js'
 
 import axios from 'axios'
-import { getSubs, getEmps } from '../../JS/SSO/Azure/utils.js'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
 
