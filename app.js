@@ -80,8 +80,8 @@ app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-app.use(handleErrors)
-app.use(jwtCheck)
+// app.use(handleErrors)
+// app.use(jwtCheck)
 
 // SSO Routes
 app.use('/api/v1/okta', okta)
