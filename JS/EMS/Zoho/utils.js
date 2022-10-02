@@ -11,14 +11,13 @@ function getZohoOptions (orgId, accessToken, method, uri) {
 }
 
 async function getAllExpenseReports (orgId, accessToken) {
-  const reports = []
   const response = await axios.get('https://expense.zoho.in/api/v1/expensereports', {
     headers: {
       'X-com-zoho-expense-organizationid': orgId,
       Authorization: `Zoho-oauthtoken ${accessToken}`
     }
   })
-  reports.push(response.data.expense_reports)
+  const reports = response.data.expense_reports
   return reports
 }
 
@@ -34,6 +33,9 @@ async function getExpense (reports, name, orgId, accessToken) {
       id = report.report_id
       break
     }
+  }
+  if (!id) {
+    return null
   }
   const uri = `https://expense.zoho.in/api/v1/expensereports/${id}`
   let results = {}
@@ -52,9 +54,14 @@ async function getExpense (reports, name, orgId, accessToken) {
 
 // updated this function as  orgId is passed as arguement to the function
 export async function getZohoData (orgId, accessToken, subList) {
+  console.log('inside get zoho data')
+  console.log(orgId, accessToken)
   const allExpenses = await getAllExpenseReports(orgId, accessToken)
   for (const sub of subList) {
     const expense = await getExpense(allExpenses, sub.name, orgId, accessToken)
+    if (!expense) {
+      continue
+    }
     sub.emsID = expense.report_id
     sub.licences = expense.liscenses
     sub.currentCost = expense.currentCost

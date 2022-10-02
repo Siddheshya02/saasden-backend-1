@@ -11,7 +11,8 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const orgData = await orgSchema.find({ name: req.session.orgID })
+    const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+    console.log(orgData)
     req.session.sso_apiDomain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -23,10 +24,8 @@ router.get('/', async (req, res) => {
     }, {
       'Content-Type': 'application/x-www-form-urlencoded'
     })
-
-    req.session.sso_accessToken = tokenSet.access_token // access token
-    req.session.sso_refreshToken = tokenSet.refresh_token // refresh token
-
+    req.session.sso_accessToken = tokenSet.data.access_token // access token
+    req.session.sso_refreshToken = tokenSet.data.refresh_token // refresh token
     res.sendStatus(200)
     // differrent from other apis as this sends ok status on getting access token
   } catch (error) {
@@ -35,7 +34,8 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgID }
+  req.session.orgID = 'org_sad78dsfbsdbfs'
+  const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
       clientID: req.body.clientID,
@@ -56,7 +56,7 @@ router.post('/auth', async (req, res) => {
 
 // needs to be changed
 router.get('/refreshData', async (req, res) => {
-  console.log('Fetching Okta Data')
+  console.log('Fetching oneLogin Data')
   const ems_creds = {
     name: req.session.ems_name,
     domain: undefined,
@@ -71,7 +71,8 @@ router.get('/refreshData', async (req, res) => {
     accessToken: req.session.sso_accessToken,
     apiToken: undefined
   }
-
+  console.log(sso_creds)
+  console.log(ems_creds)
   try {
     await getSubs(req.session.orgID, sso_creds, ems_creds)
     await getEmps(req.session.orgID, sso_creds)

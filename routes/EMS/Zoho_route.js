@@ -5,14 +5,14 @@ const router = express.Router()
 
 // Send Link to Login
 router.get('/', async (req, res) => {
-  const orgData = await orgSchema.find({ name: req.session.orgName })
-
-  req.session.ems_apiDomain = orgData.emsData.apiDomain
+  const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+  console.log(orgData)
   req.session.ems_clientID = orgData.emsData.clientID
   req.session.ems_clientSecret = orgData.emsData.clientSecret
-
-  const url = new URL(`${req.session.ems_apiDomain}/oauth/v2/auth`)
-  url.searchParams.append('scope', 'ZohoExpense.expensereport.READ')
+  console.log(req.session.ems_clientID, req.session.ems_clientSecret)
+  // https://accounts.zoho.com/oauth/v2/auth
+  const url = new URL('https://accounts.zoho.com/oauth/v2/auth')
+  url.searchParams.append('scope', 'ZohoExpense.fullaccess.ALL')
   url.searchParams.append('client_id', req.session.ems_clientID)
   url.searchParams.append('state', 'radomState=usedforSecuRity')
   url.searchParams.append('response_type', 'code')
@@ -24,20 +24,24 @@ router.get('/', async (req, res) => {
 
 router.get('/callback', async (req, res) => {
   try {
-    const url = new URL(`${req.session.ems_apiDomain}/oauth/v2/token`)
+    const url = new URL('https://accounts.zoho.in/oauth/v2/token')
     url.searchParams.append('code', req.query.code)
-    url.searchParams.append('client_id', req.session.ems_clientID)
-    url.searchParams.append('client_secret', req.session.ems_clientSecret)
+    url.searchParams.append('client_id', '1000.OQ0Q9OQ9YSBI58TY2EAEG5YHNPRWQH')
+    url.searchParams.append('client_secret', 'c35f485384a4fdf52077777398c419d18b233d5996')
     url.searchParams.append('redirect_uri', `${process.env.domain}/api/v1/zoho/callback`)
     url.searchParams.append('grant_type', 'authorization_code')
+    req.session.clientSecret = 'c35f485384a4fdf52077777398c419d18b233d5996'
+    req.session.clientID = '1000.OQ0Q9OQ9YSBI58TY2EAEG5YHNPRWQH'
+    console.log(req.session.ems_clientID, req.session.ems_clientSecret)
     const tokenSet = await axios.post(url.toString(), {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'
       }
-    }).data
-    req.session.ems_accessToken = tokenSet.access_token
-    req.session.ems_IDToken = tokenSet.id_token
-    req.session.apiDomain = tokenSet.apiDomain
+    })
+    req.session.ems_accessToken = tokenSet.data.access_token
+    req.session.ems_refreshToken = tokenSet.data.refresh_token
+    req.session.ems_name = 'zoho'
+    console.log(req.session.ems_accessToken, req.session.ems_refreshToken)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -46,15 +50,15 @@ router.get('/callback', async (req, res) => {
 })
 
 // To be called only 1 time
-router.get('/auth', async (req, res) => {
-  const filter = { name: req.session.orgName } // have to set orgName in session in app.js
+router.post('/auth', async (req, res) => {
+  req.session.orgID = 'org_sad78dsfbsdbfs'
+  const filter = { ID: req.session.orgID } // have to set orgName in session in app.js
   const update = {
     emsData: {
       clientID: req.body.clientID,
       clientSecret: req.body.clientSecret
     }
   }
-
   try {
     await orgSchema.findOneAndUpdate(filter, update)
     // FIXME: Need to add functionality to accept tenantID
