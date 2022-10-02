@@ -4,7 +4,8 @@ const Schema = mongoose.Schema
 const orgModel = new Schema({
   ID: {
     type: String,
-    require: true
+    unique: true,
+    required: true
   },
   name: {
     type: String,
@@ -34,4 +35,4 @@ const orgModel = new Schema({
 })
 
 const orgSchema = mongoose.model('orgSchema', orgModel)
-export default { orgSchema }
+export default orgSchema
