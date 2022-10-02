@@ -4,18 +4,18 @@ import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
-const domain = 'https://graph.microsoft.com/.default'
 // get onelogin access token
-async function getToken (clientID, clientSecret, tenantId) {
-  const token = await axios.post(
-        `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-        new URLSearchParams({
-          client_id: `${clientID}`,
-          scope: `${domain}`,
-          client_secret: `${clientSecret}`,
-          grant_type: 'client_credentials'
-        })
-  ).then(res => { return res.data.access_token }).catch(res => console.log(res))
+export async function getNewToken (clientID, clientSecret, tenantId) {
+  const token = await axios.post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    new URLSearchParams({
+      client_id: `${clientID}`,
+      scope: 'https://graph.microsoft.com/.default',
+      client_secret: `${clientSecret}`,
+      grant_type: 'client_credentials'
+    })
+  ).then(res => {
+    return res.data.access_token
+  })
   return token
 }
 
@@ -142,5 +142,3 @@ export async function getEmps (orgID, sso_creds) {
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')
 }
-
-// module.exports = { getSubs, getEmps }

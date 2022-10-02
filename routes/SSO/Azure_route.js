@@ -12,7 +12,6 @@ router.get('/', async (req, res) => {
     req.session.sso_tenantID = orgData.ssoData.tenantID
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
-    // console.log("tenantId",orgData.ssoData.tenantID)
     const tokenSet = await axios.post(`https://login.microsoftonline.com/${req.session.sso_tenantID}/oauth2/v2.0/token`,
       new URLSearchParams({
         client_id: `${req.session.sso_clientID}`,

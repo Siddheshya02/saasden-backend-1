@@ -38,6 +38,19 @@ async function getUserApps (userID, domain, accessToken) {
   return res.data
 }
 
+export async function getNewToken (domain, accessToken, refreshToken) {
+  const res = await axios.post(`https://${domain}/auth/oauth2/token`, {
+    grant_type: 'refresh_token',
+    access_token: accessToken,
+    refresh_token: refreshToken
+  }, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  return res.data.access_token
+}
+
 export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getApps(sso_creds.domain, sso_creds.accessToken)
