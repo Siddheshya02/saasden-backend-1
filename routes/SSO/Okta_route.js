@@ -8,8 +8,8 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.find({ name: req.session.orgID })
-    req.session.domain = orgData.ssoData.domain
-    req.session.apiToken = orgData.ssoData.apiToken
+    req.session.sso_domain = orgData.ssoData.domain
+    req.session.sso_apiToken = orgData.ssoData.apiToken
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -21,13 +21,13 @@ router.post('/auth', async (req, res) => {
   const filter = { name: req.session.orgID }
   const update = {
     ssoData: {
-      domain: req.body.domain, // okta domain here
-      apiToken: req.body.apiToken // okta api token here, long lived
+      domain: req.body.domain,
+      apiToken: req.body.apiToken
     }
   }
 
   try {
-    await orgSchema.findOneAndUpdate(filter, update) // save the domain and api token in the db
+    await orgSchema.findOneAndUpdate(filter, update)
     console.log('Okta Credentials saved succesfully')
     res.sendStatus(200)
   } catch (error) {
@@ -41,18 +41,17 @@ router.get('/refreshData', async (req, res) => {
   try {
     // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
     const sso_creds = {
-      name: req.session.sso_name,
-      domain: req.session.domain,
-      tenantID: null,
-      accessToken: null,
-      apiToken: req.session.apiToken
+      domain: req.session.sso_apiDomain,
+      tenantID: req.session.sso_tenantID,
+      accessToken: req.session.sso_accessToken,
+      apiToken: req.session.sso_apiToken
     }
     const ems_creds = {
       name: req.session.ems_name,
-      domain: null,
-      tenantID: req.session.tenantID,
-      accessToken: req.session.accessToken,
-      apiToken: null
+      domain: req.session.ems_domain,
+      tenantID: req.session.ems_tenantID,
+      accessToken: req.session.ems_accessToken,
+      apiToken: req.session.ems_apiToken
     }
     await getSubs(req.session.orgID, sso_creds, ems_creds)
     await getEmps(req.session.orgID, sso_creds)

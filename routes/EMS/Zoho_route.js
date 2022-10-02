@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   req.session.ems_clientSecret = orgData.emsData.clientSecret
 
   const url = new URL(`${req.session.ems_apiDomain}/oauth/v2/auth`)
-  url.searchParams.append('scope', 'ZohoExpense.expensereport.READ')
+  url.searchParams.append('scope', 'ZohoExpense.fullaccess.ALL')
   url.searchParams.append('client_id', req.session.ems_clientID)
   url.searchParams.append('state', 'radomState=usedforSecuRity')
   url.searchParams.append('response_type', 'code')

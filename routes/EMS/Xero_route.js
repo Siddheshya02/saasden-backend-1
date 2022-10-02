@@ -1,38 +1,36 @@
-import express, { json } from 'express'
-
 import { XeroClient } from 'xero-node'
+import express from 'express'
 import orgSchema from '../../models/organization.js'
 
 const router = express.Router()
 let xero
 
 router.get('/', async (req, res) => {
-  const orgData = await orgSchema.find({ name: req.session.orgName })
-
-  // req.session.ems_apiDomain = orgData.emsData.apiDomain
+  const orgData = await orgSchema.findOne({ ID: req.session.orgID })
   req.session.ems_clientID = orgData.emsData.clientID
   req.session.ems_clientSecret = orgData.emsData.clientSecret
 
   xero = new XeroClient({
     clientId: req.session.ems_clientID,
-    clientSecret: req.session.ems_clientID,
+    clientSecret: req.session.ems_clientSecret,
     redirectUris: [`${process.env.domain}/api/v1/xero/callback`],
-    scopes: 'openid profile email accounting.transactions offline_access'.split(' '),
+    scopes: 'profile email openid accounting.transactions accounting.settings offline_access accounting.contacts'.split(' '),
     state: 'returnPage=my-sweet-dashboard', // custom params (optional)
     httpTimeout: 3000 // ms (optional)
   })
 
   const consentUrl = await xero.buildConsentUrl()
-  res.send(json({ redirectUri: consentUrl }))
+  res.send(consentUrl)
 })
 
 router.get('/callback', async (req, res) => {
   try {
     const tokenSet = await xero.apiCallback(req.url)
+    console.log(tokenSet)
     req.session.ems_accessToken = tokenSet.access_token
     req.session.ems_IDToken = tokenSet.id_token
     req.session.ems_refreshToken = tokenSet.refresh_token
-    req.session.ems_name='xero'
+    req.session.ems_name = 'xero'
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -44,7 +42,7 @@ router.get('/callback', async (req, res) => {
 router.post('/auth', async (req, res) => {
   const clientID = req.body.clientID
   const clientSecret = req.body.clientSecret
-  const filter = { name: req.session.orgName }
+  const filter = { ID: req.session.orgID }
   const update = {
     emsData: {
       clientID: clientID,

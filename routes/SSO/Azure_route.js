@@ -49,44 +49,20 @@ router.post('/auth', async (req, res) => {
   }
 })
 
-// access_token => req.sesion.sso_accessToken
-// client ID => req.session.sso_clientID
-// client Secret => req.session.sso_clientSecret
-// tenant ID => req.session.sso_tenantID
-
-/* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to undefined, name should have name of EMS/SSO
-      ems_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-
-      sso_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-*/
-
 router.get('/refreshData', async (req, res) => {
   console.log('Fetching Okta Data')
-  const ems_creds={
-    name:req.session.ems_name,
-    domain:undefined,
-    tenantID:undefined,
-    accessToken:req.session.ems_accessToken,
-    apiToken:req.session.ems_IDToken
+  const ems_creds = {
+    domain: req.session.sso_apiDomain,
+    tenantID: req.session.sso_tenantID,
+    accessToken: req.session.sso_accessToken,
+    apiToken: req.session.sso_apiToken
   }
   const sso_creds = {
-    name:undefined,
-    domain:undefined,
-    tenantID:undefined,
-    accessToken:req.session.sso_accessToken,
-    apiToken:undefined
+    name: req.session.ems_name,
+    domain: req.session.ems_domain,
+    tenantID: req.session.ems_tenantID,
+    accessToken: req.session.ems_accessToken,
+    apiToken: req.session.ems_apiToken
   }
   const orgName = req.session.orgName
   // const domain = req.session.sso_domain

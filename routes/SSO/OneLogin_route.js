@@ -6,9 +6,6 @@ import orgSchema from '../../models/organization.js'
 
 const router = express.Router()
 
-// const utils = require('../../JS/SSO/OneLogin/utils')
-// const ssoModel = require('../../models/sso')
-
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.find({ name: req.session.orgID })
@@ -28,14 +25,13 @@ router.get('/', async (req, res) => {
     req.session.sso_refreshToken = tokenSet.refresh_token // refresh token
 
     res.sendStatus(200)
-    // differrent from other apis as this sends ok status on getting access token
   } catch (error) {
     console.log(error)
   }
 })
 
 router.post('/auth', async (req, res) => {
-  const filter = { name: req.session.orgID }
+  const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
       clientID: req.body.clientID,
@@ -57,19 +53,19 @@ router.post('/auth', async (req, res) => {
 // needs to be changed
 router.get('/refreshData', async (req, res) => {
   console.log('Fetching Okta Data')
+
+  const sso_creds = {
+    domain: req.session.sso_apiDomain,
+    tenantID: req.session.sso_tenantID,
+    accessToken: req.session.sso_accessToken,
+    apiToken: req.session.sso_apiToken
+  }
   const ems_creds = {
     name: req.session.ems_name,
-    domain: undefined,
-    tenantID: undefined,
+    domain: req.session.ems_domain,
+    tenantID: req.session.ems_tenantID,
     accessToken: req.session.ems_accessToken,
-    apiToken: req.session.ems_IDToken
-  }
-  const sso_creds = {
-    name: undefined,
-    domain: req.session.sso_apiDomain,
-    tenantID: undefined,
-    accessToken: req.session.sso_accessToken,
-    apiToken: undefined
+    apiToken: req.session.ems_apiToken
   }
 
   try {
@@ -81,7 +77,5 @@ router.get('/refreshData', async (req, res) => {
     res.sendStatus(500)
   }
 })
-
-// domain query
 
 export { router }

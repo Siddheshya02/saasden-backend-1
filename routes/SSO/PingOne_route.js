@@ -31,7 +31,6 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
-  req.session.orgID = 'org_Zr9RLZMYVdE9Zm0P'
   const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
@@ -44,7 +43,6 @@ router.post('/auth', async (req, res) => {
 
   try {
     await orgSchema.findOneAndUpdate(filter, update)
-    console.log('Ping Credentials saved succesfully')
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -53,8 +51,6 @@ router.post('/auth', async (req, res) => {
 })
 
 router.get('/refreshData', async (req, res) => {
-  // fetch SSO Data from the DB
-
   const sso_creds = {
     domain: req.session.sso_domain,
     tenantID: req.session.sso_tenantID,
