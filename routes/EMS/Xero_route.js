@@ -42,11 +42,13 @@ router.get('/callback', async (req, res) => {
 router.post('/auth', async (req, res) => {
   const clientID = req.body.clientID
   const clientSecret = req.body.clientSecret
+  const tenantID = req.body.tenantID
   const filter = { ID: req.session.orgID }
   const update = {
     emsData: {
       clientID: clientID,
-      clientSecret: clientSecret
+      clientSecret: clientSecret,
+      tenantID: tenantID
     }
   }
 
