@@ -78,7 +78,7 @@ async function getUsers (domain, envID, accessToken, groupList) {
   }
   return [...new Set(userList)]
 }
-
+// envID  not recieved
 // Get list of all apps along with their associted users
 export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []

@@ -36,34 +36,8 @@ router.post('/auth', async (req, res) => {
   }
 })
 
-// access_token => req.sesion.sso_accessToken
-// client ID => req.session.sso_clientID
-// client Secret => req.session.sso_clientSecret
-// tenant ID => req.session.sso_tenantID
-
-/* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
-      ems_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-
-      sso_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-*/
-
 router.get('/refreshData', async (req, res) => {
   console.log('Fetching Okta Data')
-  const orgID = req.session.orgID
-  const domain = req.session.sso_domain
-  const apiToken = req.session.sso_apiToken
   try {
     // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
     const sso_creds = {
@@ -80,8 +54,8 @@ router.get('/refreshData', async (req, res) => {
       accessToken: req.session.accessToken,
       apiToken: null
     }
-    await getSubs(orgID, sso_creds, ems_creds)
-    await getEmps(orgID, sso_creds)
+    await getSubs(req.session.orgID, sso_creds, ems_creds)
+    await getEmps(req.session.orgID, sso_creds)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

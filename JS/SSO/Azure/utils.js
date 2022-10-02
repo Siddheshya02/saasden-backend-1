@@ -114,9 +114,9 @@ async function getSubs (orgID, sso_creds, ems_creds) {
   console.log('Azure subscription data updated successfully')
 }
 
-async function getEmps (accessToken, saasdenID) {
+async function getEmps (orgName, sso_creds) {
   const userList = []
-  const empList = await getUsers(accessToken)
+  const empList = await getUsers(sso_creds.accessToken)
 
   for (const emp of empList) {
     const appList = emp.apps
@@ -137,7 +137,7 @@ async function getEmps (accessToken, saasdenID) {
     })
   }
 
-  const filter = { saasdenID: saasdenID }
+  const filter = { name: orgName }
   const update = { emps: userList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')

@@ -3,6 +3,7 @@ import { getEmps, getSubs } from '../../JS/SSO/OneLogin/utils.js'
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
+
 const router = express.Router()
 
 // const utils = require('../../JS/SSO/OneLogin/utils')
@@ -11,7 +12,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.find({ name: req.session.orgID })
-    req.session.sso_apiDomain = orgData.ssoData.apiDomain
+    req.session.sso_apiDomain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
 
@@ -53,48 +54,25 @@ router.post('/auth', async (req, res) => {
   }
 })
 
-// access_token => req.sesion.sso_accessToken
-// client ID => req.session.sso_clientID
-// client Secret => req.session.sso_clientSecret
-// tenant ID => req.session.sso_tenantID
-
-/* NOTE: ems/sso _creds object should be passed along like this, irrelevent data should be set to null, name should have name of EMS/SSO
-      ems_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-
-      sso_creds = {
-        name,
-        domain,
-        tenantID,
-        accessToken,
-        apiToken
-      }
-*/
-
 // needs to be changed
 router.get('/refreshData', async (req, res) => {
+  console.log('Fetching Okta Data')
+  const ems_creds = {
+    name: req.session.ems_name,
+    domain: undefined,
+    tenantID: undefined,
+    accessToken: req.session.ems_accessToken,
+    apiToken: req.session.ems_IDToken
+  }
+  const sso_creds = {
+    name: undefined,
+    domain: req.session.sso_apiDomain,
+    tenantID: undefined,
+    accessToken: req.session.sso_accessToken,
+    apiToken: undefined
+  }
+
   try {
-  //     // fetch SSO Data from the DB
-  //     remove if not required    //const ssoData = await ssoModel.findOne({ name: req.session.orgID })
-    const sso_creds = {
-      name: req.session.sso_name,
-      domain: req.session.domain,
-      tenantID: null,
-      accessToken: req.session.accessToken,
-      apiToken: null
-    }
-    const ems_creds = {
-      name: req.session.ems_name,
-      domain: null,
-      tenantID: req.session.tenantID,
-      accessToken: req.session.accessToken,
-      apiToken: null
-    }
     await getSubs(req.session.orgID, sso_creds, ems_creds)
     await getEmps(req.session.orgID, sso_creds)
     res.sendStatus(200)
@@ -103,5 +81,7 @@ router.get('/refreshData', async (req, res) => {
     res.sendStatus(500)
   }
 })
+
+// domain query
 
 export { router }
