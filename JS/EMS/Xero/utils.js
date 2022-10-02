@@ -33,7 +33,7 @@ export async function getXeroData (tenantID, accessToken, subList) {
     })
     for (let i = 0; i < subList.length; i++) {
       for (const emsApp of res.data.Contacts) {
-        if (subList[i].name === emsApp.Name) {
+        if ((subList[i].name).toLowerCase() === (emsApp.Name).toLowerCase()) {
           subList[i].emsID = emsApp.ContactID
           subList[i] = await getTxData(tenantID, accessToken, subList[i])
           break
