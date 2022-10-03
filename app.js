@@ -57,8 +57,9 @@ const sess_config = {
 }
 
 const cors_config = {
-  origin: 'http://localhost:3000',
-  optionsSuccessStatus: 200
+  origin: ['https://login.xero.com', 'https://accounts.zoho.in', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  methods: ['GET', 'POST', 'DELETE'],
+  credentials: true
 }
 
 // MongoDB configuration
