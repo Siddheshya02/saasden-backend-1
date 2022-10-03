@@ -53,7 +53,6 @@ router.post('/auth', async (req, res) => {
 
   try {
     await orgSchema.findOneAndUpdate(filter, update)
-    // FIXME: Need to add functionality to accept tenantID
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
