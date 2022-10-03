@@ -35,6 +35,7 @@ router.get('/callback', async (req, res) => {
       }
     })
     req.session.ems_accessToken = tokenSet.data.access_token
+    console.log(tokenSet.data.access_token)
     req.session.ems_refreshToken = tokenSet.data.refresh_token
     res.sendStatus(200)
   } catch (error) {
@@ -53,6 +54,9 @@ router.post('/auth', async (req, res) => {
       tenantID: req.body.tenantID
     }
   }
+  req.session.ems_clientID = req.body.clientID
+  req.session.ems_clientSecret = req.body.clientSecret
+  req.session.ems_tenantID = req.body.tenantID
   try {
     await orgSchema.findOneAndUpdate(filter, update)
     res.sendStatus(200)

@@ -47,10 +47,10 @@ router.get('/refreshData', async (req, res) => {
   try {
     // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
     const sso_creds = {
-      domain: req.session.sso_apiDomain,
+      domain: req.session.domain,
       tenantID: req.session.sso_tenantID,
       accessToken: req.session.sso_accessToken,
-      apiToken: req.session.sso_apiToken
+      apiToken: req.session.apiToken
     }
     const ems_creds = {
       name: req.session.ems_name,
