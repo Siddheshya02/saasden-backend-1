@@ -72,13 +72,13 @@ router.get('/refreshData', async (req, res) => {
   }
 
   console.log('Fetching Azure Data')
-  const ems_creds = {
+  const sso_creds = {
     domain: req.session.sso_apiDomain,
     tenantID: req.session.sso_tenantID,
     accessToken: req.session.sso_accessToken,
     apiToken: req.session.sso_apiToken
   }
-  const sso_creds = {
+  const ems_creds = {
     name: req.session.ems_name,
     domain: req.session.ems_domain,
     tenantID: req.session.ems_tenantID,
@@ -86,7 +86,7 @@ router.get('/refreshData', async (req, res) => {
     apiToken: req.session.ems_apiToken
   }
   const orgID = req.session.orgID
-  console.log(req.session.sso_accessToken)
+  console.log(orgID)
   // const domain = req.session.sso_domain
   // const apiToken = req.session.sso_apiToken
   try {
