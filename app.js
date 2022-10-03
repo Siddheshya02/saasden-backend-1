@@ -56,7 +56,10 @@ const sess_config = {
   })
 }
 
-const cors_config = {}
+const cors_config = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200
+}
 
 // MongoDB configuration
 mongoose.connect(process.env.MONGODB_URI, {
