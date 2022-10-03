@@ -1,4 +1,5 @@
 import axios from 'axios'
+import base64 from 'nodejs-base64-converter'
 import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
@@ -38,17 +39,22 @@ async function getUserApps (userID, domain, accessToken) {
   return res.data
 }
 
-export async function getNewToken (domain, accessToken, refreshToken) {
-  const res = await axios.post(`https://${domain}/auth/oauth2/token`, {
-    grant_type: 'refresh_token',
-    access_token: accessToken,
-    refresh_token: refreshToken
-  }, {
+export async function verifyOneLoginToken (domain, clientID, clientSecret, accessToken) {
+  const res = await axios.get(`https://${domain}/api/2/api_authorizations`, {
     headers: {
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${accessToken}`
     }
   })
-  return res.data.access_token
+  if (res.status === 401) {
+    const tokenSet = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
+      client_id: clientID,
+      client_secret: clientSecret,
+      grant_type: 'client_credentials'
+    }, {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    })
+    return tokenSet.data.access_token
+  } else { return accessToken }
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {

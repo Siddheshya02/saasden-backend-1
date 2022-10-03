@@ -1,8 +1,11 @@
-import { getEmps, getSubs } from '../../JS/SSO/OneLogin/utils.js'
+import { getEmps, getSubs, verifyOneLoginToken } from '../../JS/SSO/OneLogin/utils.js'
 
 import axios from 'axios'
 import express from 'express'
+import { isJwtExpired } from 'jwt-check-expiration'
+import { getNewToken as newXeroToken } from '../../JS/EMS/Xero/utils.js'
 import orgSchema from '../../models/organization.js'
+import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 
 const router = express.Router()
 
@@ -51,7 +54,18 @@ router.post('/auth', async (req, res) => {
 
 // needs to be changed
 router.get('/refreshData', async (req, res) => {
-  console.log('Fetching Okta Data')
+  // Check if SSO Token Expired
+  req.session.sso_accessToken = await verifyOneLoginToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_accessToken)
+  // Check if EMS Token Expired
+  if (req.session.ems_name === 'xero') {
+    if (isJwtExpired(req.session.ems_accessToken)) {
+      req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+    }
+  } else {
+    req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+  }
+
+  console.log('Fetching OneLogin Data')
 
   const sso_creds = {
     domain: req.session.sso_apiDomain,

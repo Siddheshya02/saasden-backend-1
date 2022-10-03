@@ -37,6 +37,16 @@ async function getUsers (domain, apiToken) {
   return userList
 }
 
+export async function checkOktaToken (domain, apiToken) {
+  const res = await axios.get(`https://${domain}/api/v1/iam/roles`, {
+    headers: {
+      Authorization: `SSWS ${apiToken}`
+    }
+  })
+  if (res.status !== 200) { return false }
+  return true
+}
+
 // get app -> user mapping
 export async function getSubs (orgID, sso_creds, ems_creds) {
   try {

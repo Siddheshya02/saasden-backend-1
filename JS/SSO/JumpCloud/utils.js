@@ -80,6 +80,18 @@ async function getUserApps (userID, apiToken, appMap) {
   return appList
 }
 
+export async function checkJumpCloudToken (apiToken) {
+  const res = await axios.get('https://console.jumpcloud.com/api/organizations', {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'x-api-key': `${apiToken}`
+    }
+  })
+  if (res.status !== 200) { return false }
+  return true
+}
+
 export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
   const appList = await getApps(sso_creds.apiToken)

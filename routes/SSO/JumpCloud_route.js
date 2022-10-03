@@ -1,9 +1,23 @@
-import { getEmps, getSubs } from '../../JS/SSO/JumpCloud/utils.js'
+import { checkJumpCloudToken, getEmps, getSubs } from '../../JS/SSO/JumpCloud/utils.js'
 
 import express from 'express'
+import { isJwtExpired } from 'jwt-check-expiration'
+import { getNewToken as newXeroToken } from '../../JS/EMS/Xero/utils.js'
 import orgSchema from '../../models/organization.js'
+import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 
 const router = express.Router()
+
+router.get('/', async (req, res) => {
+  try {
+    const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+    req.session.sso_apiToken = orgData.ssoData.apiToken
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
 
 router.post('/auth', async (req, res) => {
   const filter = { ID: req.session.orgID }
@@ -12,8 +26,6 @@ router.post('/auth', async (req, res) => {
       apiToken: req.body.apiToken
     }
   }
-  req.session.apiToken = req.body.apiToken
-  req.session.sso_name = 'jumpcloud'
   try {
     await orgSchema.findOneAndUpdate(filter, update)
     console.log('Jumpcloud Credentials saved succesfully')
@@ -25,6 +37,14 @@ router.post('/auth', async (req, res) => {
 })
 
 router.get('/refreshData', async (req, res) => {
+  if (checkJumpCloudToken(req.session.sso_apiToken)) { res.send(`${process.env.domain}/jumpcloud/auth`).status(303) }
+  if (req.session.ems_name === 'xero') {
+    if (isJwtExpired(req.session.ems_accessToken)) {
+      req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+    }
+  } else {
+    req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+  }
   try {
     const sso_creds = {
       domain: req.session.sso_apiDomain,

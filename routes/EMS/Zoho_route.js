@@ -6,8 +6,10 @@ const router = express.Router()
 // Send Link to Login
 router.get('/', async (req, res) => {
   const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+  req.session.ems_name = 'zoho'
   req.session.ems_clientID = orgData.emsData.clientID
   req.session.ems_clientSecret = orgData.emsData.clientSecret
+  req.session.tenantID = orgData.emsData.tenantID
   const url = new URL('https://accounts.zoho.com/oauth/v2/auth')
   url.searchParams.append('scope', 'ZohoExpense.fullaccess.ALL')
   url.searchParams.append('client_id', req.session.ems_clientID)
@@ -23,12 +25,10 @@ router.get('/callback', async (req, res) => {
   try {
     const url = new URL('https://accounts.zoho.in/oauth/v2/token')
     url.searchParams.append('code', req.query.code)
-    url.searchParams.append('client_id', req.session.clientID)
-    url.searchParams.append('client_secret', req.session.clientSecret)
+    url.searchParams.append('client_id', req.session.ems_clientID)
+    url.searchParams.append('client_secret', req.session.ems_clientSecret)
     url.searchParams.append('redirect_uri', `${process.env.domain}/api/v1/zoho/callback`)
     url.searchParams.append('grant_type', 'authorization_code')
-    req.session.clientSecret = 'c35f485384a4fdf52077777398c419d18b233d5996'
-    req.session.clientID = '1000.OQ0Q9OQ9YSBI58TY2EAEG5YHNPRWQH'
     const tokenSet = await axios.post(url.toString(), {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded'

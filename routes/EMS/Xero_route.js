@@ -7,9 +7,10 @@ let xero
 
 router.get('/', async (req, res) => {
   const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+  req.session.ems_name = 'xero'
   req.session.ems_clientID = orgData.emsData.clientID
   req.session.ems_clientSecret = orgData.emsData.clientSecret
-
+  req.session.ems_tenantID = orgData.emsData.tenantID
   xero = new XeroClient({
     clientId: req.session.ems_clientID,
     clientSecret: req.session.ems_clientSecret,
@@ -26,11 +27,9 @@ router.get('/', async (req, res) => {
 router.get('/callback', async (req, res) => {
   try {
     const tokenSet = await xero.apiCallback(req.url)
-    console.log(tokenSet)
     req.session.ems_accessToken = tokenSet.access_token
     req.session.ems_IDToken = tokenSet.id_token
     req.session.ems_refreshToken = tokenSet.refresh_token
-    req.session.ems_name = 'xero'
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

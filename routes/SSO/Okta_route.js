@@ -1,16 +1,18 @@
-import { getEmps, getSubs } from '../../JS/SSO/Okta/utils.js'
+import { checkOktaToken, getEmps, getSubs } from '../../JS/SSO/Okta/utils.js'
 
 import express from 'express'
+import { isJwtExpired } from 'jwt-check-expiration'
+import { getNewToken as newXeroToken } from '../../JS/EMS/Xero/utils.js'
 import orgSchema from '../../models/organization.js'
+import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 
 const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
-    req.session.domain = orgData.ssoData.domain
-    // console.log("data ",orgData.ssoData)
-    req.session.apiToken = orgData.ssoData.apiToken
+    req.session.sso_domain = orgData.ssoData.domain
+    req.session.sso_apiToken = orgData.ssoData.apiToken
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -28,10 +30,7 @@ router.post('/auth', async (req, res) => {
       apiToken: req.body.apiToken
     }
   }
-  req.session.domain = req.body.domain
-  // console.log("domain",req.body.domain);
-  req.session.apiToken = req.body.apiToken
-  // console.log("domain",req.body.apiToken);
+
   try {
     await orgSchema.findOneAndUpdate(filter, update)
     console.log('Okta Credentials saved succesfully')
@@ -43,6 +42,14 @@ router.post('/auth', async (req, res) => {
 })
 
 router.get('/refreshData', async (req, res) => {
+  if (checkOktaToken(req.session.sso_apiToken)) { res.send(`${process.env.domain}/okta/auth`).status(303) }
+  if (req.session.ems_name === 'xero') {
+    if (isJwtExpired(req.session.ems_accessToken)) {
+      req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+    }
+  } else {
+    req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+  }
   console.log('Fetching Okta Data')
   try {
     // NOTE: Calling both the functions simultaneously exceeds the okta rate limit
