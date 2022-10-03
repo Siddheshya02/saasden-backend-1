@@ -86,7 +86,7 @@ app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
 app.use(setOrgName)
-app.use(handleErrors)
+// app.use(handleErrors)
 app.use(jwtCheck)
 
 // SSO Routes
