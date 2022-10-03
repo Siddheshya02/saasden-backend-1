@@ -33,6 +33,8 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/auth', async (req, res) => {
+  console.log('In OneLogin auth')
+  console.log(req.body)
   const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
