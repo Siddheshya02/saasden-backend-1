@@ -6,6 +6,7 @@ export function setOrgName (req, res, next) {
   req.session.userName = auth0_tokenSet.name
   req.session.userEmail = auth0_tokenSet.email
   console.log('Middlware Executing')
+  console.log(req.session)
   next()
 }
 
