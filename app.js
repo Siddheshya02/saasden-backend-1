@@ -26,7 +26,6 @@ dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-// NOTE: Check this config of redis
 const RedisStore = connectRedis(sessions)
 const redisClient = createClient({ legacyMode: true })
 const app = express()
