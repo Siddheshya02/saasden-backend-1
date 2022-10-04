@@ -9,6 +9,27 @@ import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 
 const router = express.Router()
 
+router.post('/auth', async (req, res) => {
+  console.log(req.body)
+  const filter = { ID: req.session.orgID }
+  const update = {
+    ssoData: {
+      clientID: req.body.clientID,
+      clientSecret: req.body.clientSecret,
+      domain: req.body.domain
+    }
+  }
+
+  try {
+    await orgSchema.findOneAndUpdate(filter, update)
+    console.log('OneLogin credentials saved successfully')
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
@@ -32,43 +53,20 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.post('/auth', async (req, res) => {
-  console.log('In OneLogin auth')
-  console.log(req.body)
-  const filter = { ID: req.session.orgID }
-  const update = {
-    ssoData: {
-      clientID: req.body.clientID,
-      clientSecret: req.body.clientSecret,
-      domain: req.body.domain
-    }
-  }
-
-  try {
-    await orgSchema.findOneAndUpdate(filter, update)
-    console.log('OneLogin credentials saved successfully')
-    res.sendStatus(200)
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(500)
-  }
-})
-
-// needs to be changed
 router.get('/refreshData', async (req, res) => {
-  // Check if SSO Token Expired
-  req.session.sso_accessToken = await verifyOneLoginToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_accessToken)
-  // Check if EMS Token Expired
-  if (req.session.ems_name === 'xero') {
-    if (isJwtExpired(req.session.ems_accessToken)) {
-      req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
-    }
-  } else {
-    req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
-  }
+  // BUG: Untested
+  // req.session.sso_accessToken = await verifyOneLoginToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_accessToken)
+  // if (req.session.ems_name === 'xero') {
+  //   if (isJwtExpired(req.session.ems_accessToken)) {
+  //     req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+  //   }
+  // } else {
+  //   req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+  // }
 
   console.log('Fetching OneLogin Data')
 
+  const orgID = req.session.orgID
   const sso_creds = {
     domain: req.session.sso_apiDomain,
     tenantID: req.session.sso_tenantID,
@@ -82,11 +80,10 @@ router.get('/refreshData', async (req, res) => {
     accessToken: req.session.ems_accessToken,
     apiToken: req.session.ems_apiToken
   }
-  console.log(sso_creds)
-  console.log(ems_creds)
+
   try {
-    await getSubs(req.session.orgID, sso_creds, ems_creds)
-    await getEmps(req.session.orgID, sso_creds)
+    await getSubs(orgID, sso_creds, ems_creds)
+    await getEmps(orgID, sso_creds)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

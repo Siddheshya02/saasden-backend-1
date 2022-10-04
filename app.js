@@ -29,7 +29,6 @@ const __dirname = path.dirname(__filename)
 // NOTE: Check this config of redis
 const RedisStore = connectRedis(sessions)
 const redisClient = createClient({ legacyMode: true })
-redisClient.connect().catch(console.error)
 const app = express()
 
 const jwtCheck = expressjwt({
@@ -63,6 +62,14 @@ const cors_config = {
   credentials: true
 }
 
+// Redis server connection
+redisClient.connect()
+  .then(() => console.log('Redis Connected'))
+  .catch((err) => {
+    console.log('Error connecting to redis')
+    console.log(err)
+  })
+
 // MongoDB configuration
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -70,6 +77,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 }, (err) => {
   if (err) {
     console.log('Error Connecting to mongoDB')
+    console.log(err)
   } else {
     console.log('MongoDB Connected')
   }
@@ -86,8 +94,8 @@ app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
 app.use(jwtCheck)
-app.use(setOrgName)
 app.use(handleErrors)
+app.use(setOrgName)
 
 // SSO Routes
 app.use('/api/v1/okta', okta)
@@ -102,11 +110,6 @@ app.use('/api/v1/zoho', zoho)
 
 app.use('/api/v1', subs)
 app.use('/api/v1', emps)
-
-app.get('/api/v1/test', (req, res) => {
-  req.session.orgID = 'org_Zr9RLZMYVdE9Zm0P'
-  res.sendStatus(200)
-})
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))

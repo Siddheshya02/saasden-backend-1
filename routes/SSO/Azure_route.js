@@ -9,6 +9,30 @@ import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 
 const router = express.Router()
 
+router.post('/auth', async (req, res) => {
+  req.session.orgID = 'org_ioaseunclsd'
+  const filter = { ID: req.session.orgID }
+  const update = {
+    ssoData: {
+      clientID: req.body.clientID,
+      clientSecret: req.body.clientSecret,
+      tenantID: req.body.tenantID
+    }
+  }
+  req.session.sso_tenantID = req.body.tenantID
+  req.session.sso_clientID = req.body.clientID
+  req.session.sso_clientSecret = req.body.clientSecret
+
+  try {
+    await orgSchema.findOneAndUpdate(filter, update)
+    console.log('Azure credentials saved successfully')
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
@@ -34,44 +58,21 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.post('/auth', async (req, res) => {
-  req.session.orgID = 'org_ioaseunclsd'
-  const filter = { ID: req.session.orgID }
-  const update = {
-    ssoData: {
-      clientID: req.body.clientID,
-      clientSecret: req.body.clientSecret,
-      tenantID: req.body.tenantID
-    }
-  }
-  req.session.sso_tenantID = req.body.tenantID
-  req.session.sso_clientID = req.body.clientID
-  req.session.sso_clientSecret = req.body.clientSecret
-  // console.log("tenantiD",req.body.tenantID)
-
-  try {
-    await orgSchema.findOneAndUpdate(filter, update)
-    console.log('Azure credentials saved successfully')
-    res.sendStatus(200)
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(500)
-  }
-})
-
 router.get('/refreshData', async (req, res) => {
-  if (isJwtExpired(req.session.sso_accessToken)) {
-    req.session.sso_accessToken = await newAzureToken(req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_tenantID)
-  }
-  if (req.session.ems_name === 'xero') {
-    if (isJwtExpired(req.session.ems_accessToken)) {
-      req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
-    }
-  } else {
-    req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
-  }
-
+  // BUG: Untested
+  // if (isJwtExpired(req.session.sso_accessToken)) {
+  //   req.session.sso_accessToken = await newAzureToken(req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_tenantID)
+  // }
+  // if (req.session.ems_name === 'xero') {
+  //   if (isJwtExpired(req.session.ems_accessToken)) {
+  //     req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+  //   }
+  // } else {
+  //   req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+  // }
   console.log('Fetching Azure Data')
+
+  const orgID = req.session.orgID
   const sso_creds = {
     domain: req.session.sso_apiDomain,
     tenantID: req.session.sso_tenantID,
@@ -85,10 +86,7 @@ router.get('/refreshData', async (req, res) => {
     accessToken: req.session.ems_accessToken,
     apiToken: req.session.ems_apiToken
   }
-  const orgID = req.session.orgID
-  console.log(orgID)
-  // const domain = req.session.sso_domain
-  // const apiToken = req.session.sso_apiToken
+
   try {
     await getSubs(orgID, sso_creds, ems_creds)
     await getEmps(orgID, sso_creds)

@@ -13,7 +13,7 @@ export async function verifyZohoToken (accessToken, refreshToken, clientID, clie
     url.searchParams.append('refresh_token', refreshToken)
     url.searchParams.append('client_id', clientID)
     url.searchParams.append('client_secret', clientSecret)
-    url.searchParams.append('redirect_uri', `${process.env.domain}/api/v1/zoho/callback`)
+    url.searchParams.append('redirect_uri', `${process.env.redirect_URI}`)
     url.searchParams.append('grant_type', 'refres_token')
     const tokenSet = await axios.post(url.toString(), {
       headers: {
@@ -93,5 +93,6 @@ export async function getZohoData (orgId, accessToken, subList) {
     sub.amountSaved = sub.currentCost - sub.emps.length * PerSubscription
     sub.dueDate = expense.dueDate
   }
+  console.log('Zoho data saved successfully')
   return subList
 }
