@@ -4,7 +4,7 @@ const router = express.Router()
 
 router.get('/emps', async (req, res) => {
   try {
-    const empData = await empSchema.find({ saasdenID: req.cookies.saasdenID })
+    const empData = await empSchema.find({ ID: req.session.orgID })
     res.json(empData)
   } catch (error) {
     console.log(error)
