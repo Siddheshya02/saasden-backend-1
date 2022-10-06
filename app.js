@@ -1,5 +1,3 @@
-import { handleErrors, setOrgName } from './middleware/middleware.js'
-
 import { router as azure } from './routes/SSO/Azure_route.js'
 import connectRedis from 'connect-redis'
 import cookieParser from 'cookie-parser'
@@ -18,6 +16,7 @@ import { router as onelogin } from './routes/SSO/OneLogin_route.js'
 import path from 'path'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import sessions from 'express-session'
+import { setOrgName } from './middleware/middleware.js'
 import { router as subs } from './routes/dashboard/subscription_route.js'
 import { router as xero } from './routes/EMS/Xero_route.js'
 import { router as zoho } from './routes/EMS/Zoho_route.js'
@@ -93,7 +92,6 @@ app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
 app.use(jwtCheck)
-app.use(handleErrors)
 app.use(setOrgName)
 
 // SSO Routes
