@@ -56,7 +56,7 @@ const sess_config = {
 
 const cors_config = {
   origin: ['*'],
-  methods: ['GET', 'POST', 'DELETE'],
+  methods: ['GET', 'POST', 'DELETE']
 }
 
 // Redis server connection
