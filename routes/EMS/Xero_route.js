@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
   })
 
   const consentUrl = await xero.buildConsentUrl()
-  res.send(consentUrl)
+  res.json(consentUrl)
 })
 
 router.get('/callback', async (req, res) => {
