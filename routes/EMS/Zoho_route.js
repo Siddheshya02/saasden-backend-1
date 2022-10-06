@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
   url.searchParams.append('redirect_uri', `${process.env.redirect_URI}`)
   url.searchParams.append('access_type', 'offline')
   url.searchParams.append('prompt', 'consent')
-  res.send(url.toString())
+  res.json(url.toString())
 })
 
 router.get('/callback', async (req, res) => {

@@ -31,9 +31,9 @@ router.post('/auth', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
+  console.log(req.session)
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
-    console.log(orgData)
     req.session.sso_apiDomain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -50,6 +50,7 @@ router.get('/', async (req, res) => {
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
+    res.sendStatus(500)
   }
 })
 
