@@ -31,7 +31,6 @@ router.post('/auth', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-  console.log(req.session)
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     req.session.sso_apiDomain = orgData.ssoData.domain
