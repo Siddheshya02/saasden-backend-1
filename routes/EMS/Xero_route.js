@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
   res.json(consentUrl)
 })
 
-router.get('/callback', async (req, res) => {
+router.get('/loading', async (req, res) => {
   console.log('In Xero Callback route')
   try {
     const tokenSet = await xero.apiCallback(req.body.callbackURL)
