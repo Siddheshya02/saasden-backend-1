@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
 router.get('/callback', async (req, res) => {
   console.log('In Xero Callback route')
   try {
-    const tokenSet = await xero.apiCallback(req.url)
+    const tokenSet = await xero.apiCallback(req.body.callbackURL)
     req.session.ems_accessToken = tokenSet.access_token
     req.session.ems_IDToken = tokenSet.id_token
     req.session.ems_refreshToken = tokenSet.refresh_token
