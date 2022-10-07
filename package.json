@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nishit-saasden/saasden-backend.git"
+    "url": "git+https://github.com/saasden7/saasden-backend.git"
   },
   "author": "Nishit Pandit, Vadiraj Karnam, Shubham Bhatt",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nishit-saasden/saasden-backend/issues"
+    "url": "https://github.com/saasden7/saasden-backend/issues"
   },
-  "homepage": "https://github.com/nishit-saasden/saasden-backend#readme",
+  "homepage": "https://github.com/saasden7/saasden-backend#readme",
   "dependencies": {
     "axios": "^0.27.2",
     "connect-redis": "^6.1.3",
