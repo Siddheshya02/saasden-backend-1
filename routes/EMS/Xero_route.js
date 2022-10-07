@@ -54,6 +54,7 @@ router.get('/callback', async (req, res) => {
     req.session.ems_accessToken = tokenSet.access_token
     req.session.ems_IDToken = tokenSet.id_token
     req.session.ems_refreshToken = tokenSet.refresh_token
+    console.log('Xero access token set')
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
