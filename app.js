@@ -15,6 +15,7 @@ import { router as okta } from './routes/SSO/Okta_route.js'
 import { router as onelogin } from './routes/SSO/OneLogin_route.js'
 import path from 'path'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
+import { router as refresh } from './routes/dashboard/refresh_route.js'
 import sessions from 'express-session'
 import { setOrgName } from './middleware/middleware.js'
 import { router as subs } from './routes/dashboard/subscription_route.js'
@@ -105,6 +106,8 @@ app.use('/api/v1/jumpcloud', jumpcloud)
 app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
+// Dashboard Routes
+app.use('/api/v1', refresh)
 app.use('/api/v1', subs)
 app.use('/api/v1', emps)
 

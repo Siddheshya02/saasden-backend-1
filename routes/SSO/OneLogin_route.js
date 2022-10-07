@@ -33,6 +33,7 @@ router.post('/auth', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
+    req.session.sso_name = 'onelogin'
     req.session.sso_apiDomain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
@@ -53,42 +54,42 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.get('/refreshData', async (req, res) => {
-  // BUG: Untested
-  // req.session.sso_accessToken = await verifyOneLoginToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_accessToken)
-  // if (req.session.ems_name === 'xero') {
-  //   if (isJwtExpired(req.session.ems_accessToken)) {
-  //     req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
-  //   }
-  // } else {
-  //   req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
-  // }
+// router.get('/refreshData', async (req, res) => {
+//   // BUG: Untested
+//   // req.session.sso_accessToken = await verifyOneLoginToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_accessToken)
+//   // if (req.session.ems_name === 'xero') {
+//   //   if (isJwtExpired(req.session.ems_accessToken)) {
+//   //     req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+//   //   }
+//   // } else {
+//   //   req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+//   // }
 
-  console.log('Fetching OneLogin Data')
+//   console.log('Fetching OneLogin Data')
 
-  const orgID = req.session.orgID
-  const sso_creds = {
-    domain: req.session.sso_apiDomain,
-    tenantID: req.session.sso_tenantID,
-    accessToken: req.session.sso_accessToken,
-    apiToken: req.session.sso_apiToken
-  }
-  const ems_creds = {
-    name: req.session.ems_name,
-    domain: req.session.ems_domain,
-    tenantID: req.session.ems_tenantID,
-    accessToken: req.session.ems_accessToken,
-    apiToken: req.session.ems_apiToken
-  }
+//   const orgID = req.session.orgID
+//   const sso_creds = {
+//     domain: req.session.sso_apiDomain,
+//     tenantID: req.session.sso_tenantID,
+//     accessToken: req.session.sso_accessToken,
+//     apiToken: req.session.sso_apiToken
+//   }
+//   const ems_creds = {
+//     name: req.session.ems_name,
+//     domain: req.session.ems_domain,
+//     tenantID: req.session.ems_tenantID,
+//     accessToken: req.session.ems_accessToken,
+//     apiToken: req.session.ems_apiToken
+//   }
 
-  try {
-    await getSubs(orgID, sso_creds, ems_creds)
-    await getEmps(orgID, sso_creds)
-    res.sendStatus(200)
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(500)
-  }
-})
+//   try {
+//     await getSubs(orgID, sso_creds, ems_creds)
+//     await getEmps(orgID, sso_creds)
+//     res.sendStatus(200)
+//   } catch (error) {
+//     console.log(error)
+//     res.sendStatus(500)
+//   }
+// })
 
 export { router }
