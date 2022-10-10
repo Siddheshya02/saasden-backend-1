@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
   xero = new XeroClient({
     clientId: req.session.ems_clientID,
     clientSecret: req.session.ems_clientSecret,
-    redirectUris: [`${process.env.redirect_URI}`],
+    redirectUris: [`${process.env.redirect_URI}-xero`],
     scopes: 'profile email openid accounting.transactions accounting.settings offline_access accounting.contacts'.split(' '),
     state: 'returnPage=my-sweet-dashboard',
     httpTimeout: 3000
@@ -50,6 +50,7 @@ router.get('/', async (req, res) => {
 router.get('/callback', async (req, res) => {
   console.log('In Xero Callback route')
   try {
+    console.log(req.url)
     const tokenSet = await xero.apiCallback(req.url)
     req.session.ems_accessToken = tokenSet.access_token
     req.session.ems_IDToken = tokenSet.id_token

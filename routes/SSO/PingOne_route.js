@@ -23,6 +23,7 @@ router.post('/auth', async (req, res) => {
   }
 
   try {
+    console.log('PingOne Data received')
     await orgSchema.findOneAndUpdate(filter, update)
     res.sendStatus(200)
   } catch (error) {

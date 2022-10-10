@@ -70,6 +70,7 @@ async function getPingEmployees (domain, envID, accessToken) {
 }
 
 // Get List of users in the groups associated with an app
+//BUG: PingONE User details not fetched
 async function getUsers (domain, envID, accessToken, groupList) {
   const userList = []
   for (const group of groupList) {

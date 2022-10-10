@@ -12,10 +12,11 @@ import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 const router = express.Router()
 
 router.get('/refresh', async (req, res) => {
+  console.log(req.session.sso_name)
   const ssoName = req.session.sso_name
   const orgID = req.session.orgID
   const sso_creds = {
-    domain: req.session.sso_apiDomain,
+    domain: req.session.sso_domain,
     tenantID: req.session.sso_tenantID,
     accessToken: req.session.sso_accessToken,
     apiToken: req.session.sso_apiToken

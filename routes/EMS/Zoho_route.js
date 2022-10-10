@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
   url.searchParams.append('client_id', req.session.ems_clientID)
   url.searchParams.append('state', 'radomState=usedforSecuRity')
   url.searchParams.append('response_type', 'code')
-  url.searchParams.append('redirect_uri', `${process.env.redirect_URI}`)
+  url.searchParams.append('redirect_uri', `${process.env.redirect_URI}-zoho`)
   url.searchParams.append('access_type', 'offline')
   url.searchParams.append('prompt', 'consent')
   res.json(url.toString())
@@ -47,7 +47,7 @@ router.get('/callback', async (req, res) => {
     url.searchParams.append('code', req.query.code)
     url.searchParams.append('client_id', req.session.ems_clientID)
     url.searchParams.append('client_secret', req.session.ems_clientSecret)
-    url.searchParams.append('redirect_uri', `${process.env.redirect_URI}`)
+    url.searchParams.append('redirect_uri', `${process.env.redirect_URI}-zoho`)
     url.searchParams.append('grant_type', 'authorization_code')
     const tokenSet = await axios.post(url.toString(), {
       headers: {

@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
   try {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     req.session.sso_name = 'onelogin'
-    req.session.sso_apiDomain = orgData.ssoData.domain
+    req.session.sso_domain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
 
