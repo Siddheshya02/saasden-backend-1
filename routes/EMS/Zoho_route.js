@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
   req.session.ems_name = 'zoho'
   req.session.ems_clientID = orgData.emsData.clientID
   req.session.ems_clientSecret = orgData.emsData.clientSecret
-  req.session.tenantID = orgData.emsData.tenantID
+  req.session.ems_tenantID = orgData.emsData.tenantID
   const url = new URL('https://accounts.zoho.com/oauth/v2/auth')
   url.searchParams.append('scope', 'ZohoExpense.fullaccess.ALL')
   url.searchParams.append('client_id', req.session.ems_clientID)
