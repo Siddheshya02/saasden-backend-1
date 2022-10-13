@@ -1,13 +1,8 @@
-import { getEmps, getSubs, getNewToken as newPingOneToken } from '../../JS/SSO/PingONE/utils.js'
-
 import axios from 'axios'
 import base64 from 'nodejs-base64-converter'
 import express from 'express'
-import { isJwtExpired } from 'jwt-check-expiration'
-import { getNewToken as newXeroToken } from '../../JS/EMS/Xero/utils.js'
 import orgSchema from '../../models/organization.js'
 import url from 'url'
-import { verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 
 const router = express.Router()
 
@@ -50,50 +45,12 @@ router.get('/', async (req, res) => {
       }
     })
     req.session.sso_accessToken = tokenSet.data.access_token
+    console.log('Pingone access token recieved')
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)
   }
 })
-
-// router.get('/refreshData', async (req, res) => {
-//   // BUG: Untested
-//   // if (isJwtExpired(req.session.sso_accessToken)) {
-//   //   req.session.sso_accessToken = await newPingOneToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_tenantID)
-//   // }
-//   // if (req.session.ems_name === 'xero') {
-//   //   if (isJwtExpired(req.session.ems_accessToken)) {
-//   //     req.session.ems_accessToken = await newXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
-//   //   }
-//   // } else {
-//   //   req.session.ems_accessToken = await verifyZohoToken(req.session.ems_accessToken, req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
-//   // }
-//   console.log('Fetching PingOne Data')
-
-//   const sso_creds = {
-//     domain: req.session.sso_domain,
-//     tenantID: req.session.sso_tenantID,
-//     accessToken: req.session.sso_accessToken,
-//     apiToken: req.session.sso_apiToken
-//   }
-
-//   const ems_creds = {
-//     name: req.session.ems_name,
-//     domain: req.session.ems_domain,
-//     tenantID: req.session.ems_tenantID,
-//     accessToken: req.session.ems_accessToken,
-//     apiToken: req.session.ems_apiToken
-//   }
-
-//   try {
-//     await getSubs(req.session.orgID, sso_creds, ems_creds)
-//     await getEmps(req.session.orgID, sso_creds)
-//     res.sendStatus(200)
-//   } catch (error) {
-//     console.log(error)
-//     res.sendStatus(500)
-//   }
-// })
 
 export { router }

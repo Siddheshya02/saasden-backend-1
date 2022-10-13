@@ -70,7 +70,7 @@ async function getPingEmployees (domain, envID, accessToken) {
 }
 
 // Get List of users in the groups associated with an app
-//BUG: PingONE User details not fetched
+// BUG: PingONE User details not fetched
 async function getUsers (domain, envID, accessToken, groupList) {
   const userList = []
   for (const group of groupList) {
@@ -96,7 +96,6 @@ async function getUsers (domain, envID, accessToken, groupList) {
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
   let subList = []
-  console.log(sso_creds)
   const appList = await getPingApps(sso_creds.domain, sso_creds.tenantID, sso_creds.accessToken)
 
   for (const app of appList) {
