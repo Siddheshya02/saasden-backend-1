@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function verifyZohoToken (accessToken, refreshToken, clientID, clientSecret) {
+export async function verifyToken (accessToken) {
   const res = await axios.get('https://expense.zoho.com/api/v1/contacts', {
     headers: {
       'Content-type': 'application/x-www-form-urlencoded',
@@ -8,20 +8,23 @@ export async function verifyZohoToken (accessToken, refreshToken, clientID, clie
     }
   })
 
-  if (res.status === 401) { // If token is invalid
-    const url = new URL('https://accounts.zoho.in/oauth/v2/token')
-    url.searchParams.append('refresh_token', refreshToken)
-    url.searchParams.append('client_id', clientID)
-    url.searchParams.append('client_secret', clientSecret)
-    url.searchParams.append('redirect_uri', `${process.env.redirect_URI}`)
-    url.searchParams.append('grant_type', 'refres_token')
-    const tokenSet = await axios.post(url.toString(), {
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
-      }
-    })
-    return tokenSet.data.access_token
-  } else { return accessToken }
+  if (res.status === 401) { return false }
+  return true
+}
+
+export async function getNewToken (refreshToken, clientID, clientSecret) {
+  const url = new URL('https://accounts.zoho.in/oauth/v2/token')
+  url.searchParams.append('refresh_token', refreshToken)
+  url.searchParams.append('client_id', clientID)
+  url.searchParams.append('client_secret', clientSecret)
+  url.searchParams.append('redirect_uri', `${process.env.redirect_URI}`)
+  url.searchParams.append('grant_type', 'refres_token')
+  const tokenSet = await axios.post(url.toString(), {
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded'
+    }
+  })
+  return tokenSet.data.access_token
 }
 
 function getZohoOptions (orgId, accessToken, method, uri) {

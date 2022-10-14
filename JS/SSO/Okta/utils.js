@@ -4,6 +4,17 @@ import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
+// verify if the token is still active
+export async function verifyToken (domain, apiToken) {
+  const res = await axios.get(`https://${domain}/api/v1/iam/roles`, {
+    headers: {
+      Authorization: `SSWS ${apiToken}`
+    }
+  })
+  if (res.status !== 200) { return false }
+  return true
+}
+
 // get list of applications
 async function getApps (domain, apiToken) {
   const res = await axios.get(`https://${domain}/api/v1/apps`, {
@@ -35,16 +46,6 @@ async function getUsers (domain, apiToken) {
     apps: []
   }))
   return userList
-}
-
-export async function checkOktaToken (domain, apiToken) {
-  const res = await axios.get(`https://${domain}/api/v1/iam/roles`, {
-    headers: {
-      Authorization: `SSWS ${apiToken}`
-    }
-  })
-  if (res.status !== 200) { return false }
-  return true
 }
 
 // get app -> user mapping

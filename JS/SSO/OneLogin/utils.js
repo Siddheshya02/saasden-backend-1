@@ -1,9 +1,28 @@
 import axios from 'axios'
-import base64 from 'nodejs-base64-converter'
 import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
+
+// verify separately because the token is non-JWT
+export async function verifyToken (domain, accessToken) {
+  const res = await axios.get(`https://${domain}/api/2/api_authorizations`, {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  })
+  if (res.status === 401) { return false }
+  return true
+}
+
+export async function getNewToken (domain, clientID, clientSecret) {
+  const tokenSet = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
+    client_id: clientID,
+    client_secret: clientSecret,
+    grant_type: 'client_credentials'
+  }, {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  })
+  return tokenSet.data.access_token
+}
 
 // get list of apps used by the org
 async function getApps (domain, accessToken) {
@@ -37,24 +56,6 @@ async function getUserApps (userID, domain, accessToken) {
     }
   })
   return res.data
-}
-
-export async function verifyOneLoginToken (domain, clientID, clientSecret, accessToken) {
-  const res = await axios.get(`https://${domain}/api/2/api_authorizations`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  })
-  if (res.status === 401) {
-    const tokenSet = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
-      client_id: clientID,
-      client_secret: clientSecret,
-      grant_type: 'client_credentials'
-    }, {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    })
-    return tokenSet.data.access_token
-  } else { return accessToken }
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {

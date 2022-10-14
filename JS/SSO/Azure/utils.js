@@ -4,19 +4,17 @@ import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
-// get onelogin access token
+// Generate a new token if the previous token has expired
 export async function getNewToken (clientID, clientSecret, tenantId) {
-  const token = await axios.post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+  const tokenSet = await axios.post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
     new URLSearchParams({
       client_id: `${clientID}`,
       scope: 'https://graph.microsoft.com/.default',
       client_secret: `${clientSecret}`,
       grant_type: 'client_credentials'
     })
-  ).then(res => {
-    return res.data.access_token
-  })
-  return token
+  )
+  return tokenSet.data.accessToken
 }
 
 // get list of apps used by the org

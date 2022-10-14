@@ -6,6 +6,7 @@ import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 import url from 'url'
 
+// Generate a new token if the previous token has expired
 export async function getNewToken (domain, clientID, clientSecret, envID) {
   const client_creds = base64.encode(`${clientID}:${clientSecret}`)
   const params = new url.URLSearchParams({ grant_type: 'client_credentials' })

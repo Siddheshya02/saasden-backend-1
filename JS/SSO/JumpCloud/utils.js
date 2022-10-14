@@ -4,6 +4,19 @@ import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 
+// verify if the token is still active
+export async function verifyToken (apiToken) {
+  const res = await axios.get('https://console.jumpcloud.com/api/organizations', {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'x-api-key': `${apiToken}`
+    }
+  })
+  if (res.status !== 200) { return false }
+  return true
+}
+
 async function getApps (apiToken) {
   const res = await axios.get('https://console.jumpcloud.com/api/applications', {
     headers: {
@@ -78,18 +91,6 @@ async function getUserApps (userID, apiToken, appMap) {
     })
   }
   return appList
-}
-
-export async function checkJumpCloudToken (apiToken) {
-  const res = await axios.get('https://console.jumpcloud.com/api/organizations', {
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'x-api-key': `${apiToken}`
-    }
-  })
-  if (res.status !== 200) { return false }
-  return true
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
