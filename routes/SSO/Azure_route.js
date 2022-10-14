@@ -5,7 +5,6 @@ import orgSchema from '../../models/organization.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  req.session.orgID = 'org_ioaseunclsd'
   const filter = { ID: req.session.orgID }
   const update = {
     ssoData: {
@@ -14,9 +13,6 @@ router.post('/auth', async (req, res) => {
       tenantID: req.body.tenantID
     }
   }
-  req.session.sso_tenantID = req.body.tenantID
-  req.session.sso_clientID = req.body.clientID
-  req.session.sso_clientSecret = req.body.clientSecret
 
   try {
     await orgSchema.findOneAndUpdate(filter, update)

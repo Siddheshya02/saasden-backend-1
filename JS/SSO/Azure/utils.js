@@ -129,10 +129,10 @@ export async function getEmps (orgID, sso_creds) {
     }
     userList.push({
       id: emp.userId,
-      //   email: emp.email,
-      //   firstname: emp.firstname,
-      userName: emp.userName,
-      //   lastname: emp.lastname,
+      email: emp.email,
+      firstname: emp.firstname,
+      username: emp.userName,
+      lastname: emp.lastname,
       apps: userAppList
     })
   }
