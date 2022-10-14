@@ -51,7 +51,7 @@ export async function checkOktaToken (domain, apiToken) {
 export async function getSubs (orgID, sso_creds, ems_creds) {
   try {
     const appData = await getApps(sso_creds.domain, sso_creds.apiToken)
-    let subList = []
+    const subList = []
     for (const app of appData) {
       const userData = await axios.get(app[3], {
         headers: {
@@ -82,17 +82,26 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       })
     }
 
-    switch ((ems_creds.name).toLowerCase()) {
-      case 'xero':
-        subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
-        break
-      case 'zoho':
-        subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
-        break
+    let subData = {
+      subList: subList,
+      amtSaved: 0,
+      amtSpent: 0
     }
 
+    switch ((ems_creds.name).toLowerCase()) {
+      case 'xero':
+        subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
+        break
+      case 'zoho':
+        subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
+        break
+    }
     const filter = { ID: orgID }
-    const update = { apps: subList }
+    const update = {
+      apps: subList,
+      amtSpent: subData.amtSpent,
+      amtSaved: subData.amtSaved
+    }
     await subSchema.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')
   } catch (error) {

@@ -22,7 +22,9 @@ const subModel = new Schema({
     currentCost: Number,
     amountSaved: Number,
     dueDate: String
-  }]
+  }],
+  amtSaved: { type: Number },
+  amtSpent: { type: Number }
 })
 
 const subSchema = mongoose.model('subSchema', subModel)

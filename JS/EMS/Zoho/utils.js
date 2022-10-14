@@ -77,20 +77,21 @@ async function getExpense (reports, name, orgId, accessToken) {
 }
 
 // updated this function as  orgId is passed as arguement to the function
-export async function getZohoData (orgId, accessToken, subList) {
+export async function getZohoData (orgId, accessToken, subData) {
   const allExpenses = await getAllExpenseReports(orgId, accessToken)
+  const subList = subData.subList
   for (const sub of subList) {
     const expense = await getExpense(allExpenses, sub.name, orgId, accessToken)
-    if (!expense) {
-      continue
-    }
+    if (!expense) { continue }
     sub.emsID = expense.report_id
     sub.licences = expense.licences
     sub.currentCost = expense.currentCost
     const PerSubscription = expense.PerSubscription
     sub.amountSaved = sub.currentCost - sub.emps.length * PerSubscription
     sub.dueDate = expense.dueDate
+    subData.amtSaved += sub.amountSaved
+    subData.amtSpent += sub.currentCost
   }
   console.log('Zoho data saved successfully')
-  return subList
+  return subData
 }
