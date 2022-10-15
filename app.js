@@ -9,13 +9,11 @@ import dotenv from 'dotenv'
 import { router as emps } from './routes/dashboard/employee_route.js'
 import express from 'express'
 import { expressjwt } from 'express-jwt'
-import { fileURLToPath } from 'url'
 import { router as jumpcloud } from './routes/SSO/JumpCloud_route.js'
 import jwks from 'jwks-rsa'
 import mongoose from 'mongoose'
 import { router as okta } from './routes/SSO/Okta_route.js'
 import { router as onelogin } from './routes/SSO/OneLogin_route.js'
-import path from 'path'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import { router as refresh } from './routes/dashboard/refresh_route.js'
 import sessions from 'express-session'
@@ -25,12 +23,11 @@ import { router as zoho } from './routes/EMS/Zoho_route.js'
 
 dotenv.config()
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 const RedisStore = connectRedis(sessions)
 const redisClient = createClient({ legacyMode: true })
 const app = express()
 
+// Verify the Auth0 Token
 const jwtCheck = expressjwt({
   secret: jwks.expressJwtSecret({
     cache: true,
@@ -43,6 +40,7 @@ const jwtCheck = expressjwt({
   algorithms: ['RS256']
 })
 
+// Session Configuration, uses redis, need redis to run in local environment
 const sess_config = {
   secret: process.env.sessionSecret,
   resave: false,
@@ -51,11 +49,11 @@ const sess_config = {
   store: new RedisStore({
     host: process.env.REDIS_URI,
     port: process.env.REDIS_PORT,
-    client: redisClient,
-    ttl: 2592000 // 30 days validity
+    client: redisClient
   })
 }
 
+// The most troublesome part, always check before deployment
 const cors_config = {
   origin: ['https://login.xero.com', 'http://localhost:3000', 'http://127.0.0.1:3000', 'https://saasden.club'],
   methods: ['GET', 'POST', 'DELETE'],
@@ -83,19 +81,15 @@ mongoose.connect(process.env.MONGODB_URI, {
   }
 })
 
-// App configurations
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'))
-
-// Middleware
+// Middleware, order of middlewares is important check
 app.use(express.urlencoded({ extended: false }))
 app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-app.use(jwtCheck)
-app.use(handleErrors)
-app.use(setOrgName)
+app.use(jwtCheck) // check token first
+app.use(handleErrors) // throw errors if error found in the token
+app.use(setOrgName) // set the organization id in the session
 
 // SSO Routes
 app.use('/api/v1/okta', okta)
