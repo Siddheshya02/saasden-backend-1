@@ -2,7 +2,7 @@ import express from 'express'
 import subSchema from '../../models/subscription.js'
 const router = express.Router()
 
-router.get('/subs', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const subData = await subSchema.findOne({ ID: req.session.orgID })
     res.json(subData)

@@ -25,6 +25,7 @@ async function getTxData (tenantID, accessToken, sub) {
       }
     })
     const invoice = res.data.Invoices.pop()
+    if (invoice === undefined) { return }
     sub.licences = invoice.LineItems[0].Quantity
     sub.currentCost = invoice.Total
     sub.dueDate = invoice.DueDateString.substring(0, 10)
@@ -51,8 +52,10 @@ export async function getXeroData (tenantID, accessToken, subData) {
         if ((subList[i].name).toLowerCase() === (emsApp.Name).toLowerCase()) {
           subList[i].emsID = emsApp.ContactID
           subList[i] = await getTxData(tenantID, accessToken, subList[i])
-          subData.amtSaved += subList[i].amountSaved === undefined ? 0 : subList[i].amountSaved
-          subData.amtSpent += subList[i].currentCost === undefined ? 0 : subList[i].currentCost
+          if (subList[i] !== undefined) {
+            subData.amtSaved += subList[i].amountSaved === null ? 0 : subList[i].amountSaved
+            subData.amtSpent += subList[i].currentCost === null ? 0 : subList[i].currentCost
+          }
           break
         }
       }

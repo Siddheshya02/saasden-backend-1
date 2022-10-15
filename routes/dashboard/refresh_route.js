@@ -11,7 +11,7 @@ import { isJwtExpired } from 'jwt-check-expiration'
 
 const router = express.Router()
 
-router.get('/refresh', async (req, res) => {
+router.get('/', async (req, res) => {
   const ssoName = req.session.sso_name
   const orgID = req.session.orgID
   const sso_creds = {
@@ -36,48 +36,48 @@ router.get('/refresh', async (req, res) => {
 
   try {
     // Check EMS token validity
-    if (req.session.ems_name === 'xero') {
-      if (isJwtExpired(req.session.ems_accessToken)) {
-        req.session.ems_accessToken = await getNewXeroToken(req.session.ems_clientID, req.session.ems_clientSecret, req.session.ems_refreshToken)
+    if (ems_creds.name === 'xero') {
+      if (isJwtExpired(ems_creds.accessToken)) {
+        ems_creds.accessToken = await getNewXeroToken(ems_creds.clientID, ems_creds.clientSecret, ems_creds.refreshToken)
       }
     } else {
-      if (!verifyZohoToken(req.session.ems_accessToken)) {
-        req.session.ems_accessToken = await getNewZohoToken(req.session.ems_refreshToken, req.session.ems_clientID, req.session.ems_clientSecret)
+      if (!verifyZohoToken(ems_creds.accessToken, ems_creds.tenantID)) {
+        ems_creds.accessToken = await getNewZohoToken(ems_creds.refreshToken, ems_creds.clientID, ems_creds.clientSecret)
       }
     }
 
     switch (ssoName) {
       case 'okta':
-        if (!verifyOktaToken(req.session.sso_apiToken)) { res.send(`${process.env.domain}/okta/auth`).status(303) }
+        if (!verifyOktaToken(sso_creds.domain, sso_creds.apiToken)) { res.send(`${process.env.domain}/okta/auth`).status(303) }
         console.log('Fetching okta data')
         await getOktaSubs(orgID, sso_creds, ems_creds)
         await getOktaEmps(orgID, sso_creds)
         break
       case 'pingone':
-        if (isJwtExpired(req.session.sso_accessToken)) {
-          req.session.sso_accessToken = await getNewPingOneToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_tenantID)
+        if (isJwtExpired(sso_creds.accessToken)) {
+          sso_creds.accessToken = await getNewPingOneToken(sso_creds.domain, sso_creds.clientID, sso_creds.clientSecret, sso_creds.tenantID)
         }
         console.log('Fetching pingone data')
         await getPingOneSubs(orgID, sso_creds, ems_creds)
         await getPingOneEmps(orgID, sso_creds)
         break
       case 'onelogin':
-        if (!verifyOneLoginToken(req.session.sso_domain, req.session.sso_accessToken)) {
-          getNewOneLoginToken(req.session.sso_domain, req.session.sso_clientID, req.session.sso_clientSecret)
+        if (!verifyOneLoginToken(sso_creds.domain, sso_creds.accessToken)) {
+          getNewOneLoginToken(sso_creds.domain, sso_creds.clientID, sso_creds.clientSecret)
         }
         console.log('Fetching onelogin data')
         await getOneLoginSubs(orgID, sso_creds, ems_creds)
         await getOneLoginEmps(orgID, sso_creds)
         break
       case 'jumpcloud':
-        if (!verifyJumpCloudToken(req.session.sso_apiToken)) { res.send(`${process.env.domain}/jumpcloud/auth`).status(303) }
+        if (!verifyJumpCloudToken(sso_creds.apiToken)) { res.send(`${process.env.domain}/jumpcloud/auth`).status(303) }
         console.log('Fetching jumpcloud data')
         await getJumpCloudSubs(orgID, sso_creds, ems_creds)
         await getJumpCloudEmps(orgID, sso_creds)
         break
       case 'azure':
-        if (isJwtExpired(req.session.sso_accessToken)) {
-          req.session.sso_accessToken = await getNewAzureToken(req.session.sso_clientID, req.session.sso_clientSecret, req.session.sso_tenantID)
+        if (isJwtExpired(sso_creds.accessToken)) {
+          sso_creds.accessToken = await getNewAzureToken(sso_creds.clientID, sso_creds.clientSecret, sso_creds.tenantID)
         }
         console.log('Fetching azure data')
         await getAzureSubs(orgID, sso_creds, ems_creds)

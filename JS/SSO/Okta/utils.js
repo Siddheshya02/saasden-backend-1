@@ -17,35 +17,43 @@ export async function verifyToken (domain, apiToken) {
 
 // get list of applications
 async function getApps (domain, apiToken) {
-  const res = await axios.get(`https://${domain}/api/v1/apps`, {
-    headers: {
-      Authorization: `SSWS ${apiToken}`,
-      'Content-Type': 'application/json'
-    }
-  })
-  const appList = []
-  res.data.forEach(app => appList.push([app.id, app.label, app.status, app._links.users.href]))
-  return appList
+  try {
+    const res = await axios.get(`https://${domain}/api/v1/apps`, {
+      headers: {
+        Authorization: `SSWS ${apiToken}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    const appList = []
+    res.data.forEach(app => appList.push([app.id, app.label, app.status, app._links.users.href]))
+    return appList
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // get list of users
 async function getUsers (domain, apiToken) {
-  const res = await axios.get(`https://${domain}/api/v1/users`, {
-    headers: {
-      Authorization: `SSWS ${apiToken}`,
-      'Content-Type': 'application/json'
-    }
-  })
-  const userList = []
-  res.data.forEach(user => userList.push({
-    id: user.id,
-    email: user.profile.email,
-    firstname: user.profile.firstName,
-    lastname: user.profile.lastName,
-    username: user.profile.email,
-    apps: []
-  }))
-  return userList
+  try {
+    const res = await axios.get(`https://${domain}/api/v1/users`, {
+      headers: {
+        Authorization: `SSWS ${apiToken}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    const userList = []
+    res.data.forEach(user => userList.push({
+      id: user.id,
+      email: user.profile.email,
+      firstname: user.profile.firstName,
+      lastname: user.profile.lastName,
+      username: user.profile.email,
+      apps: []
+    }))
+    return userList
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // get app -> user mapping

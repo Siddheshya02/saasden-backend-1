@@ -59,7 +59,7 @@ async function getUserApps (userID, domain, accessToken) {
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
-  let subList = []
+  const subList = []
   const appList = await getApps(sso_creds.domain, sso_creds.accessToken)
 
   for (const app of appList) {
@@ -93,17 +93,26 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     })
   }
 
-  switch ((ems_creds.name).toLowerCase()) {
-    case 'xero':
-      subList = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subList)
-      break
-    case 'zoho':
-      subList = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subList)
-      break
+  let subData = {
+    subList: subList,
+    amtSaved: 0,
+    amtSpent: 0
   }
 
+  switch ((ems_creds.name).toLowerCase()) {
+    case 'xero':
+      subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
+      break
+    case 'zoho':
+      subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
+      break
+  }
   const filter = { ID: orgID }
-  const update = { apps: subList }
+  const update = {
+    apps: subList,
+    amtSpent: subData.amtSpent,
+    amtSaved: subData.amtSaved
+  }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin subscription data updated successfully')
 }

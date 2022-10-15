@@ -1,3 +1,5 @@
+import { checkStatus, handleErrors, setOrgName } from './middleware/middleware.js'
+
 import { router as azure } from './routes/SSO/Azure_route.js'
 import connectRedis from 'connect-redis'
 import cookieParser from 'cookie-parser'
@@ -17,7 +19,6 @@ import path from 'path'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import { router as refresh } from './routes/dashboard/refresh_route.js'
 import sessions from 'express-session'
-import { setOrgName } from './middleware/middleware.js'
 import { router as subs } from './routes/dashboard/subscription_route.js'
 import { router as xero } from './routes/EMS/Xero_route.js'
 import { router as zoho } from './routes/EMS/Zoho_route.js'
@@ -56,7 +57,7 @@ const sess_config = {
 }
 
 const cors_config = {
-  origin: ['https://login.xero.com', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['https://login.xero.com', 'http://localhost:3000', 'http://127.0.0.1:3000', 'https://saasden.club'],
   methods: ['GET', 'POST', 'DELETE'],
   credentials: true
 }
@@ -93,6 +94,7 @@ app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
 app.use(jwtCheck)
+app.use(handleErrors)
 app.use(setOrgName)
 
 // SSO Routes
@@ -107,9 +109,9 @@ app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
 // Dashboard Routes
-app.use('/api/v1', refresh)
-app.use('/api/v1', subs)
-app.use('/api/v1', emps)
+app.use('/api/v1/refresh', checkStatus, refresh)
+app.use('/api/v1/subs', checkStatus, subs)
+app.use('/api/v1/emps', checkStatus, emps)
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
