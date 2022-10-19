@@ -28,12 +28,6 @@ router.get('/', async (req, res) => {
     apiToken: req.session.ems_apiToken
   }
 
-  console.log('SSO Creds: ')
-  console.log(sso_creds)
-
-  console.log('EMS Creds: ')
-  console.log(ems_creds)
-
   try {
     // Check EMS token validity
     if (ems_creds.name === 'xero') {
