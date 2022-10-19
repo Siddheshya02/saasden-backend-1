@@ -12,10 +12,8 @@ export function checkStatus (req, res, next) {
   if (req.session.sso_name && req.session.ems_name) {
     next()
   } else if (!req.session.sso_name) {
-    res.send('sso').status(404)
-  } else {
-    res.send('ems').status(404)
-  }
+    res.sendStatus(420)
+  } else { res.sendstatus(421) }
 }
 
 // NOTE: Add your errors here
