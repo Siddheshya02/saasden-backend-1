@@ -89,6 +89,7 @@ async function getExpense (reports, name, orgId, accessToken) {
     const data = await getExpenseReport(uri, options)
     const e = data.expense_report.expenses
     licences += e.length
+    console.log(licences)
     currentCost += e[0].total
     const dueDate = data.expense_report.due_date
 
