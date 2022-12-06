@@ -131,6 +131,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     amtSpent: subData.amtSpent,
     amtSaved: subData.amtSaved
   }
+  console.log(update)
   await subSchema.findOneAndUpdate(filter, update)
   console.log('Jumpcloud subscription data updated successfully')
   return subList
