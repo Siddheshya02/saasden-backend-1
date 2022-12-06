@@ -89,7 +89,6 @@ async function getExpense (reports, name, orgId, accessToken) {
     const data = await getExpenseReport(uri, options)
     const e = data.expense_report.expenses
     licences += e.length
-    console.log(name+" "+licences)
     currentCost += e[0].total
     const dueDate = data.expense_report.due_date
 
@@ -117,6 +116,7 @@ export async function getZohoData (orgId, accessToken, subData) {
       subData.amtSaved += sub.amountSaved == null ? 0 : sub.amountSaved
       subData.amtSpent += sub.currentCost == null ? 0 : sub.currentCost
     }
+    console.log(subData[0])
     console.log('Zoho data saved successfully')
     return subData
   } catch (error) {
