@@ -3,7 +3,6 @@ import jwt_decode from 'jwt-decode'
 // set organizationID in the session
 export function setOrgName (req, res, next) {
   const auth0_tokenSet = jwt_decode(req.get('Authorization'))
-  console.log(auth0_tokenSet)
   req.session.orgID = auth0_tokenSet.org_id
   next()
 }
