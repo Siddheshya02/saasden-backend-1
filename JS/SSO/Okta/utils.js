@@ -3,7 +3,7 @@ import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
-
+import groupSchema from '../../../models/groups.js'
 // verify if the token is still active
 export async function verifyToken (domain, apiToken) {
   const res = await axios.get(`https://${domain}/api/v1/iam/roles`, {
@@ -143,4 +143,62 @@ export async function getEmps (orgID, sso_creds) {
   } catch (error) {
     console.log(error)
   }
+}
+// fetching all groups data
+// fetching all users and apps of each group
+// delete a complete group
+// delete a user or an app from the group
+export async function getGroups (orgID, sso_creds) {
+  const groups = []
+  const r = await axios.get(`https://${sso_creds.domain}/api/v1/groups?limit=200`, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `SSWS ${sso_creds.apiToken}`
+    }
+  })
+  const response = r.data
+  for (let i = 0; i < response.length; i++) {
+    const name = response[i].profile.name
+    const { id } = response[i]
+    const emps = []
+    const e = await axios.get(`https://${sso_creds.domain}/api/v1/groups/${id}/users`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `SSWS ${sso_creds.apiToken}`
+      }
+    })
+    const res = e.data
+    for (let j = 0; j < res.length; j++) {
+      const { id } = res[j]
+      const email = res[j].profile.email
+      const fname = res[j].profile.firstName
+      const lname = res[j].profile.lastName
+      const userName = null
+      const emp = { id: id, email: email, firstname: fname, username: userName, lastname: lname }
+      emps.push(emp)
+    }
+    const p = await axios.get(`https://${sso_creds.domain}/api/v1/groups/${id}/apps`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `SSWS ${sso_creds.apiToken}`
+      }
+    })
+    const resp = p.data
+    const apps = []
+    for (let k = 0; k < resp.length; k++) {
+      const { id, label } = resp[k]
+      const app = { id: id, name: label }
+      console.log(app)
+      apps.push(app)
+    }
+    const group = { name: name, groupId: id, emps: emps, apps: apps }
+    groups.push(group)
+  }
+  const filter = { ID: orgID }
+  const update = { groups: groups }
+  await groupSchema.findOneAndUpdate(filter, update)
+  console.log('Okta group data updated successfully')
 }

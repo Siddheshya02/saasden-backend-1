@@ -29,13 +29,15 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
+    req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     req.session.sso_name = 'pingone'
     req.session.sso_domain = orgData.ssoData.domain
     req.session.sso_clientID = orgData.ssoData.clientID
     req.session.sso_clientSecret = orgData.ssoData.clientSecret
     req.session.sso_tenantID = orgData.ssoData.tenantID
-
+    // console.log(req.session)
+    console.log(orgData)
     const client_creds = base64.encode(`${orgData.ssoData.clientID}:${orgData.ssoData.clientSecret}`)
     const params = new url.URLSearchParams({ grant_type: 'client_credentials' })
     const tokenSet = await axios.post(`https://auth.${req.session.sso_domain}/${req.session.sso_tenantID}/as/token`, params.toString(), {

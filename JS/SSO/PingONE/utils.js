@@ -172,3 +172,36 @@ export async function getEmps (orgID, sso_creds) {
   await empSchema.findOneAndUpdate(filter, update)
   console.log('PingOne Emp data saved successfully')
 }
+export async function getGroups(orgID, sso_creds)
+{
+  let gs=await axios.get(`https://api.${sso_creds.domain}/v1/environments/${sso_creds.tenantID}/groups`, {
+    headers: {
+    Authorization: `Bearer ${sso_creds.accessToken}`
+    }
+  })
+  gs=gs.data._embedded.groups
+  const groups=[]
+  for(let i=0;i<gs.length;i++)
+  {
+    const {name,id}=gs[i]
+    let us=await axios.get(`https://api.${sso_creds.domain}/v1/environments/${sso_creds.tenantID}/users?filter=memberOfGroups[id eq "${id}"]`,{
+      headers: {
+        Authorization: `Bearer ${sso_creds.accessToken}`
+        }
+    })
+    us=us.data._embedded.users
+    const emps=[]
+    for(let i=0;i<us.length;i++)
+    {
+      const userId=us[i].id
+      const userName=us[i].username
+      const email=us[i].email
+      const fname=us[i].name.given
+      const lname=us[i].name.family
+      const emp={id:userId,email:email,firstname:fname,lastname:lname,username:userName}
+      emps.push(emp)
+    } 
+     
+  }
+  
+}

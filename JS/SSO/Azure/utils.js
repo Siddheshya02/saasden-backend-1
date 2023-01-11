@@ -3,7 +3,7 @@ import empSchema from '../../../models/employee.js'
 import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
-
+import groupSchema from '../../../models/groups.js'
 // Generate a new token if the previous token has expired
 export async function getNewToken (clientID, clientSecret, tenantId) {
   const tokenSet = await axios.post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
@@ -148,4 +148,76 @@ export async function getEmps (orgID, sso_creds) {
   const update = { emps: userList }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')
+}
+// fetching azure group data
+export async function getGroups (orgID, sso_creds) {
+  const groups = []
+  const response = await axios.get(`https://graph.microsoft.com/beta/groups`, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `bearer ${sso_creds.accessToken}`
+    }
+  }).then(response => {
+    return response.data.value
+  })
+    .catch(error => {
+      console.error('There was an error!', error)
+    })
+  for (let i = 0; i < response.length; i++) {
+    const name = response[i].displayName
+    const { id } = response[i]
+    const emps = []
+    const res = await axios.get(`https://graph.microsoft.com/v1.0/groups/${id}/members`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${sso_creds.accessToken}`
+      }
+    }).then(res => {
+    // console.log(res.data);
+      return res.data.value
+    })
+      .catch(error => {
+      // element.parentElement.innerHTML = `Error: ${error.message}`;
+        console.error('There was an error!', error)
+      })
+    for (let j = 0; j < res.length; j++) {
+      const {id}=res[j]
+      const email=res[j].userPrincipalName
+      const fname=res[j].givenName
+      const lname=res[j].surname
+      const userName=null
+      const emp = { id: id, email: email, firstname: fname, username: userName, lastname: lname }
+      emps.push(emp)
+    }
+    const resp = await axios.get(`https://graph.microsoft.com/beta/groups/${id}/members`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${sso_creds.accessToken}`
+      }
+    }).then(res => {
+      return res.data.value
+    })
+      .catch(error => {
+        console.error('There was an error!', error)
+      })
+    const apps = []
+    for (let k=0;k<resp.length;k++){
+      if(resp[k].appId){
+      const {appId}=resp[k]
+     const appName=resp[k].appDisplayName
+      const app={id:appId,name:appName}
+      apps.push(app);
+      }
+   }
+    const group = { name: name, groupId: id, emps: emps, apps: apps }
+    groups.push(group)
+  }
+  console.log(groups)
+  const filter = { ID: orgID }
+  const update = { groups: groups }
+  await groupSchema.findOneAndUpdate(filter, update)
+  console.log('Azure group data updated successfully')
 }
