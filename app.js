@@ -7,6 +7,7 @@ import cors from 'cors'
 import { createClient } from 'redis'
 import dotenv from 'dotenv'
 import { router as emps } from './routes/dashboard/employee_route.js'
+import { router as group } from './routes/dashboard/group_route.js'
 import express from 'express'
 import { expressjwt } from 'express-jwt'
 import { router as jumpcloud } from './routes/SSO/JumpCloud_route.js'
@@ -106,6 +107,7 @@ app.use('/api/v1/zoho', zoho)
 app.use('/api/v1/refresh', refresh) // add checkStatus afterwards
 app.use('/api/v1/subs', subs) // add checkStatus afterwards
 app.use('/api/v1/emps', emps) // add checkStatus afterwards
+app.use('/api/v1/groups', group)
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
