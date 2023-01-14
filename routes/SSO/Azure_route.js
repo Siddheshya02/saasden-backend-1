@@ -26,7 +26,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     req.session.sso_name = 'azure'
     req.session.sso_tenantID = orgData.ssoData.tenantID
@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
         grant_type: 'client_credentials'
       })
     ).then(res => { return res.data }).catch(res => console.log(res))
-    //console.log(tokenSet)
+    // console.log(tokenSet)
     req.session.sso_accessToken = tokenSet.access_token // access token
     console.log('Azure Access Token recieved')
     res.sendStatus(200)
