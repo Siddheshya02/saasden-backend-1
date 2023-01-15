@@ -104,10 +104,10 @@ app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
 // Dashboard Routes
-app.use('/api/v1/refresh', refresh) // add checkStatus afterwards
-app.use('/api/v1/subs', subs) // add checkStatus afterwards
-app.use('/api/v1/emps', emps) // add checkStatus afterwards
-app.use('/api/v1/groups', group)
+app.use('/api/v1/refresh', checkStatus, refresh) // add checkStatus afterwards
+app.use('/api/v1/subs', checkStatus, subs) // add checkStatus afterwards
+app.use('/api/v1/emps', checkStatus, emps) // add checkStatus afterwards
+app.use('/api/v1/groups', checkStatus, group)
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
