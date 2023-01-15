@@ -13,7 +13,7 @@ export function checkStatus (req, res, next) {
     next()
   } else if (!req.session.sso_name) {
     res.sendStatus(420)
-  } else { res.sendstatus(421) }
+  } else { res.sendStatus(421) }
 }
 
 // NOTE: Add your errors here
