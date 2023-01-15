@@ -9,11 +9,14 @@ export function setOrgName (req, res, next) {
 
 // Check if ems or sso creds are present or not
 export function checkStatus (req, res, next) {
+  
+  console.log(req.session);
   if (req.session.sso_name && req.session.ems_name) {
     next()
   } else if (!req.session.sso_name) {
     res.sendStatus(420)
   } else { res.sendStatus(421) }
+  
 }
 
 // NOTE: Add your errors here
