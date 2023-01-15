@@ -16,6 +16,7 @@ router.post('/auth', async (req, res) => {
   req.session.ems_accessToken = '1000.88a2f91899a66a23e480f9a0bc0673ab.6afafecd85df4d49a46dd8fb97e0b220'
   req.session.ems_tenantID = '60017656360'
   req.session.ems_name = 'zoho'
+  console.log(req.session)
   try {
     await orgSchema.findOneAndUpdate(filter, update)
     res.sendStatus(200)
@@ -41,7 +42,7 @@ router.get('/', async (req, res) => {
   // url.searchParams.append('access_type', 'offline')
   // url.searchParams.append('prompt', 'consent')
   // res.json(url.toString())
-  res.redirect('/callback')
+  res.send(' kuch ').status(200)
 })
 
 router.get('/callback', async (req, res) => {
