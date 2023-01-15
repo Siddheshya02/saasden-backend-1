@@ -41,6 +41,7 @@ router.get('/', async (req, res) => {
     })
     req.session.sso_accessToken = tokenSet.data.access_token // access token
     req.session.sso_refreshToken = tokenSet.data.refresh_token // refresh token
+    console.log(req.session);
     console.log('One login access token recieved')
     res.sendStatus(200)
   } catch (error) {
