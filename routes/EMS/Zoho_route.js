@@ -38,6 +38,7 @@ router.get('/', async (req, res) => {
   url.searchParams.append('redirect_uri', `${process.env.redirect_URI}-zoho`)
   url.searchParams.append('access_type', 'offline')
   url.searchParams.append('prompt', 'consent')
+  console.log(req.session)
   temp = req.session
   res.json(url.toString())
 })
