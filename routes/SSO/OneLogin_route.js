@@ -26,7 +26,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     req.session.sso_name = 'onelogin'
     req.session.sso_domain = orgData.ssoData.domain
