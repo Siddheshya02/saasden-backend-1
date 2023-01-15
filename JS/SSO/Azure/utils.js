@@ -152,7 +152,7 @@ export async function getEmps (orgID, sso_creds) {
 // fetching azure group data
 export async function getGroups (orgID, sso_creds) {
   const groups = []
-  const response = await axios.get(`https://graph.microsoft.com/beta/groups`, {
+  const response = await axios.get('https://graph.microsoft.com/beta/groups', {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -183,11 +183,11 @@ export async function getGroups (orgID, sso_creds) {
         console.error('There was an error!', error)
       })
     for (let j = 0; j < res.length; j++) {
-      const {id}=res[j]
-      const email=res[j].userPrincipalName
-      const fname=res[j].givenName
-      const lname=res[j].surname
-      const userName=null
+      const { id } = res[j]
+      const email = res[j].userPrincipalName
+      const fname = res[j].givenName
+      const lname = res[j].surname
+      const userName = null
       const emp = { id: id, email: email, firstname: fname, username: userName, lastname: lname }
       emps.push(emp)
     }
@@ -204,14 +204,14 @@ export async function getGroups (orgID, sso_creds) {
         console.error('There was an error!', error)
       })
     const apps = []
-    for (let k=0;k<resp.length;k++){
-      if(resp[k].appId){
-      const {appId}=resp[k]
-     const appName=resp[k].appDisplayName
-      const app={id:appId,name:appName}
-      apps.push(app);
+    for (let k = 0; k < resp.length; k++) {
+      if (resp[k].appId) {
+        const { appId } = resp[k]
+        const appName = resp[k].appDisplayName
+        const app = { id: appId, name: appName }
+        apps.push(app)
       }
-   }
+    }
     const group = { name: name, groupId: id, emps: emps, apps: apps }
     groups.push(group)
   }

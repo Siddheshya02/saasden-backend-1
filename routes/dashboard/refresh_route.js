@@ -43,8 +43,8 @@ router.get('/', async (req, res) => {
       case 'okta':
         if (!verifyOktaToken(sso_creds.domain, sso_creds.apiToken)) { res.send(`${process.env.domain}/okta/auth`).status(303) }
         console.log('Fetching okta data')
-        // await getOktaSubs(orgID, sso_creds, ems_creds)
-        // await getOktaEmps(orgID, sso_creds)
+        await getOktaSubs(orgID, sso_creds, ems_creds)
+        await getOktaEmps(orgID, sso_creds)
         await getOktaGroups(orgID, sso_creds)
         break
       case 'pingone':
@@ -52,8 +52,8 @@ router.get('/', async (req, res) => {
           sso_creds.accessToken = await getNewPingOneToken(sso_creds.domain, sso_creds.clientID, sso_creds.clientSecret, sso_creds.tenantID)
         }
         console.log('Fetching pingone data')
-        // await getPingOneSubs(orgID, sso_creds, ems_creds)
-        // await getPingOneEmps(orgID, sso_creds)
+        await getPingOneSubs(orgID, sso_creds, ems_creds)
+        await getPingOneEmps(orgID, sso_creds)
         await getPingOneGroups(orgID, sso_creds)
         break
       case 'onelogin':
@@ -61,15 +61,15 @@ router.get('/', async (req, res) => {
           getNewOneLoginToken(sso_creds.domain, sso_creds.clientID, sso_creds.clientSecret)
         }
         console.log('Fetching onelogin data')
-        // await getOneLoginSubs(orgID, sso_creds, ems_creds)
-        // await getOneLoginEmps(orgID, sso_creds)
+        await getOneLoginSubs(orgID, sso_creds, ems_creds)
+        await getOneLoginEmps(orgID, sso_creds)
         await getOneLoginGroups(orgID, sso_creds)
         break
       case 'jumpcloud':
         if (!verifyJumpCloudToken(sso_creds.apiToken)) { res.send(`${process.env.domain}/jumpcloud/auth`).status(303) }
         console.log('Fetching jumpcloud data')
-        // await getJumpCloudSubs(orgID, sso_creds, ems_creds)
-        // await getJumpCloudEmps(orgID, sso_creds)
+        await getJumpCloudSubs(orgID, sso_creds, ems_creds)
+        await getJumpCloudEmps(orgID, sso_creds)
         await getJumpCloudGroups(orgID, sso_creds)
         break
       case 'azure':
@@ -77,8 +77,8 @@ router.get('/', async (req, res) => {
           sso_creds.accessToken = await getNewAzureToken(sso_creds.clientID, sso_creds.clientSecret, sso_creds.tenantID)
         }
         console.log('Fetching azure data')
-        // await getAzureSubs(orgID, sso_creds, ems_creds)
-        // await getAzureEmps(orgID, sso_creds)
+        await getAzureSubs(orgID, sso_creds, ems_creds)
+        await getAzureEmps(orgID, sso_creds)
         await getAzureGroups(orgID, sso_creds)
         break
     }
