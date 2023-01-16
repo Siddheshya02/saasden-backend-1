@@ -5,6 +5,7 @@ const router = express.Router()
 let temp
 // To be called only 1 time
 router.post('/auth', async (req, res) => {
+  console.log(req.session)
   const filter = { ID: req.session.orgID }
   const update = {
     emsData: {
