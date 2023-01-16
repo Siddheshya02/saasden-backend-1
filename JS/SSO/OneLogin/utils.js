@@ -98,7 +98,6 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     amtSaved: 0,
     amtSpent: 0
   }
-
   switch ((ems_creds.name).toLowerCase()) {
     case 'xero':
       subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
