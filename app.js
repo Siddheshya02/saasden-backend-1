@@ -1,4 +1,4 @@
-import { checkStatus, handleErrors, setOrgName, setSSOData } from './middleware/middleware.js'
+import { checkStatus, handleErrors, setOrgName } from './middleware/middleware.js'
 
 import { router as azure } from './routes/SSO/Azure_route.js'
 import connectRedis from 'connect-redis'
@@ -91,7 +91,7 @@ app.use(express.json())
 app.use(jwtCheck) // check tok en first comment if
 // app.use(handleErrors) // throw errors if error found in the token
 app.use(setOrgName) // set the organization id in the session
-app.use(setSSOData)
+
 // SSO Routes
 app.use('/api/v1/okta', okta)
 app.use('/api/v1/azure', azure)
