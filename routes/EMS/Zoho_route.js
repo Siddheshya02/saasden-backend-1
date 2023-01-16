@@ -25,6 +25,8 @@ router.post('/auth', async (req, res) => {
 
 // Send Link to Login
 router.get('/', async (req, res) => {
+  console.log('in code route')
+  console.log(req.session)
   const orgData = await orgSchema.findOne({ ID: req.session.orgID })
   req.session.ems_name = 'zoho'
   req.session.ems_clientID = orgData.emsData.clientID
