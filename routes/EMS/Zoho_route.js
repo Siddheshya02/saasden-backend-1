@@ -57,8 +57,8 @@ router.get('/callback', async (req, res) => {
         'Content-type': 'application/x-www-form-urlencoded'
       }
     })
+    console.log(temp)
     temp.ems_accessToken = tokenSet.data.access_token
-
     temp.ems_refreshToken = tokenSet.data.refresh_token
     req.session = temp
     console.log(req.session)
