@@ -5,7 +5,6 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const subData = await subSchema.findOne({ ID: req.session.orgID })
-    
     res.json(subData)
   } catch (error) {
     console.log(error)

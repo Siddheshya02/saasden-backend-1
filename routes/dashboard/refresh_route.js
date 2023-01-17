@@ -71,7 +71,7 @@ router.get('/', async (req, res) => {
         await getJumpCloudSubs(orgID, sso_creds, ems_creds)
         await getJumpCloudEmps(orgID, sso_creds)
         await getJumpCloudGroups(orgID, sso_creds)
-        await getScriptTags('https://shobitam.com/')
+        await getScriptTags(orgID, 'https://shobitam.com/')
         break
       case 'azure':
         if (isJwtExpired(sso_creds.accessToken)) {
