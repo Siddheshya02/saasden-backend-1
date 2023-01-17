@@ -1,6 +1,6 @@
 
 import subSchema from '../../../models/subscription.js';
-const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer';
 
 export async function getScriptTags(url) {
     const browser = await puppeteer.launch();
