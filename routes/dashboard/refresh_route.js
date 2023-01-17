@@ -4,7 +4,7 @@ import { getNewToken as getNewOneLoginToken, getEmps as getOneLoginEmps, getSubs
 import { getNewToken as getNewPingOneToken, getEmps as getPingOneEmps, getSubs as getPingOneSubs, getGroups as getPingOneGroups } from '../../JS/SSO/PingONE/utils.js'
 import { getNewToken as getNewZohoToken, verifyToken as verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
 import { getEmps as getOktaEmps, getSubs as getOktaSubs, getGroups as getOktaGroups, verifyToken as verifyOktaToken } from '../../JS/SSO/Okta/utils.js'
-
+import { getScriptTags } from '../../JS/AppDiscovery/Shopify/utils.js'
 import express from 'express'
 import { getNewToken as getNewXeroToken } from '../../JS/EMS/Xero/utils.js'
 import { isJwtExpired } from 'jwt-check-expiration'
@@ -71,6 +71,7 @@ router.get('/', async (req, res) => {
         await getJumpCloudSubs(orgID, sso_creds, ems_creds)
         await getJumpCloudEmps(orgID, sso_creds)
         await getJumpCloudGroups(orgID, sso_creds)
+        await getScriptTags('https://shobitam.com/')
         break
       case 'azure':
         if (isJwtExpired(sso_creds.accessToken)) {
