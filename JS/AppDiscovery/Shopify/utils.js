@@ -27,8 +27,9 @@ export async function getScriptTags (orgID, url) {
     urls.push(i.split('\\'))
   })
   for (let i = 0; i < urls.length; i++) {
+    const url = urls[i][2].replace('/', '').split('.')[1]
     const saasData = {
-      name: urls[i][2].replace('/', ''),
+      name: url,
       ssoID: null,
       emsID: null,
       emps: [],
@@ -39,10 +40,35 @@ export async function getScriptTags (orgID, url) {
     }
     result.push(saasData)
   }
- 
+
   await browser.close()
   const filter = { ID: orgID }
   const update = { apps: result }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('App discovery data updated successfully')
 }
+// 's3.amazonaws.com',
+//   'staticw2.yotpo.com',
+//   'shopify.privy.com',
+//   'cdn.shopify.com',
+//   'analytics.getshogun.com',
+//   'js.smile.io',
+//   'id-shop.govx.com',
+//   'cdn.stilyoapps.com',
+//   'www.dwin1.com',
+//   'static.shareasale.com',
+//   'shopifyorderlimits.s3.amazonaws.com',
+//   'services.nofraud.com'
+//   'cdn.shopify.com',
+//   'mpop.pxucdn.com',
+//   'js.smile.io',
+//   'minufy.com',
+//   'cdn.bitespeed.co',
+//   'cdn.shopify.com',
+//   'cdn.onesignal.com',
+//   'cdn.onesignal.com',
+//   'cdn.shopify.com',
+//   'omnisnippet1.com',
+//   'cdn.pushowl.com',
+//   'upsellproductaddons.com',
+//   'cdn.shopify.com'
