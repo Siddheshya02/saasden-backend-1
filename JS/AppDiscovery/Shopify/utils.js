@@ -33,6 +33,16 @@ export async function getScriptTags (orgID, url) {
     } else {
       url = url[0]
     }
+    let found = false
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].name == url) {
+        found = true
+        break
+      }
+    }
+    if (found) {
+      continue
+    }
     const saasData = {
       name: url,
       ssoID: null,
@@ -45,7 +55,6 @@ export async function getScriptTags (orgID, url) {
     }
     result.push(saasData)
   }
-
   await browser.close()
   const filter = { ID: orgID }
   const res = await subSchema.findOne(filter)
