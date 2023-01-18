@@ -27,7 +27,12 @@ export async function getScriptTags (orgID, url) {
     urls.push(i.split('\\'))
   })
   for (let i = 0; i < urls.length; i++) {
-    const url = urls[i][2].replace('/', '').split('.')[1]
+    let url = urls[i][2].replace('/', '').split('.')
+    if (url.length > 2) {
+      url = url[1]
+    } else {
+      url = url[0]
+    }
     const saasData = {
       name: url,
       ssoID: null,
