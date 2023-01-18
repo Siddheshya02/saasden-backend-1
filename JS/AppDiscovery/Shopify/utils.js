@@ -39,10 +39,10 @@ export async function getScriptTags (orgID, url) {
     }
     result.push(saasData)
   }
-  console.log(result)
+ 
   await browser.close()
   const filter = { ID: orgID }
-  // const update = { apps: result }
-  // await subSchema.findOneAndUpdate(filter, update)
+  const update = { apps: result }
+  await subSchema.findOneAndUpdate(filter, update)
   console.log('App discovery data updated successfully')
 }
