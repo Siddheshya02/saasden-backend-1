@@ -29,10 +29,10 @@ export async function getScriptTags (orgID, url) {
   for (let i = 0; i < urls.length; i++) {
     result.push(urls[i][2].replace('/', ''))
   }
-  // console.log(result)
+  console.log(result)
   await browser.close()
   const filter = { ID: orgID }
-  const update = { apps: result }
-  await subSchema.findOneAndUpdate(filter, update)
+  // const update = { apps: result }
+  // await subSchema.findOneAndUpdate(filter, update)
   console.log('App discovery data updated successfully')
 }
