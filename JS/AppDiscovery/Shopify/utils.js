@@ -48,9 +48,9 @@ export async function getScriptTags (orgID, url) {
 
   await browser.close()
   const filter = { ID: orgID }
-  const apps = await subSchema.findOne(filter)
-  console.log('These are previuos apps', apps)
-  // apps.concat(result)
+  const res = await subSchema.findOne(filter)
+  const apps = res.apps
+  apps.concat(result)
   const update = { apps: apps }
   await subSchema.findOneAndUpdate(filter, update)
   console.log('App discovery data updated successfully')
