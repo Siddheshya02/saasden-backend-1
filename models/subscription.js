@@ -9,9 +9,9 @@ const subModel = new Schema({
   },
   apps: [{
     name: String,
-    ssoID: String,
+    sso: [{ id: String, name: String }],
     emsID: String,
-    emps: [{
+    emps: [{ // single instance
       id: String,
       email: String,
       firstname: String,

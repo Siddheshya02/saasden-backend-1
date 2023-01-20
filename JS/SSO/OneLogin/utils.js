@@ -5,9 +5,9 @@ import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 import groupSchema from '../../../models/groups.js'
 // verify separately because the token is non-JWT
-export async function verifyToken (domain, accessToken) {
+export async function verifyToken (domain, access_token) {
   const res = await axios.get(`https://${domain}/api/2/api_authorizations`, {
-    headers: { Authorization: `Bearer ${accessToken}` }
+    headers: { Authorization: `Bearer ${access_token}` }
   })
   if (res.status === 401) { return false }
   return true
@@ -25,10 +25,10 @@ export async function getNewToken (domain, clientID, clientSecret) {
 }
 
 // get list of apps used by the org
-async function getApps (domain, accessToken) {
+async function getApps (domain, access_token) {
   const res = await axios.get(`https://${domain}/api/2/apps`, {
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${access_token}`
     }
   })
   const apps = res.data
@@ -39,33 +39,35 @@ async function getApps (domain, accessToken) {
 }
 
 // get list of users in the org
-async function getUsers (domain, accessToken) {
+async function getUsers (domain, access_token) {
   const res = await axios.get(`https://${domain}/api/2/users`, {
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${access_token}`
     }
   })
   return res.data
 }
 
 // get apps used by a user
-async function getUserApps (userID, domain, accessToken) {
+async function getUserApps (userID, domain, access_token) {
   const res = await axios.get(`https://${domain}/api/2/users/${userID}/apps`, {
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${access_token}`
     }
   })
   return res.data
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
-  const subList = []
-  const appList = await getApps(sso_creds.domain, sso_creds.accessToken)
+  const filter = { ID: orgID }
+  const subsData = await subSchema.findOne(filter)
+  const subList = subsData.apps
+  const appList = await getApps(sso_creds.domain, sso_creds.access_token)
 
   for (const app of appList) {
     const res = await axios.get(`https://${sso_creds.domain}/api/2/apps/${app.id}/users`, {
       headers: {
-        Authorization: `Bearer ${sso_creds.accessToken}`
+        Authorization: `Bearer ${sso_creds.access_token}`
       }
     })
 
@@ -79,9 +81,36 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
         email: user.email
       })
     }
-
+    const sso = {
+      id: app.id,
+      name: 'onelogin'
+    }
+    let checkPresence = false
+    for (const sub of subList) {
+      // eslint-disable-next-line eqeqeq
+      if (sub.name == app.name) {
+        let checkSsoPresence = false
+        for (const origin of sub.sso) {
+          // eslint-disable-next-line eqeqeq
+          if (origin.name == 'onelogin') {
+            checkSsoPresence = true
+            break
+          }
+        }
+        if (checkSsoPresence) {
+          continue
+        }
+        sub.sso.push(sso)
+        checkPresence = true
+        break
+      }
+    }
+    if (checkPresence) {
+      continue
+    }
+    const ssoData = [sso]
     subList.push({
-      ssoID: app.id,
+      sso: ssoData,
       name: app.name,
       emps: emps,
       // data to be fetched from EMS
@@ -98,15 +127,15 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     amtSaved: 0,
     amtSpent: 0
   }
-  switch ((ems_creds.name).toLowerCase()) {
-    case 'xero':
-      subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
-      break
-    case 'zoho':
-      subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
-      break
-  }
-  const filter = { ID: orgID }
+  // switch ((ems_creds.name).toLowerCase()) {
+  //   case 'xero':
+  //     subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
+  //     break
+  //   case 'zoho':
+  //     subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
+  //     break
+  // }
+
   const update = {
     apps: subList,
     amtSpent: subData.amtSpent,
@@ -118,10 +147,10 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
 
 export async function getEmps (orgID, sso_creds) {
   const userList = []
-  const empList = await getUsers(sso_creds.domain, sso_creds.accessToken)
+  const empList = await getUsers(sso_creds.domain, sso_creds.access_token)
 
   for (const emp of empList) {
-    const appList = await getUserApps(emp.id, sso_creds.domain, sso_creds.accessToken)
+    const appList = await getUserApps(emp.id, sso_creds.domain, sso_creds.access_token)
     const userAppList = []
     for (const app of appList) {
       userAppList.push({
@@ -135,12 +164,16 @@ export async function getEmps (orgID, sso_creds) {
       firstname: emp.firstname,
       userName: emp.username,
       lastname: emp.lastname,
+      source: 'onelogin',
       apps: userAppList
     })
   }
 
   const filter = { ID: orgID }
-  const update = { emps: userList }
+  const orgData = await empSchema.findOne(filter)
+  const empData = orgData.emps
+  const updatedEmps = empData.concat(userList)
+  const update = { emps: updatedEmps }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin employee data updated successfully')
 }
@@ -154,7 +187,7 @@ export async function getGroups (orgID, sso_creds) {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `bearer ${sso_creds.accessToken}`
+      Authorization: `bearer ${sso_creds.access_token}`
     }
   }).then(response => {
     return response.data
@@ -170,7 +203,7 @@ export async function getGroups (orgID, sso_creds) {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: `bearer ${sso_creds.accessToken}`
+        Authorization: `bearer ${sso_creds.access_token}`
       }
     }).then(res => {
     // console.log(res.data);
@@ -193,7 +226,7 @@ export async function getGroups (orgID, sso_creds) {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: `bearer ${sso_creds.accessToken}`
+        Authorization: `bearer ${sso_creds.access_token}`
       }
     }).then(res => {
       return res.data
@@ -207,11 +240,14 @@ export async function getGroups (orgID, sso_creds) {
       const app = { id: id, name: name }
       apps.push(app)
     }
-    const group = { name: name, groupId: id, emps: emps, apps: apps }
+    const group = { name: name, groupId: id, emps: emps, apps: apps, source: 'onelogin' }
     groups.push(group)
   }
   const filter = { ID: orgID }
-  const update = { groups: groups }
+  const orgData = await groupSchema.findOne(filter)
+  const grpData = orgData.groups
+  const updatedgrps = grpData.concat(groups)
+  const update = { groups: updatedgrps }
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin group data updated successfully')
 }

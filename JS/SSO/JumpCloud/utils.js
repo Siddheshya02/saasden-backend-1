@@ -94,12 +94,42 @@ async function getUserApps (userID, apiToken, appMap) {
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
-  const subList = []
+  const filter = { ID: orgID }
   const appList = await getApps(sso_creds.apiToken)
+  const subsData = await subSchema.findOne(filter)
+  const subList = subsData.apps
   for (const app of appList) {
     const emps = await getAppUsers(app.id, sso_creds.apiToken)
+    const sso = {
+      id: app.id,
+      name: 'jumpcloud'
+    }
+    let checkPresence = false
+    for (const sub of subList) {
+      // eslint-disable-next-line eqeqeq
+      if (sub.name == app.name) {
+        let checkSsoPresence = false
+        for (const origin of sub.sso) {
+          // eslint-disable-next-line eqeqeq
+          if (origin.name == 'jumpcloud') {
+            checkSsoPresence = true
+            break
+          }
+        }
+        if (checkSsoPresence) {
+          continue
+        }
+        sub.sso.push(sso)
+        checkPresence = true
+        break
+      }
+    }
+    if (checkPresence) {
+      continue
+    }
+    const ssoData = [sso]
     subList.push({
-      ssoID: app.id,
+      sso: ssoData,
       name: app.name,
       emps: emps,
       // ems data to be updated
@@ -117,15 +147,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     amtSpent: 0
   }
 
-  switch ((ems_creds.name).toLowerCase()) {
-    case 'xero':
-      subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
-      break
-    case 'zoho':
-      subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
-      break
-  }
-  const filter = { ID: orgID }
+  // switch ((ems_creds.name).toLowerCase()) {
+  //   case 'xero':
+  //     subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
+  //     break
+  //   case 'zoho':
+  //     subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
+  //     break
+  // }
   const update = {
     apps: subList,
     amtSpent: subData.amtSpent,
@@ -153,11 +182,15 @@ export async function getEmps (orgID, sso_creds) {
       firstname: user.firstname,
       username: user.username,
       lastname: user.lastname,
-      apps: appList
+      apps: appList,
+      source: 'jumpcloud'
     })
   }
   const filter = { ID: orgID }
-  const update = { emps: empList }
+  const orgData = await empSchema.findOne(filter)
+  const empData = orgData.emps
+  const updatedEmps = empData.concat(empList)
+  const update = { emps: updatedEmps }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Jumpcloud employee data updated successfully')
 }
@@ -227,11 +260,14 @@ export async function getGroups (orgID, sso_creds) {
       const app = { id: ap.data._id, name: ap.data.name }
       apps.push(app)
     }
-    const group = { name: name, groupId: id, emps: emps, apps: apps }
+    const group = { name: name, groupId: id, emps: emps, apps: apps, source: 'jumpcloud' }
     groups.push(group)
   }
   const filter = { ID: orgID }
-  const update = { groups: groups }
+  const orgData = await groupSchema.findOne(filter)
+  const grpData = orgData.groups
+  const updatedgrps = grpData.concat(groups)
+  const update = { groups: updatedgrps }
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('JumpCloud group data updated successfully')
 }

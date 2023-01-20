@@ -25,7 +25,7 @@ async function getApps (domain, apiToken) {
       }
     })
     const appList = []
-    res.data.forEach(app => appList.push([app.id, app.label, app.status, app._links.users.href]))
+    res.data.forEach(app => appList.push({ id: app.id, label: app.label.toLowerCase(), status: app.status, link: app._links.users.href }))
     return appList
   } catch (error) {
     console.log(error)
@@ -48,6 +48,7 @@ async function getUsers (domain, apiToken) {
       firstname: user.profile.firstName,
       lastname: user.profile.lastName,
       username: user.profile.email,
+      source: 'okta',
       apps: []
     }))
     return userList
@@ -59,10 +60,13 @@ async function getUsers (domain, apiToken) {
 // get app -> user mapping
 export async function getSubs (orgID, sso_creds, ems_creds) {
   try {
+    const filter = { ID: orgID }
     const appData = await getApps(sso_creds.domain, sso_creds.apiToken)
-    const subList = []
+    console.log(appData)
+    const subsData = await subSchema.findOne(filter)
+    const subList = subsData.apps
     for (const app of appData) {
-      const userData = await axios.get(app[3], {
+      const userData = await axios.get(app.link, {
         headers: {
           Authorization: `SSWS ${sso_creds.apiToken}`,
           'Content-Type': 'application/json'
@@ -78,10 +82,37 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
           username: user.profile.email
         })
       }
-
+      const sso = {
+        id: app.id,
+        name: 'okta'
+      }
+      let checkPresence = false
+      for (const sub of subList) {
+        // eslint-disable-next-line eqeqeq
+        if (sub.name == app.label) {
+          let checkSsoPresence = false
+          for (const origin of sub.sso) {
+            // eslint-disable-next-line eqeqeq
+            if (origin.name == 'okta') {
+              checkSsoPresence = true
+              break
+            }
+          }
+          if (checkSsoPresence) {
+            continue
+          }
+          sub.sso.push(sso)
+          checkPresence = true
+          break
+        }
+      }
+      if (checkPresence) {
+        continue
+      }
+      const ssoData = [sso]
       subList.push({
-        name: app[1],
-        ssoID: app[0],
+        name: app.label,
+        sso: ssoData,
         emps: empList,
         emsID: '',
         licences: null,
@@ -91,26 +122,27 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       })
     }
 
-    let subData = {
+    const subData = {
       subList: subList,
       amtSaved: 0,
       amtSpent: 0
     }
 
-    switch ((ems_creds.name).toLowerCase()) {
-      case 'xero':
-        subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
-        break
-      case 'zoho':
-        subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
-        break
-    }
-    const filter = { ID: orgID }
+    // switch ((ems_creds.name).toLowerCase()) {
+    //   case 'xero':
+    //     subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
+    //     break
+    //   case 'zoho':
+    //     subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
+    //     break
+    // }
+
     const update = {
       apps: subList,
       amtSpent: subData.amtSpent,
       amtSaved: subData.amtSaved
     }
+    console.log(subList)
     await subSchema.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')
   } catch (error) {
@@ -194,7 +226,7 @@ export async function getGroups (orgID, sso_creds) {
       console.log(app)
       apps.push(app)
     }
-    const group = { name: name, groupId: id, emps: emps, apps: apps }
+    const group = { name: name, groupId: id, emps: emps, apps: apps,source: 'okta' }
     groups.push(group)
   }
   const filter = { ID: orgID }

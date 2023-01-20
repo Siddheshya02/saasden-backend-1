@@ -7,12 +7,13 @@ const empModel = new Schema({
     unique: true,
     required: true
   },
-  emps: [{
+  emps: [{ // single instance
     id: String,
     email: String,
     firstname: String,
     username: String,
     lastname: String,
+    source: String,
     apps: [{
       id: String,
       name: String

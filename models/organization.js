@@ -16,14 +16,14 @@ const orgModel = new Schema({
     email: String,
     role: String
   }],
-  ssoData: {
+  ssoData: [{
     ssoName: String,
     clientID: String,
     clientSecret: String,
     tenantID: String,
     domain: String,
     apiToken: String
-  },
+  }],
   emsData: {
     emsName: String,
     clientID: String,

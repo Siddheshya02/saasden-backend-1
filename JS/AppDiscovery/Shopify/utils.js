@@ -35,6 +35,7 @@ export async function getScriptTags (orgID, url) {
     }
     let found = false
     for (let i = 0; i < result.length; i++) {
+      // eslint-disable-next-line eqeqeq
       if (result[i].name == url) {
         found = true
         break

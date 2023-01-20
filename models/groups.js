@@ -10,6 +10,7 @@ const groupModel = new Schema({
   groups: [{
     name: String,
     groupId: String,
+    source: String,
     emps: [{
       id: String,
       email: String,

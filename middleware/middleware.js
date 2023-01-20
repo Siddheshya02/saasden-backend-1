@@ -6,7 +6,13 @@ export function setOrgName (req, res, next) {
   req.session.orgID = auth0_tokenSet.org_id
   next()
 }
-
+export function setSSOs (req, res, next) {
+  if (!req.session.ssos) {
+    req.session.ssos = []
+    next()
+  }
+  next()
+}
 // Check if ems or sso creds are present or not
 export function checkStatus (req, res, next) {
   if (req.session.sso_name && req.session.ems_name) {

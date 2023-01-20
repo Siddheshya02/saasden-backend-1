@@ -1,4 +1,4 @@
-import { checkStatus, handleErrors, setOrgName } from './middleware/middleware.js'
+import { checkStatus, handleErrors, setOrgName, setSSOs } from './middleware/middleware.js'
 
 import { router as azure } from './routes/SSO/Azure_route.js'
 import connectRedis from 'connect-redis'
@@ -88,10 +88,10 @@ app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-app.use(jwtCheck) // check tok en first comment if
-app.use(handleErrors) // throw errors if error found in the token
-app.use(setOrgName) // set the organization id in the session
-
+// app.use(jwtCheck) // check tok en first comment if
+// app.use(handleErrors) // throw errors if error found in the token
+// app.use(setOrgName) // set the organization id in the session
+app.use(setSSOs) // initialize the sso array in session if empty
 // SSO Routes
 app.use('/api/v1/okta', okta)
 app.use('/api/v1/azure', azure)
@@ -104,10 +104,10 @@ app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
 // Dashboard Routes
-app.use('/api/v1/refresh', checkStatus, refresh) // add checkStatus afterwards
-app.use('/api/v1/subs', checkStatus, subs) // add checkStatus afterwards
-app.use('/api/v1/emps', checkStatus, emps) // add checkStatus afterwards
-app.use('/api/v1/groups', checkStatus, group)
+app.use('/api/v1/refresh', refresh) // add checkStatus afterwards
+app.use('/api/v1/subs', subs) // add checkStatus afterwards
+app.use('/api/v1/emps', emps) // add checkStatus afterwards
+app.use('/api/v1/groups', group)
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
