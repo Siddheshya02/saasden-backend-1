@@ -18,10 +18,10 @@ export async function getNewToken (clientID, clientSecret, tenantId) {
 }
 
 // get list of apps used by the org
-async function getApps (accessToken) {
+async function getApps (access_token) {
   const apps = await axios.get('https://graph.microsoft.com/v1.0/applications', {
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${access_token}`
     }
   }).then(res => { return res.data.value }).catch(res => console.log(res))
   const len_apps = apps.length
@@ -45,18 +45,18 @@ async function getApps (accessToken) {
 }
 
 // get list of users in the org
-async function getUsers (accessToken) {
+async function getUsers (access_token) {
   const finalUserDetails = []
   const list = await axios.get('https://graph.microsoft.com/v1.0/users/', {
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${access_token}`
     }
   }).then(res => { return res.data.value }).catch(res => console.log(res))
   for (let i = 0; i < list.length; i++) {
     const { id, displayName } = list[i]
     const dat = await axios.get(`https://graph.microsoft.com/v1.0/users/${list[i].id}/appRoleAssignments`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${access_token}`
       }
     }).then(res => { return res.data.value }).catch(res => console.log(res))
     const apps = []
@@ -72,8 +72,10 @@ async function getUsers (accessToken) {
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
-  const subList = []
-  const appList = await getApps(sso_creds.accessToken)
+  const filter = { ID: orgID }
+  const subsData = await subSchema.findOne(filter)
+  const subList = subsData.apps
+  const appList = await getApps(sso_creds.access_token)
 
   for (const app of appList) {
     const emps = []
@@ -83,9 +85,44 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
         username: user.userName
       })
     }
-
+    const sso = {
+      id: app.appID,
+      name: 'azure'
+    }
+    let checkPresence = false
+    for (const sub of subList) {
+      // eslint-disable-next-line eqeqeq
+      if (sub.name == app.appName) {
+        let checkSsoPresence = false
+        for (const origin of sub.sso) {
+          // eslint-disable-next-line eqeqeq
+          if (origin.name == 'azure') {
+            checkSsoPresence = true
+            break
+          }
+        }
+        if (checkSsoPresence) {
+          continue
+        }
+        sub.sso.push(sso)
+        checkPresence = true
+        break
+      }
+    }
+    if (checkPresence) {
+      for (const sub of subList) {
+        // eslint-disable-next-line eqeqeq
+        if (sub.name == app.appName) {
+          const updatedEmps = emps.concat(sub.emps)
+          sub.emps = updatedEmps
+          break
+        }
+      }
+      continue
+    }
+    const ssoData = [sso]
     subList.push({
-      ssoID: app.appID,
+      ssoID: ssoData,
       name: app.appName,
       emps: emps,
       // data to be fetched from EMS
@@ -103,15 +140,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     amtSpent: 0
   }
 
-  switch ((ems_creds.name).toLowerCase()) {
-    case 'xero':
-      subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
-      break
-    case 'zoho':
-      subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
-      break
-  }
-  const filter = { ID: orgID }
+  // switch ((ems_creds.name).toLowerCase()) {
+  //   case 'xero':
+  //     subData = await getXeroData(ems_creds.tenantID, ems_creds.access_token, subData)
+  //     break
+  //   case 'zoho':
+  //     subData = await getZohoData(ems_creds.tenantID, ems_creds.access_token, subData)
+  //     break
+  // }
   const update = {
     apps: subList,
     amtSpent: subData.amtSpent,
@@ -123,7 +159,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
 
 export async function getEmps (orgID, sso_creds) {
   const userList = []
-  const empList = await getUsers(sso_creds.accessToken)
+  const empList = await getUsers(sso_creds.access_token)
 
   for (const emp of empList) {
     const appList = emp.apps
@@ -140,12 +176,16 @@ export async function getEmps (orgID, sso_creds) {
       firstname: emp.firstname,
       username: emp.userName,
       lastname: emp.lastname,
-      apps: userAppList
+      apps: userAppList,
+      source: 'azure'
     })
   }
 
   const filter = { ID: orgID }
-  const update = { emps: userList }
+  const orgData = await empSchema.findOne(filter)
+  const empData = orgData.emps
+  const updatedEmps = empData.concat(userList)
+  const update = { emps: updatedEmps }
   await empSchema.findOneAndUpdate(filter, update)
   console.log('Azure employee data updated successfully')
 }
@@ -156,7 +196,7 @@ export async function getGroups (orgID, sso_creds) {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `bearer ${sso_creds.accessToken}`
+      Authorization: `bearer ${sso_creds.access_token}`
     }
   }).then(response => {
     return response.data.value
@@ -172,7 +212,7 @@ export async function getGroups (orgID, sso_creds) {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: `bearer ${sso_creds.accessToken}`
+        Authorization: `bearer ${sso_creds.access_token}`
       }
     }).then(res => {
     // console.log(res.data);
@@ -188,14 +228,14 @@ export async function getGroups (orgID, sso_creds) {
       const fname = res[j].givenName
       const lname = res[j].surname
       const userName = null
-      const emp = { id: id, email: email, firstname: fname, username: userName, lastname: lname }
+      const emp = { id: id, email: email, firstname: fname, username: userName, lastname: lname, source: 'azure' }
       emps.push(emp)
     }
     const resp = await axios.get(`https://graph.microsoft.com/beta/groups/${id}/members`, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: `bearer ${sso_creds.accessToken}`
+        Authorization: `bearer ${sso_creds.access_token}`
       }
     }).then(res => {
       return res.data.value
@@ -217,7 +257,10 @@ export async function getGroups (orgID, sso_creds) {
   }
   console.log(groups)
   const filter = { ID: orgID }
-  const update = { groups: groups }
+  const orgData = await groupSchema.findOne(filter)
+  const grpData = orgData.groups
+  const updatedgrps = grpData.concat(groups)
+  const update = { groups: updatedgrps }
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('Azure group data updated successfully')
 }

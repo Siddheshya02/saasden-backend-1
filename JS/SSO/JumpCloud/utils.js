@@ -125,9 +125,18 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       }
     }
     if (checkPresence) {
+      for (const sub of subList) {
+        // eslint-disable-next-line eqeqeq
+        if (sub.name == app.name) {
+          const updatedEmps = emps.concat(sub.emps)
+          sub.emps = updatedEmps
+          break
+        }
+      }
       continue
     }
     const ssoData = [sso]
+    console.log(app.name, ' : ', emps)
     subList.push({
       sso: ssoData,
       name: app.name,
@@ -141,7 +150,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     })
   }
 
-  let subData = {
+  const subData = {
     subList: subList,
     amtSaved: 0,
     amtSpent: 0

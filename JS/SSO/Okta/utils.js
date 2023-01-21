@@ -107,6 +107,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
         }
       }
       if (checkPresence) {
+        for (const sub of subList) {
+          // eslint-disable-next-line eqeqeq
+          if (sub.name == app.label) {
+            const updatedEmps = empList.concat(sub.emps)
+            sub.emps = updatedEmps
+            break
+          }
+        }
         continue
       }
       const ssoData = [sso]

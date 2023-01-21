@@ -71,7 +71,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       }
     })
 
-    const emps = []
+    let emps = []
     for (const user of res.data) {
       emps.push({
         id: user.id,
@@ -89,6 +89,8 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     for (const sub of subList) {
       // eslint-disable-next-line eqeqeq
       if (sub.name == app.name) {
+        const updatedEmps = emps.concat(sub.emps)
+        emps = updatedEmps
         let checkSsoPresence = false
         for (const origin of sub.sso) {
           // eslint-disable-next-line eqeqeq
@@ -106,6 +108,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       }
     }
     if (checkPresence) {
+      for (const sub of subList) {
+        // eslint-disable-next-line eqeqeq
+        if (sub.name == app.name) {
+          const updatedEmps = emps.concat(sub.emps)
+          sub.emps = updatedEmps
+          break
+        }
+      }
       continue
     }
     const ssoData = [sso]
@@ -122,7 +132,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     })
   }
 
-  let subData = {
+  const subData = {
     subList: subList,
     amtSaved: 0,
     amtSpent: 0
