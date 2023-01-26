@@ -18,7 +18,6 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   // const ssoName = req.session.sso_name
   const orgID = req.session.orgID
-
   // deleting the data already present in the db of the organization
   await empSchema.deleteOne({ ID: orgID })
   await empSchema.insertMany({ ID: orgID })

@@ -91,9 +91,9 @@ app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-// app.use(jwtCheck) // check tok en first comment if
-// app.use(handleErrors) // throw errors if error found in the token
-// app.use(setOrgName) // set the organization id in the session
+app.use(jwtCheck) // check tok en first comment if
+app.use(handleErrors) // throw errors if error found in the token
+app.use(setOrgName) // set the organization id in the session
 app.use(setSSOs) // initialize the sso array in session if empty
 // SSO Routes
 app.use('/api/v1/okta', okta)
@@ -108,10 +108,10 @@ app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
 // Dashboard Routes
-app.use('/api/v1/refresh', refresh) // add checkStatus afterwards
-app.use('/api/v1/subs', subs) // add checkStatus afterwards
-app.use('/api/v1/emps', emps) // add checkStatus afterwards
-app.use('/api/v1/groups', group)
+app.use('/api/v1/refresh', checkStatus, refresh) // add checkStatus afterwards
+app.use('/api/v1/subs', checkStatus, subs) // add checkStatus afterwards
+app.use('/api/v1/emps', checkStatus, emps) // add checkStatus afterwards
+app.use('/api/v1/groups', checkStatus, group)
 app.use('/api/v1/discovery', appDiscovery)
 
 const port = process.env.PORT || 4000
