@@ -234,7 +234,7 @@ export async function getGroups (orgID, sso_creds) {
       console.log(app)
       apps.push(app)
     }
-    const group = { name: name, groupId: id, emps: emps, apps: apps,source: 'okta' }
+    const group = { name: name, groupId: id, emps: emps, apps: apps, source: 'okta' }
     groups.push(group)
   }
   const filter = { ID: orgID }

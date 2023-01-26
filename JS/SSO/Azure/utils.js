@@ -4,6 +4,7 @@ import { getXeroData } from '../../EMS/Xero/utils.js'
 import { getZohoData } from '../../EMS/Zoho/utils.js'
 import subSchema from '../../../models/subscription.js'
 import groupSchema from '../../../models/groups.js'
+import { LeaveTypeObject } from 'xero-node/dist/gen/model/payroll-uk/leaveTypeObject.js'
 // Generate a new token if the previous token has expired
 export async function getNewToken (clientID, clientSecret, tenantId) {
   const tokenSet = await axios.post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
@@ -18,31 +19,72 @@ export async function getNewToken (clientID, clientSecret, tenantId) {
 }
 
 // get list of apps used by the org
+// async function getApps (access_token) {
+//   const apps = await axios.get('https://graph.microsoft.com/v1.0/applications', {
+//     headers: {
+//       Authorization: `Bearer ${access_token}`
+//     }
+//   }).then(res => { return res.data.value }).catch(res => console.log(res))
+//   const len_apps = apps.length
+//   const finalAppDetails = []
+//   for (let i = 0; i < len_apps; i++) {
+//     const { appId, displayName } = apps[i]
+//     const users = []
+//     const len_user = apps[i].appRoles.length
+//     for (let j = 0; j < len_user; j++) {
+//       const { id, displayName } = apps[i].appRoles[j]
+//       const userObject = { userID: id, userName: displayName }
+//       users.push(userObject)
+//     }
+//     const appObject = { appID: appId, appName: displayName, users: users }
+//     finalAppDetails.push(appObject)
+//   }
+//   for (const app of finalAppDetails) {
+//     app.appName = app.appName.toLowerCase()
+//   }
+//   return finalAppDetails
+// }
 async function getApps (access_token) {
+  const principal = await axios.get('https://graph.microsoft.com/v1.0/servicePrincipals', {
+    headers: {
+      Authorization: `Bearer ${access_token}`
+    }
+  }).then(res => { return res.data.value }).catch(res => console.log(res))
   const apps = await axios.get('https://graph.microsoft.com/v1.0/applications', {
     headers: {
       Authorization: `Bearer ${access_token}`
     }
   }).then(res => { return res.data.value }).catch(res => console.log(res))
-  const len_apps = apps.length
+  const len_apps = principal.length
   const finalAppDetails = []
   for (let i = 0; i < len_apps; i++) {
-    const { appId, displayName } = apps[i]
+    const { id, appDisplayName } = principal[i]
     const users = []
-    const len_user = apps[i].appRoles.length
-    for (let j = 0; j < len_user; j++) {
-      const { id, displayName } = apps[i].appRoles[j]
-      const userObject = { userID: id, userName: displayName }
-      users.push(userObject)
+    for (const app of apps) {
+      // eslint-disable-next-line eqeqeq
+      if (app.displayName == appDisplayName) {
+        const user_list = await axios.get(`https://graph.microsoft.com/v1.0/servicePrincipals/${id}/appRoleAssignedTo`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`
+          }
+        }).then(res => { return res.data.value }).catch(res => console.log(res))
+        for (const user of user_list) {
+          const { id, principalDisplayName } = user
+          const userObject = { userID: id, userName: principalDisplayName }
+          users.push(userObject)
+        }
+        const appObject = { appID: id, appName: appDisplayName, users: users }
+        finalAppDetails.push(appObject)
+      }
     }
-    const appObject = { appID: appId, appName: displayName, users: users }
-    finalAppDetails.push(appObject)
   }
   for (const app of finalAppDetails) {
-    app.appName = app.appName.toLowerCase()
+    if (app.appName) app.appName = app.appName.toLowerCase()
+    // console.log(app.appName)
   }
   return finalAppDetails
 }
+// getApps(access_token);
 
 // get list of users in the org
 async function getUsers (access_token) {
@@ -79,12 +121,14 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
 
   for (const app of appList) {
     const emps = []
+    // console.log(app.appName, ':', app)
     for (const user of app.users) {
       emps.push({
         id: user.userID,
         username: user.userName
       })
     }
+    // console.log('actual emps', emps)
     const sso = {
       id: app.appID,
       name: 'azure'
@@ -93,6 +137,9 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     for (const sub of subList) {
       // eslint-disable-next-line eqeqeq
       if (sub.name == app.appName) {
+        // const updatedEmps = emps.concat(sub.emps)
+        // emps = updatedEmps
+        // console.log('before emps:', updatedEmps)
         let checkSsoPresence = false
         for (const origin of sub.sso) {
           // eslint-disable-next-line eqeqeq
@@ -115,14 +162,17 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
         if (sub.name == app.appName) {
           const updatedEmps = emps.concat(sub.emps)
           sub.emps = updatedEmps
+          // sub.sso.push(sso)
+          // console.log('after emps:', sub.sso)
           break
         }
       }
       continue
     }
     const ssoData = [sso]
+    // console.log(app.appName, ' : ', emps)
     subList.push({
-      ssoID: ssoData,
+      sso: ssoData,
       name: app.appName,
       emps: emps,
       // data to be fetched from EMS
@@ -134,7 +184,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     })
   }
 
-  let subData = {
+  const subData = {
     subList: subList,
     amtSaved: 0,
     amtSpent: 0
@@ -252,10 +302,10 @@ export async function getGroups (orgID, sso_creds) {
         apps.push(app)
       }
     }
-    const group = { name: name, groupId: id, emps: emps, apps: apps }
+    const group = { name: name, groupId: id, emps: emps, apps: apps, source: 'azure' }
     groups.push(group)
   }
-  console.log(groups)
+  // console.log(groups)
   const filter = { ID: orgID }
   const orgData = await groupSchema.findOne(filter)
   const grpData = orgData.groups

@@ -1,8 +1,7 @@
 
-import subSchema from '../../../models/subscription.js'
+import appDiscoverySchema from '../../../models/appDiscovery.js'
 import puppeteer from 'puppeteer'
-
-export async function getScriptTags (orgID, url) {
+export async function getScriptTags (orgID, url, names) {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.goto(url)
@@ -22,21 +21,22 @@ export async function getScriptTags (orgID, url) {
   scriptTags = scriptTags.toString()
   const urls = []
   const result = []
+  let app = {}
   scriptTags = scriptTags.split(',')
   scriptTags.forEach(i => {
     urls.push(i.split('\\'))
   })
   for (let i = 0; i < urls.length; i++) {
-    let url = urls[i][2].replace('/', '').split('.')
-    if (url.length > 2) {
-      url = url[1]
+    let dat = urls[i][2].replace('/', '').split('.')
+    if (dat.length > 2) {
+      dat = dat[1]
     } else {
-      url = url[0]
+      dat = dat[0]
     }
     let found = false
     for (let i = 0; i < result.length; i++) {
       // eslint-disable-next-line eqeqeq
-      if (result[i].name == url) {
+      if (result[i].name == dat) {
         found = true
         break
       }
@@ -44,25 +44,23 @@ export async function getScriptTags (orgID, url) {
     if (found) {
       continue
     }
-    const saasData = {
-      name: url,
-      ssoID: null,
-      emsID: null,
-      emps: [],
-      licences: null,
-      currentCost: null,
-      amountSaved: null,
-      dueDate: null
+    app = {
+      name: dat
     }
-    result.push(saasData)
+    result.push(app)
+  }
+  const disc = {
+    discName: names,
+    url: url,
+    apps: result
   }
   await browser.close()
   const filter = { ID: orgID }
-  const res = await subSchema.findOne(filter)
-  let apps = res.apps
-  apps = apps.concat(result)
-  const update = { apps: apps }
-  await subSchema.findOneAndUpdate(filter, update)
+  // const res = await appDiscoverySchema.findOne(filter)
+  // let discovery = res.discovery.apps
+  // discovery = discovery.concat(result)
+  const update = { discovery: disc }
+  await appDiscoverySchema.findOneAndUpdate(filter, update)
   console.log('App discovery data updated successfully')
 }
 // 's3.amazonaws.com',

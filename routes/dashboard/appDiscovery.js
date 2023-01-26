@@ -1,11 +1,11 @@
 import express from 'express'
-import subSchema from '../../models/subscription.js'
+import appDiscoverySchema from '../../models/appDiscovery.js'
 const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const subData = await subSchema.findOne({ ID: req.session.orgID })
-    res.json(subData)
+    const discData = await appDiscoverySchema.findOne({ ID: req.session.orgID })
+    res.json(discData)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)

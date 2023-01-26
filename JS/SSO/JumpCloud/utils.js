@@ -24,7 +24,7 @@ async function getApps (apiToken) {
       'Content-Type': 'application/json',
       'x-api-key': `${apiToken}`
     }
-  })
+  }).then(res => { return res }).catch(res => console.log(res))
   return res.data.results
 }
 
@@ -35,7 +35,7 @@ async function getUsers (apiToken) {
       'Content-Type': 'application/json',
       'x-api-key': `${apiToken}`
     }
-  })
+  }).then(res => { return res }).catch(res => console.log(res))
   return res.data.results
 }
 
@@ -46,7 +46,7 @@ async function getUserData (apiToken, userID) {
       'Content-Type': 'application/json',
       'x-api-key': `${apiToken}`
     }
-  })
+  }).then(res => { return res }).catch(res => console.log(res))
   const userData = res.data
   return {
     id: userData.id,
@@ -64,7 +64,7 @@ async function getAppUsers (appID, apiToken) {
       'Content-Type': 'application/json',
       'x-api-key': `${apiToken}`
     }
-  })
+  }).then(res => { return res }).catch(res => console.log(res))
 
   const userList = []
   for (const user of res.data) {
@@ -81,7 +81,7 @@ async function getUserApps (userID, apiToken, appMap) {
       'Content-Type': 'application/json',
       'x-api-key': `${apiToken}`
     }
-  })
+  }).then(res => { return res }).catch(res => console.log(res))
 
   const appList = []
   for (const app of res.data) {
@@ -225,7 +225,7 @@ export async function getGroups (orgID, sso_creds) {
         'Content-Type': 'application/json',
         'x-api-key': `${sso_creds.apiToken}`
       }
-    })
+    }).then(res => { return res }).catch(res => console.log(res))
     e = e.data
     for (let j = 0; j < e.length; j++) {
       if (e[j] == null) {
@@ -239,7 +239,7 @@ export async function getGroups (orgID, sso_creds) {
           'Content-Type': 'application/json',
           'x-api-key': `${sso_creds.apiToken}`
         }
-      })
+      }).then(res => { return res }).catch(res => console.log(res))
       const us = u.data
       const emp = { id: us.id, email: us.email, firstname: us.firstname, lastname: us.lastname, username: us.username }
       emps.push(emp)
@@ -252,7 +252,7 @@ export async function getGroups (orgID, sso_creds) {
         'Content-Type': 'application/json',
         'x-api-key': `${sso_creds.apiToken}`
       }
-    })
+    }).then(res => { return res }).catch(res => console.log(res))
     a = a.data
     for (let j = 0; j < a.length; j++) {
       if (a[i] == null) {
@@ -265,7 +265,7 @@ export async function getGroups (orgID, sso_creds) {
           'Content-Type': 'application/json',
           'x-api-key': `${sso_creds.apiToken}`
         }
-      })
+      }).then(res => { return res }).catch(res => console.log(res))
       const app = { id: ap.data._id, name: ap.data.name }
       apps.push(app)
     }

@@ -8,12 +8,27 @@ import { getScriptTags } from '../../JS/AppDiscovery/Shopify/utils.js'
 import express from 'express'
 import { getNewToken as getNewXeroToken } from '../../JS/EMS/Xero/utils.js'
 import { isJwtExpired } from 'jwt-check-expiration'
+import empSchema from '../../models/employee.js'
+import subSchema from '../../models/subscription.js'
+import groupSchema from '../../models/groups.js'
+import appDiscoverySchema from '../../models/appDiscovery.js'
 
 const router = express.Router()
 
 router.get('/', async (req, res) => {
   // const ssoName = req.session.sso_name
   const orgID = req.session.orgID
+
+  // deleting the data already present in the db of the organization
+  await empSchema.deleteOne({ ID: orgID })
+  await empSchema.insertMany({ ID: orgID })
+  await subSchema.deleteOne({ ID: orgID })
+  await subSchema.insertMany({ ID: orgID })
+  await groupSchema.deleteOne({ ID: orgID })
+  await groupSchema.insertMany({ ID: orgID })
+  await appDiscoverySchema.deleteOne({ ID: orgID })
+  await appDiscoverySchema.insertMany({ ID: orgID })
+
   const sso_creds = []
   for (const sso of req.session.ssos) {
     sso_creds.push(sso)
@@ -54,13 +69,13 @@ router.get('/', async (req, res) => {
           await getOktaGroups(orgID, sso)
           break
         case 'pingone':
-          if (isJwtExpired(sso_creds.accessToken)) {
-            sso_creds.accessToken = await getNewPingOneToken(sso_creds.domain, sso_creds.clientID, sso_creds.clientSecret, sso_creds.tenantID)
+          if (isJwtExpired(sso.access_token)) {
+            sso.access_token = await getNewPingOneToken(sso.domain, sso.clientID, sso.clientSecret, sso.tenantID)
           }
           console.log('Fetching pingone data')
-          await getPingOneSubs(orgID, sso_creds, ems_creds)
-          await getPingOneEmps(orgID, sso_creds)
-          await getPingOneGroups(orgID, sso_creds)
+          await getPingOneSubs(orgID, sso, ems_creds)
+          await getPingOneEmps(orgID, sso)
+          await getPingOneGroups(orgID, sso)
           break
         case 'onelogin':
           if (!verifyOneLoginToken(sso.domain, sso.access_token)) {
@@ -80,13 +95,13 @@ router.get('/', async (req, res) => {
           // await getScriptTags(orgID, 'https://shobitam.com/')
           break
         case 'azure':
-          if (isJwtExpired(sso_creds.accessToken)) {
-            sso_creds.accessToken = await getNewAzureToken(sso_creds.clientID, sso_creds.clientSecret, sso_creds.tenantID)
+          if (isJwtExpired(sso.access_token)) {
+            sso.accessToken = await getNewAzureToken(sso.clientID, sso.clientSecret, sso.tenantID)
           }
           console.log('Fetching azure data')
-          await getAzureSubs(orgID, sso_creds, ems_creds)
-          await getAzureEmps(orgID, sso_creds)
-          await getAzureGroups(orgID, sso_creds)
+          await getAzureSubs(orgID, sso, ems_creds)
+          await getAzureEmps(orgID, sso)
+          await getAzureGroups(orgID, sso)
           break
       }
     }

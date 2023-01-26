@@ -17,6 +17,9 @@ import { router as okta } from './routes/SSO/Okta_route.js'
 import { router as onelogin } from './routes/SSO/OneLogin_route.js'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import { router as refresh } from './routes/dashboard/refresh_route.js'
+import { router as appDiscovery } from './routes/dashboard/appDiscovery.js'
+
+import { router as shopify } from './routes/AppDiscovery/Shopify/shopify.js'
 import sessions from 'express-session'
 import { router as subs } from './routes/dashboard/subscription_route.js'
 import { router as xero } from './routes/EMS/Xero_route.js'
@@ -98,6 +101,7 @@ app.use('/api/v1/azure', azure)
 app.use('/api/v1/pingone', pingone)
 app.use('/api/v1/onelogin', onelogin)
 app.use('/api/v1/jumpcloud', jumpcloud)
+app.use('/api/v1/shopify', shopify)
 
 // EMS Routes
 app.use('/api/v1/xero', xero)
@@ -108,6 +112,7 @@ app.use('/api/v1/refresh', refresh) // add checkStatus afterwards
 app.use('/api/v1/subs', subs) // add checkStatus afterwards
 app.use('/api/v1/emps', emps) // add checkStatus afterwards
 app.use('/api/v1/groups', group)
+app.use('/api/v1/discovery', appDiscovery)
 
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
