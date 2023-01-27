@@ -2,16 +2,17 @@ import { getEmps as getAzureEmps, getSubs as getAzureSubs, getNewToken as getNew
 import { getEmps as getJumpCloudEmps, getSubs as getJumpCloudSubs, verifyToken as verifyJumpCloudToken, getGroups as getJumpCloudGroups } from '../../JS/SSO/JumpCloud/utils.js'
 import { getNewToken as getNewOneLoginToken, getEmps as getOneLoginEmps, getSubs as getOneLoginSubs, getGroups as getOneLoginGroups, verifyToken as verifyOneLoginToken } from '../../JS/SSO/OneLogin/utils.js'
 import { getNewToken as getNewPingOneToken, getEmps as getPingOneEmps, getSubs as getPingOneSubs, getGroups as getPingOneGroups } from '../../JS/SSO/PingONE/utils.js'
-import { getNewToken as getNewZohoToken, verifyToken as verifyZohoToken } from '../../JS/EMS/Zoho/utils.js'
+import { getNewToken as getNewZohoToken, verifyToken as verifyZohoToken, getZohoData } from '../../JS/EMS/Zoho/utils.js'
 import { getEmps as getOktaEmps, getSubs as getOktaSubs, getGroups as getOktaGroups, verifyToken as verifyOktaToken } from '../../JS/SSO/Okta/utils.js'
 import { getScriptTags } from '../../JS/AppDiscovery/Shopify/utils.js'
 import express from 'express'
-import { getNewToken as getNewXeroToken } from '../../JS/EMS/Xero/utils.js'
+import { getNewToken as getNewXeroToken, getXeroData } from '../../JS/EMS/Xero/utils.js'
 import { isJwtExpired } from 'jwt-check-expiration'
 import empSchema from '../../models/employee.js'
 import subSchema from '../../models/subscription.js'
 import groupSchema from '../../models/groups.js'
 import appDiscoverySchema from '../../models/appDiscovery.js'
+import orgSchema from '../../models/organization.js'
 
 const router = express.Router()
 
@@ -104,11 +105,53 @@ router.get('/', async (req, res) => {
           break
       }
     }
-    res.sendStatus(200)
+    if (ems_creds.name) {
+      console.log(ems_creds)
+      if (ems_creds.name === 'xero') {
+        if (isJwtExpired(ems_creds.accessToken)) {
+          ems_creds.accessToken = await getNewXeroToken(ems_creds.clientID, ems_creds.clientSecret, ems_creds.refreshToken)
+        }
+      } else {
+        if (!verifyZohoToken(ems_creds.accessToken, ems_creds.tenantID)) {
+          ems_creds.accessToken = await getNewZohoToken(ems_creds.refreshToken, ems_creds.clientID, ems_creds.clientSecret)
+        }
+      }
+      const subs = await subSchema.findOne({ ID: req.session.orgID })
+      let subData = {
+        subList: subs.apps,
+        amtSaved: 0,
+        amtSpent: 0
+      }
+      switch ((ems_creds.name).toLowerCase()) {
+        case 'xero':
+          subData = await getXeroData(ems_creds.tenantID, ems_creds.accessToken, subData)
+          break
+        case 'zoho':
+          subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
+          break
+      }
+    }
+    return res.sendStatus(200)
   } catch (error) {
     console.log(error)
-    res.sendStatus(500)
+    return res.sendStatus(500)
   }
+})
+
+router.get('/delete', async (req, res) => {
+  // //req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const orgID = req.session.orgID
+  await orgSchema.deleteOne({ ID: orgID })
+  await orgSchema.insertMany({ ID: orgID, name: 'techlight' })
+  await empSchema.deleteOne({ ID: orgID })
+  await empSchema.insertMany({ ID: orgID })
+  await subSchema.deleteOne({ ID: orgID })
+  await subSchema.insertMany({ ID: orgID })
+  await groupSchema.deleteOne({ ID: orgID })
+  await groupSchema.insertMany({ ID: orgID })
+  await appDiscoverySchema.deleteOne({ ID: orgID })
+  await appDiscoverySchema.insertMany({ ID: orgID })
+  res.sendStatus(200)
 })
 
 export { router }

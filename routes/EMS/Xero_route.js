@@ -7,6 +7,7 @@ let xero
 
 // To be called only 1 time
 router.post('/auth', async (req, res) => {
+  //req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const clientID = req.body.clientID
   const clientSecret = req.body.clientSecret
   const tenantID = req.body.tenantID
@@ -29,6 +30,7 @@ router.post('/auth', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
+  //req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const orgData = await orgSchema.findOne({ ID: req.session.orgID })
   req.session.ems_name = 'xero'
   req.session.ems_clientID = orgData.emsData.clientID

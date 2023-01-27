@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-return */
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
@@ -48,7 +49,7 @@ router.post('/auth', async (req, res) => {
 
   try {
     await orgSchema.findOneAndUpdate(filter, update)
-    console.log('Azure credentials saved successfully')
+    console.log('Azure Credentials saved succesfully')
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

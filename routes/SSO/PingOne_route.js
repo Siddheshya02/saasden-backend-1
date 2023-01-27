@@ -7,7 +7,7 @@ import url from 'url'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  //req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   // const update = {
   //   ssoData: {
@@ -61,7 +61,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    //req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     // req.session.sso_name = 'pingone'
     // req.session.sso_domain = orgData.ssoData.domain
