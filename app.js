@@ -18,7 +18,7 @@ import { router as onelogin } from './routes/SSO/OneLogin_route.js'
 import { router as pingone } from './routes/SSO/PingOne_route.js'
 import { router as refresh } from './routes/dashboard/refresh_route.js'
 import { router as appDiscovery } from './routes/dashboard/appDiscovery.js'
-
+import { router as checkOrgSso } from './routes/dashboard/org_route.js'
 import { router as shopify } from './routes/AppDiscovery/Shopify/shopify.js'
 import sessions from 'express-session'
 import { router as subs } from './routes/dashboard/subscription_route.js'
@@ -124,6 +124,6 @@ app.use('/api/v1/subs', subs) // add checkStatus afterwards
 app.use('/api/v1/emps', emps) // add checkStatus afterwards
 app.use('/api/v1/groups', group)
 app.use('/api/v1/discovery', appDiscovery)
-
+app.use('/api/v1/checkOrgSso', checkOrgSso)
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
