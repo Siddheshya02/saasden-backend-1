@@ -112,7 +112,7 @@ router.get('/', async (req, res) => {
       }
     }
     // req.session.sso_accessToken = tokenSet.access_token // access token
-    console.log('Azure Access Token recieved')
+    console.log('Azure Access Token recieved', req.session.ssos)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
