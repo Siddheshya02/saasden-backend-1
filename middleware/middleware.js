@@ -7,6 +7,7 @@ export function setOrgName (req, res, next) {
   next()
 }
 export function setSSOs (req, res, next) {
+  console.log('setSSO called')
   if (!req.session.ssos) {
     req.session.ssos = []
     next()
