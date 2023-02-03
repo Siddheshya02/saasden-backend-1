@@ -13,7 +13,6 @@ export function setSSOs (req, res, next) {
   if (!req.session.ssos) {
     req.session.ssos = []
     console.log('session reset')
-    next()
   } else next()
 }
 // Check if ems or sso creds are present or not
