@@ -9,11 +9,15 @@ export function setOrgName (req, res, next) {
 }
 export function setSSOs (req, res, next) {
   console.log('setSSO called')
-  console.log(req.session)
+  // console.log(req.session)
   if (!req.session.ssos) {
     req.session.ssos = []
-    console.log('session reset')
-  } else next()
+    // console.log('session reset')
+    next()
+  } else {
+    console.log(req.session)
+    next()
+  }
 }
 // Check if ems or sso creds are present or not
 export function checkStatus (req, res, next) {
