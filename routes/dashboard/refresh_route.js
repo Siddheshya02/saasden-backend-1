@@ -18,6 +18,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   // const ssoName = req.session.sso_name
+  console.log('refresh route called ', req.session.ssos)
   const orgID = req.session.orgID
   // deleting the data already present in the db of the organization
   await empSchema.deleteOne({ ID: orgID })
