@@ -105,14 +105,14 @@ router.get('/', async (req, res) => {
             access_token: tokenSet.access_token,
             refresh_token: null
           }
-          console.log(updatedSso)
+          // console.log(updatedSso)
           req.session.ssos.push(updatedSso)
         }
         break
       }
     }
     // req.session.sso_accessToken = tokenSet.access_token // access token
-    console.log('Azure Access Token recieved', req.session.ssos)
+    console.log('Azure Access Token recieved')
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
