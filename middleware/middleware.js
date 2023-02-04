@@ -14,8 +14,11 @@ export function setSSOs (req, res, next) {
   console.log('setSSO called')
   // console.log(req.session)
   if (!req.session.ssos) {
+    console.log('before set sso')
+    console.log(req.session)
     req.session.ssos = []
     console.log('session reset')
+    console.log(req.session)
     next()
   } else {
     // console.log(req.session)
