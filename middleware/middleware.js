@@ -2,6 +2,7 @@ import jwt_decode from 'jwt-decode'
 
 // set organizationID in the session
 export function setOrgName (req, res, next) {
+  console.log('first orgName')
   console.log(req.session)
   const auth0_tokenSet = jwt_decode(req.get('Authorization'))
   req.session.orgID = auth0_tokenSet.org_id
@@ -11,7 +12,7 @@ export function setOrgName (req, res, next) {
 }
 export function setSSOs (req, res, next) {
   console.log('setSSO called')
-  console.log(req.session)
+  // console.log(req.session)
   if (!req.session.ssos) {
     req.session.ssos = []
     console.log('session reset')
