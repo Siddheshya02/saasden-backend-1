@@ -95,16 +95,6 @@ app.use(jwtCheck) // check tok en first comment if
 app.use(handleErrors) // throw errors if error found in the token
 app.use(setOrgName) // set the organization id in the session
 app.use(setSSOs) // initialize the sso array in session if empty
-app.use(function (req, res, next) {
-  const _send = res.send
-  let sent = false
-  res.send = function (data) {
-    if (sent) return
-    _send.bind(res)(data)
-    sent = true
-  }
-  next()
-})
 
 // SSO Routes
 app.use('/api/v1/okta', okta)
