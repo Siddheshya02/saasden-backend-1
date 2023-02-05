@@ -59,7 +59,6 @@ router.get('/callback', async (req, res) => {
     req.session.ems_accessToken = tokenSet.data.access_token
     req.session.ems_refreshToken = tokenSet.data.refresh_token
     console.log('Zoho Access Token Received')
-    console.log(req.session)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
