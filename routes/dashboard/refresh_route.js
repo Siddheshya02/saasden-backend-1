@@ -118,6 +118,7 @@ router.get('/', async (req, res) => {
         }
       }
       const subs = await subSchema.findOne({ ID: req.session.orgID })
+      console.log('before update', subs.apps)
       let subData = {
         subList: subs.apps,
         amtSaved: 0,
@@ -132,6 +133,7 @@ router.get('/', async (req, res) => {
           break
       }
       await subSchema.findOneAndUpdate({ ID: req.session.orgID }, { apps: subData })
+      console.log('after update', subs.apps)
       console.log(subData)
     }
     return res.sendStatus(200)
