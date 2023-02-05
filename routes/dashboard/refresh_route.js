@@ -131,7 +131,7 @@ router.get('/', async (req, res) => {
           subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
           break
       }
-      await subSchema.findByIdAndUpdate({ ID: req.session.orgID }, { apps: subData })
+      await subSchema.findOneAndUpdate({ ID: req.session.orgID }, { apps: subData })
       console.log(subData)
     }
     return res.sendStatus(200)
