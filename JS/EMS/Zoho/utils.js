@@ -116,6 +116,7 @@ export async function getZohoData (orgId, accessToken, subData) {
       subData.amtSaved += sub.amountSaved == null ? 0 : sub.amountSaved
       subData.amtSpent += sub.currentCost == null ? 0 : sub.currentCost
     }
+    console.log(subData)
     console.log('Zoho data saved successfully')
     return subData
   } catch (error) {
