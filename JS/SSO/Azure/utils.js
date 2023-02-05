@@ -49,12 +49,12 @@ async function getApps (access_token) {
     headers: {
       Authorization: `Bearer ${access_token}`
     }
-  }).then(res => { return res.data.value }).catch(res => console.log(res))
+  })
   const apps = await axios.get('https://graph.microsoft.com/v1.0/applications', {
     headers: {
       Authorization: `Bearer ${access_token}`
     }
-  }).then(res => { return res.data.value }).catch(res => console.log(res))
+  })
   const len_apps = principal.length
   const finalAppDetails = []
   for (let i = 0; i < len_apps; i++) {
@@ -67,7 +67,7 @@ async function getApps (access_token) {
           headers: {
             Authorization: `Bearer ${access_token}`
           }
-        }).then(res => { return res.data.value }).catch(res => console.log(res))
+        })
         for (const user of user_list) {
           const { id, principalDisplayName } = user
           const userObject = { userID: id, userName: principalDisplayName }
@@ -93,14 +93,14 @@ async function getUsers (access_token) {
     headers: {
       Authorization: `Bearer ${access_token}`
     }
-  }).then(res => { return res.data.value }).catch(res => console.log(res))
+  })
   for (let i = 0; i < list.length; i++) {
     const { id, displayName } = list[i]
     const dat = await axios.get(`https://graph.microsoft.com/v1.0/users/${list[i].id}/appRoleAssignments`, {
       headers: {
         Authorization: `Bearer ${access_token}`
       }
-    }).then(res => { return res.data.value }).catch(res => console.log(res))
+    })
     const apps = []
     for (let j = 0; j < dat.length; j++) {
       const { id, resourceDisplayName } = dat[j]
@@ -248,12 +248,7 @@ export async function getGroups (orgID, sso_creds) {
       'Content-Type': 'application/json',
       Authorization: `bearer ${sso_creds.access_token}`
     }
-  }).then(response => {
-    return response.data.value
   })
-    .catch(error => {
-      console.error('There was an error!', error)
-    })
   for (let i = 0; i < response.length; i++) {
     const name = response[i].displayName
     const { id } = response[i]
@@ -264,14 +259,7 @@ export async function getGroups (orgID, sso_creds) {
         'Content-Type': 'application/json',
         Authorization: `bearer ${sso_creds.access_token}`
       }
-    }).then(res => {
-    // console.log(res.data);
-      return res.data.value
     })
-      .catch(error => {
-      // element.parentElement.innerHTML = `Error: ${error.message}`;
-        console.error('There was an error!', error)
-      })
     for (let j = 0; j < res.length; j++) {
       const { id } = res[j]
       const email = res[j].userPrincipalName
@@ -287,12 +275,7 @@ export async function getGroups (orgID, sso_creds) {
         'Content-Type': 'application/json',
         Authorization: `bearer ${sso_creds.access_token}`
       }
-    }).then(res => {
-      return res.data.value
     })
-      .catch(error => {
-        console.error('There was an error!', error)
-      })
     const apps = []
     for (let k = 0; k < resp.length; k++) {
       if (resp[k].appId) {
