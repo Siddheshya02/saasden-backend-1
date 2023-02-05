@@ -11,11 +11,6 @@ const orgModel = new Schema({
     type: String,
     require: true
   },
-  users: [{
-    name: String,
-    email: String,
-    role: String
-  }],
   ssoData: [{
     ssoName: String,
     clientID: String,
