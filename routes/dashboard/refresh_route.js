@@ -118,7 +118,6 @@ router.get('/', async (req, res) => {
         }
       }
       const subs = await subSchema.findOne({ ID: req.session.orgID })
-      console.log('before update', subs.apps)
       let subData = {
         subList: subs.apps,
         amtSaved: 0,
@@ -132,9 +131,8 @@ router.get('/', async (req, res) => {
           subData = await getZohoData(ems_creds.tenantID, ems_creds.accessToken, subData)
           break
       }
-      await subSchema.findOneAndUpdate({ ID: req.session.orgID }, { apps: subData })
-      console.log('after update', subs.apps)
-      console.log(subData)
+      await subSchema.findOneAndUpdate({ ID: req.session.orgID }, { apps: subData.subList })
+      console.log('after update', subData)
     }
     return res.sendStatus(200)
   } catch (error) {
