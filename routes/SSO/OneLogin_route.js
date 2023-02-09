@@ -1,7 +1,7 @@
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-
+import { createUser } from '../../JS/SSO/OneLogin/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
@@ -57,7 +57,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // //req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
     let domain
@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'onelogin') {
         domain = sso.domain
-        client_id = sso.clientI
+        client_id = sso.clientID
         client_secret = sso.clientSecret
         if (!checkPresence) {
           sso.access_token = null
@@ -96,13 +96,33 @@ router.get('/', async (req, res) => {
             access_token: tokenSet.data.access_token,
             refresh_token: tokenSet.data.refresh_token
           }
-          console.log(updatedSso)
+          console.log(updatedSso.access_token)
           req.session.ssos.push(updatedSso)
         }
         break
       }
     }
     console.log('One login access token recieved')
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/createUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'onelogin') {
+        console.log('hit')
+        await createUser(sso, user)
+      }
+    }
     res.sendStatus(200)
   } catch (error) {
     console.log(error)

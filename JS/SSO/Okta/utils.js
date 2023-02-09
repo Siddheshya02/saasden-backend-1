@@ -242,3 +242,37 @@ export async function getGroups (orgID, sso_creds) {
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('Okta group data updated successfully')
 }
+export async function createUser (sso, user) {
+  const response = await axios.post(
+    `https://${sso.domain}/api/v1/users`,
+    {
+      profile: {
+        firstName: `${user.firstName}`,
+        lastName: `${user.lastName}`,
+        email: `${user.email}`,
+        login: `${user.username}`,
+        mobilePhone: `${user.phone}`
+      },
+      credentials: {
+        password: {
+          value: `${user.password}`
+        }
+      }
+    },
+    {
+      params: {
+        activate: 'true'
+      },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `SSWS ${sso.apiToken}`
+      }
+    }
+  ).then(function (response) {
+    console.log(JSON.stringify(response.data))
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
+}

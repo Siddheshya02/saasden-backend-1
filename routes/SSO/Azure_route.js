@@ -2,7 +2,7 @@
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-
+import { createUser } from '../../JS/SSO/Azure/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
@@ -93,7 +93,7 @@ router.get('/', async (req, res) => {
               grant_type: 'client_credentials'
             })
           ).then(res => { return res.data }).catch(res => console.log(res))
-          // console.log(tokenSet)
+          console.log(tokenSet)
 
           const updatedSso = {
             ssoName: sso.ssoName,
@@ -112,7 +112,7 @@ router.get('/', async (req, res) => {
       }
     }
     // req.session.sso_accessToken = tokenSet.access_token // access token
-    console.log('Azure Access Token recieved')
+    console.log('Azure Access Token recieved', req.session)
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -120,4 +120,23 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.post('/createUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'azure') {
+        console.log('hit')
+        await createUser(sso.access_token, user)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
 export { router }

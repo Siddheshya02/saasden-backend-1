@@ -297,3 +297,37 @@ export async function getGroups (orgID, sso_creds) {
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('Azure group data updated successfully')
 }
+
+// create user
+
+export async function createUser (access_token, user) {
+  const data = JSON.stringify({
+    accountEnabled: true,
+    displayName: `${user.displayName}`,
+    mailNickname: `${user.nickName}`,
+    userPrincipalName: `${user.email}`,
+    passwordProfile: {
+      forceChangePasswordNextSignIn: true,
+      password: `${user.password}`
+    }
+  })
+
+  const config = {
+    method: 'post',
+    url: 'https://graph.microsoft.com/v1.0/users',
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    },
+    data: data
+  }
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data))
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+  console.log('Create user called')
+}

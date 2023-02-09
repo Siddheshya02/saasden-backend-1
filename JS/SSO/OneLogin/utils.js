@@ -261,3 +261,28 @@ export async function getGroups (orgID, sso_creds) {
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('OneLogin group data updated successfully')
 }
+
+// craeteUser
+
+export async function createUser (sso, user) {
+  const response = await axios.post(
+    `https://${sso.domain}/api/2/users`,
+    {
+      firstname: `${user.firstName}`,
+      lastname: `${user.lastName}`,
+      email: `${user.email}`,
+      username: `${user.username}`
+    },
+    {
+      headers: {
+        Authorization: `bearer ${sso.access_token}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  ).then(function (response) {
+    console.log(JSON.stringify(response.data))
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
+}

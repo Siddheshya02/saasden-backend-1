@@ -18,6 +18,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   // const ssoName = req.session.sso_name
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   console.log('refresh route called ')
   const orgID = req.session.orgID
   // deleting the data already present in the db of the organization
