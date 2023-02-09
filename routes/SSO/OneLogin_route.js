@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'onelogin') {
         domain = sso.domain
-        client_id = sso.clientI
+        client_id = sso.clientID
         client_secret = sso.clientSecret
         if (!checkPresence) {
           sso.access_token = null
