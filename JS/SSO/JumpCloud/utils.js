@@ -16,7 +16,44 @@ export async function verifyToken (apiToken) {
   if (res.status !== 200) { return false }
   return true
 }
-
+export async function createUser (sso, userInfo) {
+  const response = axios.post(
+    'https://console.jumpcloud.com/api/systemusers',
+    {
+      account_locked: true,
+      activated: true,
+      disableDeviceMaxLoginAttempts: true,
+      displayname: `${userInfo.username}`,
+      email: `${userInfo.email}`,
+      firstname: `${userInfo.firstname}`,
+      jobTitle: `${userInfo.jobTitle}`,
+      lastname: `${userInfo.lastname}`,
+      middlename: `${userInfo.middlename}`,
+      password: `${userInfo.password}`,
+      password_never_expires: true,
+      passwordless_sudo: true,
+      phoneNumbers: [
+        {
+          number: `${userInfo.number}`,
+          Phonetype: `${userInfo.phonetype}`
+        }
+      ],
+      username: `${userInfo.username}`
+    },
+    {
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': `${sso.apiToken}`
+      }
+    }
+  )
+    .then((data) => {
+      return data.data
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
 async function getApps (apiToken) {
   const res = await axios.get('https://console.jumpcloud.com/api/applications', {
     headers: {

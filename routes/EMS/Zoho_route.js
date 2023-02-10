@@ -5,7 +5,7 @@ const router = express.Router()
 
 // To be called only 1 time
 router.post('/auth', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   const update = {
     emsData: {
@@ -25,7 +25,7 @@ router.post('/auth', async (req, res) => {
 
 // Send Link to Login
 router.get('/', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const orgData = await orgSchema.findOne({ ID: req.session.orgID })
   req.session.ems_name = 'zoho'
   req.session.ems_clientID = orgData.emsData.clientID

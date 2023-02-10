@@ -1,16 +1,11 @@
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-
+import { createUser } from '../../JS/SSO/JumpCloud/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
-  // const update = {
-  //   ssoData: {
-  //     apiToken: req.body.apiToken
-  //   }
-  // }
   const ssoData = {
     ssoName: 'jumpcloud',
     clientID: null,
@@ -79,5 +74,23 @@ router.get('/', async (req, res) => {
     res.sendStatus(500)
   }
 })
-
+router.post('/createUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'jumpcloud') {
+        console.log('hit')
+        await createUser(sso, user)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
 export { router }

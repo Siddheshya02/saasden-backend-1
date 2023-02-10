@@ -5,15 +5,8 @@ import { createUser } from '../../JS/SSO/OneLogin/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
-  // const update = {
-  //   ssoData: {
-  //     clientID: req.body.clientID,
-  //     clientSecret: req.body.clientSecret,
-  //     domain: req.body.domain
-  //   }
-  // }
   const ssoData = {
     ssoName: 'onelogin',
     clientID: req.body.clientID,
@@ -57,7 +50,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
     let domain
@@ -86,6 +79,7 @@ router.get('/', async (req, res) => {
           }, {
             'Content-Type': 'application/x-www-form-urlencoded'
           })
+
           const updatedSso = {
             ssoName: sso.ssoName,
             clientID: sso.clientID,
@@ -96,22 +90,23 @@ router.get('/', async (req, res) => {
             access_token: tokenSet.data.access_token,
             refresh_token: tokenSet.data.refresh_token
           }
+
           console.log(updatedSso.access_token)
           req.session.ssos.push(updatedSso)
+          break
         }
-        break
       }
+      console.log('One login access token recieved')
+      res.sendStatus(200)
     }
-    console.log('One login access token recieved')
-    res.sendStatus(200)
   } catch (error) {
     console.log(error)
-    res.sendStatus(500)
+    res.sendStatus(401)
   }
 })
 
 router.post('/createUser', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const user = req.body
   console.log('user ', user)
   try {

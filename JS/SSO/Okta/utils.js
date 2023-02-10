@@ -177,7 +177,10 @@ export async function getEmps (orgID, sso_creds) {
       }
     }
     const filter = { ID: orgID }
-    const update = { emps: userList }
+    const orgData = await empSchema.findOne(filter)
+    const empData = orgData.emps
+    const updatedEmps = empData.concat(userList)
+    const update = { emps: updatedEmps }
     await empSchema.findOneAndUpdate(filter, update)
     console.log('Okta employee data updated successfully')
   } catch (error) {
@@ -231,14 +234,16 @@ export async function getGroups (orgID, sso_creds) {
     for (let k = 0; k < resp.length; k++) {
       const { id, label } = resp[k]
       const app = { id: id, name: label }
-      console.log(app)
       apps.push(app)
     }
     const group = { name: name, groupId: id, emps: emps, apps: apps, source: 'okta' }
     groups.push(group)
   }
   const filter = { ID: orgID }
-  const update = { groups: groups }
+  const orgData = await groupSchema.findOne(filter)
+  const grpData = orgData.groups
+  const updatedgrps = grpData.concat(groups)
+  const update = { groups: updatedgrps }
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('Okta group data updated successfully')
 }

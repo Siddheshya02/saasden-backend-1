@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.post('/auth', async (req, res) => {
   // req.session.destroy()
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN' 
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
 
   // const update = {
@@ -77,10 +77,6 @@ router.get('/', async (req, res) => {
         break
       }
     }
-    // console.log(req.session)
-    // req.session.sso_name = 'okta'
-    // req.session.sso_domain = orgData.ssoData.domain
-    // req.session.sso_apiToken = orgData.ssoData.apiToken
     res.sendStatus(200)
   } catch (error) {
     console.log(error)
@@ -95,7 +91,7 @@ router.get('/destroy', (req, res) => {
 // createuser
 
 router.post('/createUser', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const user = req.body
   console.log('user ', user)
   try {

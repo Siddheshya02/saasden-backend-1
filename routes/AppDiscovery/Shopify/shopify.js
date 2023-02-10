@@ -6,7 +6,7 @@ import { getScriptTags } from '../../../JS/AppDiscovery/Shopify/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   // const update = {
   //   ssoData: {
@@ -54,7 +54,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const Data = await appDiscoverySchema.findOne({ ID: req.session.orgID })
     console.log(Data.ID, ':  :', Data.discovery.url)
     await getScriptTags(Data.ID, Data.discovery.url, Data.discovery.discName)
