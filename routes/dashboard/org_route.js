@@ -10,6 +10,11 @@ router.get('/', async (req, res) => {
     for (let i = 0; i < orgData.ssoData.length; i++) {
       ssoNames.push(orgData.ssoData[i].ssoName)
     }
+    if (!orgData.emsData.tenantID) {
+      ssoNames.push(false)
+    } else {
+      ssoNames.push(true)
+    }
     req.session.ssos.push(ssos)
     res.json(ssoNames)
   } catch (error) {
