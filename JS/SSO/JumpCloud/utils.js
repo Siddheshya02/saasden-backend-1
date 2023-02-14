@@ -263,7 +263,7 @@ export async function getGroups (orgID, sso_creds) {
         'Content-Type': 'application/json',
         'x-api-key': `${sso_creds.apiToken}`
       }
-    }).then(res => { return res }).catch(res => console.log(res))
+    })
     e = e.data
     for (let j = 0; j < e.length; j++) {
       if (e[j] == null) {
@@ -277,7 +277,7 @@ export async function getGroups (orgID, sso_creds) {
           'Content-Type': 'application/json',
           'x-api-key': `${sso_creds.apiToken}`
         }
-      }).then(res => { return res }).catch(res => console.log(res))
+      })
       const us = u.data
       const emp = { id: us.id, email: us.email, firstname: us.firstname, lastname: us.lastname, username: us.username }
       emps.push(emp)
