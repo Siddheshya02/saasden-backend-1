@@ -280,7 +280,8 @@ export async function createUser (sso, user) {
       }
     }
   ).then(function (response) {
-    console.log(JSON.stringify(response.data))
+    // console.log(JSON.stringify(response.data))
+    console.log('User created successfully')
   })
     .catch(function (error) {
       console.log(error)

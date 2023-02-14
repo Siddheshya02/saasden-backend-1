@@ -48,6 +48,7 @@ export async function createUser (sso, userInfo) {
     }
   )
     .then((data) => {
+      console.log('User created successfully')
       return data.data
     })
     .catch(function (error) {

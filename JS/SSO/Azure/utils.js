@@ -341,10 +341,10 @@ export async function createUser (access_token, user) {
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data))
+      // console.log(JSON.stringify(response.data))
+      console.log('User created successfully')
     })
     .catch(function (error) {
       console.log(error)
     })
-  console.log('Create user called')
 }
