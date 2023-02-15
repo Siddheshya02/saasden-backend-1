@@ -17,6 +17,7 @@ export async function verifyToken (apiToken) {
   return true
 }
 export async function createUser (sso, userInfo) {
+  console.log('This is userInfo', userInfo)
   const response = axios.post(
     'https://console.jumpcloud.com/api/systemusers',
     {
