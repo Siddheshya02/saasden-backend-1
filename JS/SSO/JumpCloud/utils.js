@@ -175,7 +175,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       continue
     }
     const ssoData = [sso]
-    console.log(app.name, ' : ', emps)
+    // console.log(app.name, ' : ', emps)
     subList.push({
       sso: ssoData,
       name: app.name,

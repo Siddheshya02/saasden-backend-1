@@ -62,7 +62,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
   try {
     const filter = { ID: orgID }
     const appData = await getApps(sso_creds.domain, sso_creds.apiToken)
-    console.log(appData)
+    // console.log(appData)
     const subsData = await subSchema.findOne(filter)
     const subList = subsData.apps
     for (const app of appData) {
@@ -150,7 +150,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       amtSpent: subData.amtSpent,
       amtSaved: subData.amtSaved
     }
-    console.log(subList)
+    // console.log(subList)
     await subSchema.findOneAndUpdate(filter, update)
     console.log('Okta subscription data updated successfully')
   } catch (error) {
