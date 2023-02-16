@@ -78,7 +78,7 @@ router.post('/createUser', async (req, res) => {
   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const user = req.body
   console.log('user ', user)
-  console.log('Request : ', req)
+  // console.log('Request : ', req)
   try {
     for (const sso of req.session.ssos) {
       // console.log(sso)
