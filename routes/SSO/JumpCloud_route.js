@@ -53,6 +53,7 @@ router.get('/', async (req, res) => {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
     let checkPresence = false
+    console.log('ssos in session : ', req.session.ssos)
     for (const sso of req.session.ssos) {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'jumpcloud') {
@@ -66,7 +67,7 @@ router.get('/', async (req, res) => {
           // console.log('ssos in session : ', req.session.ssos)
           // console.log('sso to be pushed : ', sso)
           req.session.ssos.push(sso)
-          console.log('ssos in session : ', req.session.ssos)
+          // console.log('ssos in session : ', req.session.ssos)
           break
         }
       }
