@@ -68,6 +68,8 @@ router.get('/', async (req, res) => {
           req.session.ssos.push(sso)
           // console.log('ssos in session : ', req.session.ssos)
           break
+        } else {
+          break
         }
       }
     }
