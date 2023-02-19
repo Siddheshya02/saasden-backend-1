@@ -95,27 +95,6 @@ router.get('/', async (req, res) => {
           // console.log(updatedSso.access_token)
           req.session.ssos.push(updatedSso)
           break
-        } else {
-          for (const sessionsso of req.session.ssos) {
-            // eslint-disable-next-line eqeqeq
-            if (sessionsso.ssoName == 'onelogin') {
-              domain = sessionsso.domain
-              client_id = sessionsso.clientID
-              client_secret = sessionsso.clientSecret
-              const tokenSet = await axios.post(`https://${domain}/auth/oauth2/v2/token`, {
-                client_id: client_id,
-                client_secret: client_secret,
-                grant_type: 'client_credentials'
-              }, {
-                'Content-Type': 'application/x-www-form-urlencoded'
-              })
-              sessionsso.access_token = tokenSet.data.access_token
-              sessionsso.refresh_token = tokenSet.data.refresh_token
-              break
-            }
-          }
-          console.log(req.session.ssos)
-          break
         }
       }
     }
