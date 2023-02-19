@@ -85,7 +85,7 @@ router.post('/createUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'jumpcloud') {
         console.log('hit')
-      // await createUser(sso, user)
+        await createUser(sso, user)
       }
     }
     res.sendStatus(200)
