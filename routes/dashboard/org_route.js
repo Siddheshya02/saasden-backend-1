@@ -14,7 +14,9 @@ router.get('/', async (req, res) => {
       ssoNames.push('xero')
       ssoNames.push('zoho')
     }
-    req.session.ssos.concat(ssos)
+    for (const sso of ssos) {
+      req.session.ssos.push(sso)
+    }
     console.log('inside org route session : ', req.session.ssos)
     res.json(ssoNames)
   } catch (error) {

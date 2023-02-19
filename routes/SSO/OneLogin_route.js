@@ -61,6 +61,7 @@ router.get('/', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'onelogin') {
         checkPresence = true
+        break
       }
     }
     for (const sso of ssos) {
