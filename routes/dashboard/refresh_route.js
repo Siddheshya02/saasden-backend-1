@@ -35,6 +35,7 @@ router.get('/', async (req, res) => {
   for (const sso of req.session.ssos) {
     sso_creds.push(sso)
   }
+  console.log(req.session.ssos)
   // const sso_creds = {
   //   domain: req.session.sso_domain,
   //   tenantID: req.session.sso_tenantID,
