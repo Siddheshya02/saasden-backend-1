@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'jumpcloud') {
         if (!checkPresence) {
-          console.log(sso)
+          console.log(req.session.ssos)
           req.session.ssos.push(sso)
           break
         }
