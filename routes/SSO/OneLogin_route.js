@@ -98,7 +98,7 @@ router.get('/', async (req, res) => {
         } else {
           for (const sessionsso of req.session.ssos) {
             // eslint-disable-next-line eqeqeq
-            if (sso.ssoName == 'onelogin') {
+            if (sessionsso.ssoName == 'onelogin') {
               domain = sessionsso.domain
               client_id = sessionsso.clientID
               client_secret = sessionsso.clientSecret
