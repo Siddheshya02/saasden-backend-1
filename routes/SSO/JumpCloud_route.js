@@ -64,8 +64,8 @@ router.get('/', async (req, res) => {
       if (sso.ssoName == 'jumpcloud') {
         if (!checkPresence) {
           req.session.ssos.push(sso)
+          break
         }
-        break
       }
     }
     res.sendStatus(200)

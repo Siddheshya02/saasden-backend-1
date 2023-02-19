@@ -91,7 +91,7 @@ router.get('/', async (req, res) => {
             refresh_token: tokenSet.data.refresh_token
           }
 
-          console.log(updatedSso.access_token)
+          // console.log(updatedSso.access_token)
           req.session.ssos.push(updatedSso)
           break
         }
