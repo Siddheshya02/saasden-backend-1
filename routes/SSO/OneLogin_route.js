@@ -114,6 +114,7 @@ router.get('/', async (req, res) => {
               break
             }
           }
+          console.log(req.session.ssos)
         }
       }
       console.log('One login access token recieved')

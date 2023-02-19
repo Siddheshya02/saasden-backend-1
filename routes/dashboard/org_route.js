@@ -17,7 +17,6 @@ router.get('/', async (req, res) => {
     for (const sso of ssos) {
       req.session.ssos.push(sso)
     }
-    console.log('inside org route session : ', req.session.ssos)
     res.json(ssoNames)
   } catch (error) {
     console.log(error)
