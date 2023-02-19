@@ -14,19 +14,19 @@ router.get('/', async (req, res) => {
       ssoNames.push('xero')
       ssoNames.push('zoho')
     }
-    for (const sso of ssos) {
-      let checkPresence = false
-      for (const sessionsso of req.session.ssos) {
-        // eslint-disable-next-line eqeqeq
-        if (sessionsso.ssoName == sso.ssoName) {
-          checkPresence = true
-          break
-        }
-      }
-      if (!checkPresence) {
-        req.session.ssos.push(sso)
-      }
-    }
+    // for (const sso of ssos) {
+    //   let checkPresence = false
+    //   for (const sessionsso of req.session.ssos) {
+    //     // eslint-disable-next-line eqeqeq
+    //     if (sessionsso.ssoName == sso.ssoName) {
+    //       checkPresence = true
+    //       break
+    //     }
+    //   }
+    //   if (!checkPresence) {
+    //     req.session.ssos.push(sso)
+    //   }
+    // }
     res.json(ssoNames)
   } catch (error) {
     console.log(error)
