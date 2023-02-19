@@ -115,11 +115,12 @@ router.get('/', async (req, res) => {
             }
           }
           console.log(req.session.ssos)
+          break
         }
       }
-      console.log('One login access token recieved')
-      res.sendStatus(200)
     }
+    console.log('One login access token recieved')
+    res.sendStatus(200)
   } catch (error) {
     console.log(error)
     res.sendStatus(401)
