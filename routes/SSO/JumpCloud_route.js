@@ -53,7 +53,6 @@ router.get('/', async (req, res) => {
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
     let checkPresence = false
-    console.log('ssos in session : ', req.session.ssos)
     for (const sso of req.session.ssos) {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'jumpcloud') {

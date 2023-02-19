@@ -42,6 +42,7 @@ router.get('/', async (req, res) => {
   //   accessToken: req.session.sso_accessToken,
   //   apiToken: req.session.sso_apiToken
   // }
+  console.log(req.session.ssos)
   const ems_creds = {
     name: req.session.ems_name,
     domain: req.session.ems_domain,
