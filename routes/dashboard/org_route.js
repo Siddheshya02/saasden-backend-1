@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
       ssoNames.push('zoho')
     }
     req.session.ssos.concat(ssos)
-    console.log(ssos)
+    console.log('inside org route session : ', req.session.ssos)
     res.json(ssoNames)
   } catch (error) {
     console.log(error)
