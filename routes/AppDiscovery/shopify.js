@@ -1,7 +1,7 @@
 import express from 'express'
 // import orgSchema from '../../models/organization.js'
-import appDiscoverySchema from '../../../models/appDiscovery.js'
-import { getScriptTags } from '../../../JS/AppDiscovery/Shopify/utils.js'
+import appDiscoverySchema from '../../models/appDiscovery.js'
+import { getScriptTags } from '../../JS/AppDiscovery/Shopify/utils.js'
 
 const router = express.Router()
 

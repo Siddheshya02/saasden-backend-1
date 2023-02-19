@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
     // }
     for (const sso of sso_creds) {
       const ssoName = sso.ssoName
-      console.log(ssoName)
+      // console.log(ssoName)
       switch (ssoName) {
         case 'okta':
           if (!verifyOktaToken(sso.domain, sso.apiToken)) { res.send(`${process.env.domain}/okta/auth`).status(303) }

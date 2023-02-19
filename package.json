@@ -28,6 +28,7 @@
     "express": "^4.18.1",
     "express-jwt": "^7.7.5",
     "express-session": "^1.17.3",
+    "googleapis": "^111.0.0",
     "jwks-rsa": "^2.1.4",
     "jwt-check-expiration": "^1.0.5",
     "jwt-decode": "^3.1.2",
