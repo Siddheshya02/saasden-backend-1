@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
       ssoNames.push('xero')
       ssoNames.push('zoho')
     }
-    // req.session.ssos.merge(ssos)
+    req.session.ssos.concat(ssos)
     res.json(ssoNames)
   } catch (error) {
     console.log(error)
