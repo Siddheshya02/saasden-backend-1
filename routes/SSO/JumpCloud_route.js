@@ -1,6 +1,6 @@
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { createUser } from '../../JS/SSO/JumpCloud/utils.js'
+import { createUser, deleteUser } from '../../JS/SSO/JumpCloud/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
@@ -91,6 +91,27 @@ router.post('/createUser', async (req, res) => {
       if (sso.ssoName == 'jumpcloud') {
         console.log('hit')
         await createUser(sso, user)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/deleteUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  // console.log('Request : ', req)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'jumpcloud') {
+        console.log('hit')
+        await deleteUser(sso, user)
       }
     }
     res.sendStatus(200)

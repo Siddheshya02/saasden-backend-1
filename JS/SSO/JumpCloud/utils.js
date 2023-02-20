@@ -16,46 +16,7 @@ export async function verifyToken (apiToken) {
   if (res.status !== 200) { return false }
   return true
 }
-export async function createUser (sso, userInfo) {
-  console.log('This is userInfo', userInfo)
-  const response = axios.post(
-    'https://console.jumpcloud.com/api/systemusers',
-    {
-      account_locked: true,
-      activated: true,
-      disableDeviceMaxLoginAttempts: true,
-      displayname: `${userInfo.username}`,
-      email: `${userInfo.email}`,
-      firstname: `${userInfo.firstname}`,
-      jobTitle: `${userInfo.jobTitle}`,
-      lastname: `${userInfo.lastname}`,
-      middlename: `${userInfo.middlename}`,
-      password: `${userInfo.password}`,
-      password_never_expires: true,
-      passwordless_sudo: true,
-      phoneNumbers: [
-        {
-          number: `${userInfo.number}`,
-          Phonetype: `${userInfo.phonetype}`
-        }
-      ],
-      username: `${userInfo.username}`
-    },
-    {
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': `${sso.apiToken}`
-      }
-    }
-  )
-    .then((data) => {
-      console.log('User created successfully')
-      return data.data
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
-}
+
 async function getApps (apiToken) {
   const res = await axios.get('https://console.jumpcloud.com/api/applications', {
     headers: {
@@ -318,4 +279,61 @@ export async function getGroups (orgID, sso_creds) {
   const update = { groups: updatedgrps }
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('JumpCloud group data updated successfully')
+}
+
+// create user
+
+export async function createUser (sso, userInfo) {
+  console.log('This is userInfo', userInfo)
+  const response = axios.post(
+    'https://console.jumpcloud.com/api/systemusers',
+    {
+      account_locked: true,
+      activated: true,
+      disableDeviceMaxLoginAttempts: true,
+      displayname: `${userInfo.username}`,
+      email: `${userInfo.email}`,
+      firstname: `${userInfo.firstname}`,
+      jobTitle: `${userInfo.jobTitle}`,
+      lastname: `${userInfo.lastname}`,
+      middlename: `${userInfo.middlename}`,
+      password: `${userInfo.password}`,
+      password_never_expires: true,
+      passwordless_sudo: true,
+      phoneNumbers: [
+        {
+          number: `${userInfo.number}`,
+          Phonetype: `${userInfo.phonetype}`
+        }
+      ],
+      username: `${userInfo.username}`
+    },
+    {
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': `${sso.apiToken}`
+      }
+    }
+  )
+    .then((data) => {
+      console.log('User created successfully')
+      return data.data
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
+
+export async function deleteUser (sso, userInfo) {
+  const res = axios.delete(`https://console.jumpcloud.com/api/systemusers/${userInfo.userId}`, {
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': `${sso.apiToken}`
+    }
+  }).then(function (re) {
+    console.log('User deleted sucessfully')
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
 }

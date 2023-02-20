@@ -1,6 +1,6 @@
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { createUser } from '../../JS/SSO/Okta/utils.js'
+import { createUser, deleteUser } from '../../JS/SSO/Okta/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
@@ -101,6 +101,26 @@ router.post('/createUser', async (req, res) => {
       if (sso.ssoName == 'okta') {
         console.log('hit')
         await createUser(sso, user)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/deleteUser', async (req, res) => {
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'okta') {
+        console.log('hit')
+        await deleteUser(sso, user)
       }
     }
     res.sendStatus(200)

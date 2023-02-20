@@ -282,3 +282,19 @@ export async function createUser (sso, user) {
       console.log(error)
     })
 }
+
+export async function deleteUser (sso, user) {
+  const response = await axios.delete(`https://dev-3755237.okta.com/api/v1/users/${user.userId}`, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `SSWS ${sso.apiToken}`,
+      Prefer: 'respond-async'
+    }
+  }).then(function (response) {
+    console.log('User deleted sucessfully')
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
+}

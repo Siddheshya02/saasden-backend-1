@@ -1,11 +1,11 @@
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { createUser } from '../../JS/SSO/OneLogin/utils.js'
+import { createUser, deleteUser } from '../../JS/SSO/OneLogin/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  //  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   const ssoData = {
     ssoName: 'onelogin',
@@ -50,7 +50,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    //  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
     let domain
@@ -117,6 +117,26 @@ router.post('/createUser', async (req, res) => {
       if (sso.ssoName == 'onelogin') {
         console.log('hit')
         await createUser(sso, user)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/deleteUser', async (req, res) => {
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'onelogin') {
+        console.log('hit')
+        await deleteUser(sso, user)
       }
     }
     res.sendStatus(200)

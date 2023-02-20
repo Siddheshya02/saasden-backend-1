@@ -2,12 +2,13 @@
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { createUser } from '../../JS/SSO/Azure/utils.js'
+import { createUser, deleteUser } from '../../JS/SSO/Azure/utils.js'
+import { TokenSet } from 'xero-node'
 // import UnAuthorized from '../../ErrorAndExceptions/unAuthorized.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   const ssoData = {
     ssoName: 'azure',
@@ -111,7 +112,7 @@ router.get('/', async (req, res) => {
       }
     }
     // req.session.sso_accessToken = tokenSet.access_token // access token
-    console.log('Azure Access Token recieved', req.session)
+    console.log('Azure Access Token recieved')
     res.sendStatus(200)
   } catch (error) {
     console(error)
@@ -138,4 +139,25 @@ router.post('/createUser', async (req, res) => {
     res.sendStatus(500)
   }
 })
+
+router.post('/deleteUser', async (req, res) => {
+  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const user = req.body
+  console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'azure') {
+        console.log('hit')
+        await deleteUser(sso.access_token, user)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 export { router }

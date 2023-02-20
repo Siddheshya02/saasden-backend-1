@@ -287,3 +287,18 @@ export async function createUser (sso, user) {
       console.log(error)
     })
 }
+
+export async function deleteUser (sso, user) {
+  const res = axios.delete(`https://saasdenbits-dev.onelogin.com/api/2/users/${user.userId}`, {
+    headers: {
+      Authorization: `bearer ${sso.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }).then(function (response) {
+    // console.log(JSON.stringify(response.data))
+    console.log('User deleted successfully')
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
+}

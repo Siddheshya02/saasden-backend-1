@@ -348,3 +348,22 @@ export async function createUser (access_token, user) {
       console.log(error)
     })
 }
+
+export async function deleteUser (access_token, user) {
+  const config = {
+    method: 'delete',
+    url: `https://graph.microsoft.com/v1.0/users/${user.userId}`,
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
+  axios(config)
+    .then(function (response) {
+      console.log('User deleted successfully')
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
