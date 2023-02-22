@@ -1,10 +1,12 @@
 import axios from 'axios'
 import { google } from 'googleapis'
+import subSchema from '../../../models/subscription.js'
+import empSchema from '../../../models/employee.js'
 export function getoauth2Client (client_id, client_secret) {
   const oauth2Client = new google.auth.OAuth2(
     client_id,
     client_secret,
-    'http://localhost:3000/callback/'
+    'http://localhost:4000/api/v1/gsuite/callback/'
   )
   return oauth2Client
 }
@@ -29,7 +31,7 @@ export async function getGsuiteToken (code, client_id, client_secret) {
   oauth2Client.setCredentials(tokens)
   return tokens.access_token
 }
-export async function getSubs (access_token) {
+export async function getApps (access_token) {
   const apps = await axios.get('https://admin.googleapis.com/admin/reports/v1/usage/dates/2023-02-06', {
     headers: {
       Authorization: `Bearer ${access_token}`,
@@ -63,7 +65,7 @@ export async function getSubs (access_token) {
   }
   return { appList1, appList2 }
 }
-export async function getAuthorizedApps (appList1, appList2) {
+export async function getEmps (appList1, appList2, orgID) {
   const appSet = new Set()
   for (const app of appList1) {
     appSet.add(app.name)
@@ -72,24 +74,36 @@ export async function getAuthorizedApps (appList1, appList2) {
   const emailSet = new Set()
   const Maps = new Map()
   for (const data of appList2) {
-    if (emailSet.has(data.email) && appSet.has(data.apps[0])) {
+    if (emailSet.has(data.email)) {
       Maps.get(data.email).add(data.apps[0])
     } else {
       const apps = new Set()
-      if (appSet.has(data.apps[0])) {
-        apps.add(data.apps[0])
-      }
+      apps.add(data.apps[0])
       emailSet.add(data.email)
       Maps.set(data.email, apps)
     }
   }
-  const Authorized = {}
+  const empList = []
   Maps.forEach(function (value, key) {
-    Authorized[key] = Array.from(value)
+    const emp = { email: null, apps: [], source: 'gsuite' }
+    emp.email = key
+    const apps = Array.from(value)
+    for (const app of apps) {
+      emp.apps.push({ name: app })
+    }
+    empList.push(emp)
   })
-  return Authorized
+  const filter = { ID: orgID }
+  const orgData = await empSchema.findOne(filter)
+  const empData = orgData.emps
+  const updatedEmps = empData.concat(empList)
+  const update = { emps: updatedEmps }
+  await empSchema.findOneAndUpdate(filter, update)
+  console.log('Gsuite employee data updated successfully')
 }
-export async function getunAuthorizedApps (appList1, appList2) {
+export async function getSubs (appList1, appList2, orgID) {
+  const filter = { ID: orgID }
+  const subsData = await subSchema.findOne(filter)
   const appSet = new Set()
   for (const app of appList1) {
     appSet.add(app.name)
@@ -98,23 +112,88 @@ export async function getunAuthorizedApps (appList1, appList2) {
   const Maps = new Map()
   for (const data of appList2) {
     if (emailSet.has(data.email)) {
-      if (appSet.has(data.apps[0])) {
-        continue
-      }
       Maps.get(data.email).add(data.apps[0])
     } else {
       const apps = new Set()
-      if (appSet.has(data.apps[0])) {
-        continue
-      }
+      apps.add(data.apps[0])
       emailSet.add(data.email)
       Maps.set(data.email, apps)
     }
   }
-  const unAuthorized = {}
-  Maps.forEach(function (value, key) {
-    unAuthorized[key] = Array.from(value)
-  })
-
-  return unAuthorized
+  const subList = subsData.apps
+  for (const app of appSet) {
+    // const sub = { name: app, emps: [] }
+    const emps = []
+    const empSet = new Set()
+    Maps.forEach(async function (value, key) {
+      if (value.has(app)) {
+        if (!empSet.has(key)) {
+          const emp = { email: key }
+          emps.push(emp)
+          empSet.add(key)
+        }
+      }
+    })
+    const sso = {
+      id: null,
+      name: 'gsuite'
+    }
+    let checkPresence = false
+    for (const sub of subList) {
+      // eslint-disable-next-line eqeqeq
+      if (sub.name == app) {
+        let checkSsoPresence = false
+        for (const origin of sub.sso) {
+          // eslint-disable-next-line eqeqeq
+          if (origin.name == 'gsuite') {
+            checkSsoPresence = true
+            break
+          }
+        }
+        if (checkSsoPresence) {
+          continue
+        }
+        sub.sso.push(sso)
+        checkPresence = true
+        break
+      }
+    }
+    if (checkPresence) {
+      for (const sub of subList) {
+        // eslint-disable-next-line eqeqeq
+        if (sub.name == app) {
+          const updatedEmps = emps.concat(sub.emps)
+          sub.emps = updatedEmps
+          break
+        }
+      }
+      continue
+    }
+    const ssoData = [sso]
+    // console.log(app.name, ' : ', emps)
+    subList.push({
+      sso: ssoData,
+      name: app,
+      emps: emps,
+      // ems data to be updated
+      emsID: '',
+      licences: null,
+      currentCost: null,
+      amountSaved: null,
+      dueDate: ''
+    })
+  }
+  const subData = {
+    subList: subList,
+    amtSaved: 0,
+    amtSpent: 0
+  }
+  const update = {
+    apps: subList,
+    amtSpent: subData.amtSpent,
+    amtSaved: subData.amtSaved
+  }
+  await subSchema.findOneAndUpdate(filter, update)
+  console.log('Gsuite subscription data updated successfully')
+  return subList
 }

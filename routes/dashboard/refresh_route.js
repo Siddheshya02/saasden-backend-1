@@ -4,6 +4,7 @@ import { getNewToken as getNewOneLoginToken, getEmps as getOneLoginEmps, getSubs
 import { getNewToken as getNewPingOneToken, getEmps as getPingOneEmps, getSubs as getPingOneSubs, getGroups as getPingOneGroups } from '../../JS/SSO/PingONE/utils.js'
 import { getNewToken as getNewZohoToken, verifyToken as verifyZohoToken, getZohoData } from '../../JS/EMS/Zoho/utils.js'
 import { getEmps as getOktaEmps, getSubs as getOktaSubs, getGroups as getOktaGroups, verifyToken as verifyOktaToken } from '../../JS/SSO/Okta/utils.js'
+import { getApps as getGsuiteApps, getEmps as getGsuiteEmps, getSubs as getGsuiteSubs } from '../../JS/AppDiscovery/Gsuite/utils.js'
 import { getScriptTags } from '../../JS/AppDiscovery/Shopify/utils.js'
 import express from 'express'
 import { getNewToken as getNewXeroToken, getXeroData } from '../../JS/EMS/Xero/utils.js'
@@ -18,7 +19,6 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   // const ssoName = req.session.sso_name
-  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   console.log('refresh route called ')
   const orgID = req.session.orgID
   // deleting the data already present in the db of the organization
@@ -35,7 +35,6 @@ router.get('/', async (req, res) => {
   for (const sso of req.session.ssos) {
     sso_creds.push(sso)
   }
-  // console.log(req.session.ssos)
   // const sso_creds = {
   //   domain: req.session.sso_domain,
   //   tenantID: req.session.sso_tenantID,
@@ -105,6 +104,13 @@ router.get('/', async (req, res) => {
           await getAzureSubs(orgID, sso, ems_creds)
           await getAzureEmps(orgID, sso)
           await getAzureGroups(orgID, sso)
+          break
+        case 'gsuite':
+          console.log('Fetching gsuite data')
+          // eslint-disable-next-line no-case-declarations
+          const { appList1, appList2 } = await getGsuiteApps(sso.access_token)
+          await getGsuiteSubs(appList1, appList2, orgID)
+          await getGsuiteEmps(appList1, appList2, orgID)
           break
       }
     }

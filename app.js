@@ -20,6 +20,7 @@ import { router as refresh } from './routes/dashboard/refresh_route.js'
 import { router as appDiscovery } from './routes/dashboard/appDiscovery.js'
 import { router as checkOrgSso } from './routes/dashboard/org_route.js'
 import { router as shopify } from './routes/AppDiscovery/shopify.js'
+import { router as gsuite } from './routes/SSO/Gsuite_route.js'
 import sessions from 'express-session'
 import { router as subs } from './routes/dashboard/subscription_route.js'
 import { router as xero } from './routes/EMS/Xero_route.js'
@@ -103,7 +104,7 @@ app.use('/api/v1/pingone', pingone)
 app.use('/api/v1/onelogin', onelogin)
 app.use('/api/v1/jumpcloud', jumpcloud)
 app.use('/api/v1/shopify', shopify)
-
+app.use('/api/v1/gsuite', gsuite)
 // EMS Routes
 app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)

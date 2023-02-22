@@ -59,6 +59,7 @@ router.get('/', async (req, res) => {
       if (sso.ssoName == 'gsuite') {
         client_id = sso.clientID
         client_secret = sso.clientSecret
+        break
       }
     }
     const authorizationUrl = await getAuthorizationUrl(client_id, client_secret)
@@ -82,16 +83,18 @@ router.get('/callback', async (req, res) => {
       break
     }
   }
-  const access_token = getGsuiteToken(code, client_id, client_secret)
+  const access_token = await getGsuiteToken(code, client_id, client_secret)
   let checkPresence = false
   for (const sso of req.session.ssos) {
     // eslint-disable-next-line eqeqeq
     if (sso.ssoName == 'gsuite') {
       checkPresence = true
+      break
     }
   }
   if (!checkPresence) {
     const gsuiteData = {
+      ssoName: 'gsuite',
       clientID: client_id,
       clientSecret: client_secret,
       access_token: access_token
@@ -104,8 +107,10 @@ router.get('/callback', async (req, res) => {
         sso.clientID = client_id
         sso.clientSecret = client_secret
         sso.access_token = access_token
+        break
       }
     }
   }
   res.sendStatus(200)
 })
+export { router }
