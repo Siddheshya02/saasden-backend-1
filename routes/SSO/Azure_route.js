@@ -8,7 +8,7 @@ import { TokenSet } from 'xero-node'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   const ssoData = {
     ssoName: 'azure',
@@ -54,7 +54,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     // req.session.sso_name = 'azure'
     // req.session.sso_tenantID = orgData.ssoData.tenantID
@@ -93,7 +93,7 @@ router.get('/', async (req, res) => {
               console.log(error)
               res.sendStatus(500)
             })
-          console.log(tokenSet)
+          // console.log(tokenSet)
 
           const updatedSso = {
             ssoName: sso.ssoName,
@@ -105,7 +105,7 @@ router.get('/', async (req, res) => {
             access_token: tokenSet.access_token,
             refresh_token: null
           }
-          // console.log(updatedSso)
+          console.log(updatedSso)
           req.session.ssos.push(updatedSso)
         }
         break

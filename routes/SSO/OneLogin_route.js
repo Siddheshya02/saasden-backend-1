@@ -5,7 +5,7 @@ import { createUser, deleteUser } from '../../JS/SSO/OneLogin/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
-  //  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
   const ssoData = {
     ssoName: 'onelogin',
@@ -50,7 +50,7 @@ router.post('/auth', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    //  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+    req.session.orgID = 'org_qEHnRrdOzNUwWajN'
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
     let domain
@@ -107,7 +107,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/createUser', async (req, res) => {
-  // // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const user = req.body
   console.log('user ', user)
   try {

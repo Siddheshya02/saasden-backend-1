@@ -92,9 +92,9 @@ app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-app.use(jwtCheck) // check tok en first comment if
-app.use(handleErrors) // throw errors if error found in the token
-app.use(setOrgName) // set the organization id in the session
+// app.use(jwtCheck) // check tok en first comment if
+// app.use(handleErrors) // throw errors if error found in the token
+// app.use(setOrgName) // set the organization id in the session
 app.use(setSSOs) // initialize the sso array in session if empty
 
 // SSO Routes

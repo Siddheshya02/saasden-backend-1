@@ -289,7 +289,7 @@ export async function createUser (sso, user) {
 }
 
 export async function deleteUser (sso, user) {
-  const res = axios.delete(`https://saasdenbits-dev.onelogin.com/api/2/users/${user.userId}`, {
+  const deleteUser = axios.delete(`https://${sso.domain}/api/2/users/${user.userId}`, {
     headers: {
       Authorization: `bearer ${sso.access_token}`,
       'Content-Type': 'application/json'
@@ -300,5 +300,35 @@ export async function deleteUser (sso, user) {
   })
     .catch(function (error) {
       console.log(error)
+    })
+}
+export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
+  const deleteUserFromGroup = axios.delete(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, {
+    data: `[${userInfo.userId}]`
+  }, {
+    headers: {
+      Authorization: `bearer ${sso.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }).then((data) => {
+    console.log('User successfully deleted from group')
+  })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+export async function addUserToGroup (sso, userInfo, grpInfo) {
+  const addUserToGroup = axios.post(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, {
+    data: `[${userInfo.userId}]`
+  }, {
+    headers: {
+      Authorization: `bearer ${sso.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }).then((data) => {
+    console.log('User added to group successfully')
+  })
+    .catch((err) => {
+      console.log(err)
     })
 }

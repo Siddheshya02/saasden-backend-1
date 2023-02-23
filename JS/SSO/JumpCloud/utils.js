@@ -325,7 +325,7 @@ export async function createUser (sso, userInfo) {
 }
 
 export async function deleteUser (sso, userInfo) {
-  const res = axios.delete(`https://console.jumpcloud.com/api/systemusers/${userInfo.userId}`, {
+  const deleteUser = axios.delete(`https://console.jumpcloud.com/api/systemusers/${userInfo.userId}`, {
     headers: {
       'content-type': 'application/json',
       'x-api-key': `${sso.apiToken}`
@@ -335,5 +335,43 @@ export async function deleteUser (sso, userInfo) {
   })
     .catch(function (error) {
       console.log(error)
+    })
+}
+export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
+  const deleteUserFromGroup = axios.post(`https://console.jumpcloud.com/api/v2/usergroups/${grpInfo.grpId}/members`, {
+    op: 'remove',
+    type: 'user',
+    id: `${userInfo.userId}`
+  },
+  {
+    headers: {
+      Accept: 'application/json',
+      'x-api-key': `${sso.apiToken}`
+    }
+  }
+  ).then((data) => {
+    console.log('User deleted from the group successfully')
+  })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+export async function addUserToGroup (sso, userInfo, grpInfo) {
+  const addUserToGroup = axios.post(`https://console.jumpcloud.com/api/v2/usergroups/${grpInfo.grpId}/members`, {
+    op: 'add',
+    type: 'user',
+    id: `${userInfo.userId}`
+  },
+  {
+    headers: {
+      Accept: 'application/json',
+      'x-api-key': `${sso.apiToken}`
+    }
+  }
+  ).then((data) => {
+    console.log('User Added to the group successfully')
+  })
+    .catch((err) => {
+      console.log(err)
     })
 }
