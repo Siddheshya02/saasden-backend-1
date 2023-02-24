@@ -298,3 +298,40 @@ export async function deleteUser (sso, user) {
       console.log(error)
     })
 }
+
+export async function addUserToGroup (sso, userInfo, grpInfo) {
+  const response = axios.put(
+    `https://${sso.domain}/api/v1/groups/${grpInfo.groupId}/users/${userInfo.userId}`,
+    '',
+    {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `SSWS ${sso.apiToken}`
+      }
+    }
+  ).then(function (response) {
+    console.log('User added to group successfully')
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
+
+export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
+  const response = axios.delete(
+    `https://${sso.domain}/api/v1/groups/${grpInfo.groupId}/users/${userInfo.userId}`,
+    {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `SSWS ${sso.apiToken}`
+      }
+    }
+  ).then(function (response) {
+    console.log('User added to group successfully')
+  })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
