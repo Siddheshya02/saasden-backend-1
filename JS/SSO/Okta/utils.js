@@ -335,3 +335,34 @@ export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
       console.log(error)
     })
 }
+
+export async function deleteApp (sso, appInfo) {
+  const config = {
+    method: 'post',
+    url: `https://${sso.domain}/api/v1/apps/${appInfo.appId}/lifecycle/deactivate`,
+    headers: {
+      Authorization: `SSWS ${sso.apiToken}`
+    }
+  }
+  const config2 = {
+    method: 'delete',
+    url: `https://${sso.domain}/api/v1/apps/${appInfo.appId}`,
+    headers: {
+      Authorization: `SSWS ${sso.apiToken}`
+    }
+  }
+
+  axios(config)
+    .then(function (response) {
+      axios(config2)
+        .then(function (response) {
+
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
