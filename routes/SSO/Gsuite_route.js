@@ -63,7 +63,7 @@ router.get('/', async(req, res) => {
             }
         }
         const authorizationUrl = await getAuthorizationUrl(client_id, client_secret)
-        res.status(200).json(authorizationUrl)
+        res.status(200).json(authorizationUrl.toString())
     } catch (error) {
         console.log(error)
         res.sendStatus(500)
