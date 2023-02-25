@@ -6,7 +6,7 @@ export function getoauth2Client (client_id, client_secret) {
   const oauth2Client = new google.auth.OAuth2(
     client_id,
     client_secret,
-    'http://localhost:4000/api/v1/gsuite/callback/'
+    'https://saasden.club/api/v1/gsuite/callback/'
   )
   return oauth2Client
 }
