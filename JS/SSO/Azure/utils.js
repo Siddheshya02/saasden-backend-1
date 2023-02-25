@@ -96,7 +96,7 @@ async function getUsers (access_token) {
     }
   }).then(res => { return res.data.value }).catch(res => console.log(res))
   for (let i = 0; i < list.length; i++) {
-   const { id, displayName, userPrincipalName, surname, givenName } = list[i]
+    const { id, displayName, userPrincipalName, surname, givenName } = list[i]
     const dat = await axios.get(`https://graph.microsoft.com/v1.0/users/${list[i].id}/appRoleAssignments`, {
       headers: {
         Authorization: `Bearer ${access_token}`
@@ -389,25 +389,26 @@ export async function addUserTogroup (sso, userInfo, groupInfo) {
       console.log(error)
     })
 }
-export async function addUserToApp(sso,userInfo,appInfo){
-var data = JSON.stringify({
-  "id": "00000000-0000-0000-0000-000000000000",
-  "principalId": `${userInfo.userId}`,
-  "resourceId": `${appInfo.appId}`
-});
-var config = {
-  method: 'post',
-maxBodyLength: Infinity,
-  url: `https://graph.microsoft.com/v1.0/${sso.tenantId}/users/${userInfo.userId}/appRoleAssignments`,
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  data : data
-};
-axios(config)
-.then(function (response) {
-  console.log(JSON.stringify(response.data));
-})
-.catch(function (error) {
-  console.log(error);
-});}
+export async function addUserToApp (sso, userInfo, appInfo) {
+  const data = JSON.stringify({
+    id: '00000000-0000-0000-0000-000000000000',
+    principalId: `${userInfo.userId}`,
+    resourceId: `${appInfo.appId}`
+  })
+  const config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: `https://graph.microsoft.com/v1.0/${sso.tenantId}/users/${userInfo.userId}/appRoleAssignments`,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: data
+  }
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data))
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
