@@ -70,6 +70,7 @@ router.get('/', async(req, res) => {
     }
 })
 router.get('/callback', async(req, res) => {
+    console.log('In callback route')
     const code = req.query.code
     const orgData = await orgSchema.findOne({ ID: req.session.orgID })
     const ssos = orgData.ssoData
