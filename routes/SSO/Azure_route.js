@@ -2,7 +2,7 @@
 import axios from 'axios'
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { addUserToApp, addUserTogroup, createUser, deleteUser, deleteUserFromApp, deleteUserFromGroup } from '../../JS/SSO/Azure/utils.js'
+import { addUserToApp, addUserTogroup, createUser, deleteApp, deleteUser, deleteUserFromApp, deleteUserFromGroup } from '../../JS/SSO/Azure/utils.js'
 import { TokenSet } from 'xero-node'
 // import UnAuthorized from '../../ErrorAndExceptions/unAuthorized.js'
 const router = express.Router()
@@ -205,7 +205,7 @@ router.post('/groups/deleteUser', async (req, res) => {
 router.post('/app/addUser', async (req, res) => {
   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const userInfo = req.body.userInfo
-  const grpInfo = req.body.grpInfo
+  const appInfo = req.body.appInfo
   // console.log('Request : ', req)
   try {
     for (const sso of req.session.ssos) {
@@ -213,7 +213,7 @@ router.post('/app/addUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'azure') {
         console.log('hit')
-        await addUserToApp(sso, userInfo, grpInfo)
+        await addUserToApp(sso, userInfo, appInfo)
       }
     }
     res.sendStatus(200)
@@ -226,7 +226,7 @@ router.post('/app/addUser', async (req, res) => {
 router.post('/app/deleteUser', async (req, res) => {
   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const userInfo = req.body.userInfo
-  const grpInfo = req.body.grpInfo
+  const appInfo = req.body.appInfo
   // console.log('Request : ', req)
   try {
     for (const sso of req.session.ssos) {
@@ -234,7 +234,28 @@ router.post('/app/deleteUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'azure') {
         console.log('hit')
-        await deleteUserFromApp(sso, userInfo, grpInfo)
+        await deleteUserFromApp(sso, userInfo, appInfo)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/app/delete', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+//   const userInfo = req.body.userInfo
+  const appInfo = req.body.appInfo
+  // console.log('Request : ', req)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'azure') {
+        console.log('hit')
+        await deleteApp(sso, appInfo)
       }
     }
     res.sendStatus(200)

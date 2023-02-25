@@ -374,7 +374,7 @@ export async function deleteApp (sso, appInfo) {
       console.log(error)
     })
 }
-async function deleteUserFromApp (sso, userInfo, appInfo) {
+export async function deleteUserFromApp (sso, userInfo, appInfo) {
   const config = {
     method: 'delete',
     url: `https://${sso.domain}/api/v1/apps/${appInfo.appId}/users/${userInfo.userId}`,
@@ -385,22 +385,6 @@ async function deleteUserFromApp (sso, userInfo, appInfo) {
   axios(config)
     .then(function (response) {
       console.log('User successfully deleted from app')
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
-}
-async function addUserToApp (sso, userInfo, appInfo) {
-  const config = {
-    method: 'delete',
-    url: `https://${sso.domain}/api/v1/api/v1/apps/${appInfo.appId}/users/${userInfo.userId}`,
-    headers: {
-      Authorization: `SSWS ${sso.apiToken}`
-    }
-  }
-  axios(config)
-    .then(function (response) {
-      console.log('User successfully added to app')
     })
     .catch(function (error) {
       console.log(error)

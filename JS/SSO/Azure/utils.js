@@ -383,7 +383,8 @@ export async function addUserTogroup (sso, userInfo, groupInfo) {
   }
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data))
+      // console.log(JSON.stringify(response.data))
+      console.log('user added to the group Sucessfully')
     })
     .catch(function (error) {
       console.log(error)
@@ -401,7 +402,8 @@ export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
   }
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data))
+      // console.log(JSON.stringify(response.data))
+      console.log('user deleted from the group successfully')
     })
     .catch(function (error) {
       console.log(error)
@@ -425,7 +427,8 @@ export async function addUserToApp (sso, userInfo, appInfo) {
   }
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data))
+      // console.log(JSON.stringify(response.data))
+      console.log('user added to the app successfully')
     })
     .catch(function (error) {
       console.log(error)
@@ -444,7 +447,28 @@ export async function deleteUserFromApp (sso, userInfo, appInfo) {
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data))
+      // console.log(JSON.stringify(response.data))
+      console.log('user deleted from the app successfully')
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
+
+export async function deleteApp (sso, appInfo) {
+  const config = {
+    method: 'delete',
+    url: `https://graph.microsoft.com/v1.0/servicePrincipals/${appInfo.appId}`,
+    headers: {
+      Authorization: `Bearer ${sso.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
+  axios(config)
+    .then(function (response) {
+      // console.log(JSON.stringify(response.data))
+      console.log('app deleted successfully')
     })
     .catch(function (error) {
       console.log(error)

@@ -1,6 +1,6 @@
 import express from 'express'
 import orgSchema from '../../models/organization.js'
-import { addUserToGroup, createUser, deleteUser, deleteUserFromGroup } from '../../JS/SSO/Okta/utils.js'
+import { addUserToApp, addUserToGroup, createUser, deleteApp, deleteUser, deleteUserFromApp, deleteUserFromGroup } from '../../JS/SSO/Okta/utils.js'
 const router = express.Router()
 
 router.post('/auth', async (req, res) => {
@@ -163,6 +163,48 @@ router.post('/groups/deleteUser', async (req, res) => {
       if (sso.ssoName == 'okta') {
         console.log('hit')
         await deleteUserFromGroup(sso, userInfo, grpInfo)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/app/delete', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // const userInfo = req.body.userInfo
+  const appInfo = req.body.appInfo
+  // console.log('Request : ', req)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'okta') {
+        console.log('hit')
+        await deleteApp(sso, appInfo)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/app/deleteUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const userInfo = req.body.userInfo
+  const appInfo = req.body.appInfo
+  // console.log('Request : ', req)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'okta') {
+        console.log('hit')
+        await deleteUserFromApp(sso, userInfo, appInfo)
       }
     }
     res.sendStatus(200)
