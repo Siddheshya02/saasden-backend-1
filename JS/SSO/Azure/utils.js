@@ -389,6 +389,25 @@ export async function addUserTogroup (sso, userInfo, groupInfo) {
       console.log(error)
     })
 }
+
+export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
+  const config = {
+    method: 'delete',
+    url: `https://graph.microsoft.com/v1.0/groups/${grpInfo.groupId}/members/${userInfo.userId}/$ref`,
+    headers: {
+      Authorization: `Bearer ${sso.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data))
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
+
 export async function addUserToApp (sso, userInfo, appInfo) {
   const data = JSON.stringify({
     id: '00000000-0000-0000-0000-000000000000',
@@ -404,6 +423,25 @@ export async function addUserToApp (sso, userInfo, appInfo) {
     },
     data: data
   }
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data))
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
+
+export async function deleteUserFromApp (sso, userInfo, appInfo) {
+  const config = {
+    method: 'delete',
+    url: `https://graph.microsoft.com/v1.0/servicePrincipals/${appInfo.appId}/appRoleAssignments/${userInfo.userId}`,
+    headers: {
+      Authorization: `Bearer ${sso.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
   axios(config)
     .then(function (response) {
       console.log(JSON.stringify(response.data))
