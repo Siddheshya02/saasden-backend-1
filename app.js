@@ -34,56 +34,56 @@ const app = express()
 
 // Verify the Auth0 Token
 const jwtCheck = expressjwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: 'https://saasden1.us.auth0.com/.well-known/jwks.json'
-  }),
-  audience: 'https://www.saasden.club',
-  issuer: 'https://saasden1.us.auth0.com/',
-  algorithms: ['RS256']
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: 'https://saasden1.us.auth0.com/.well-known/jwks.json'
+    }),
+    audience: 'https://www.saasden.club',
+    issuer: 'https://saasden1.us.auth0.com/',
+    algorithms: ['RS256']
 })
 
 // Session Configuration, uses redis, need redis to run in local environment
 const sess_config = {
-  secret: process.env.sessionSecret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
-  store: new RedisStore({
-    host: process.env.REDIS_URI,
-    port: process.env.REDIS_PORT,
-    client: redisClient
-  })
+    secret: process.env.sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
+    store: new RedisStore({
+        host: process.env.REDIS_URI,
+        port: process.env.REDIS_PORT,
+        client: redisClient
+    })
 }
 
 // The most troublesome part, always check before deployment
 const cors_config = {
-  origin: ['https://login.xero.com', 'http://localhost:3000', 'http://127.0.0.1:3000', 'https://saasden.club'],
-  methods: ['GET', 'POST', 'DELETE'],
-  credentials: true
+    origin: ['https://login.xero.com', 'http://localhost:3000', 'http://127.0.0.1:3000', 'https://saasden.club'],
+    methods: ['GET', 'POST', 'DELETE'],
+    credentials: true
 }
 
 // Redis server connection
 redisClient.connect()
-  .then(() => console.log('Redis Connected'))
-  .catch((err) => {
-    console.log('Error connecting to redis')
-    console.log(err)
-  })
+    .then(() => console.log('Redis Connected'))
+    .catch((err) => {
+        console.log('Error connecting to redis')
+        console.log(err)
+    })
 
 // MongoDB configuration
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 }, (err) => {
-  if (err) {
-    console.log('Error Connecting to mongoDB')
-    console.log(err)
-  } else {
-    console.log('MongoDB Connected')
-  }
+    if (err) {
+        console.log('Error Connecting to mongoDB')
+        console.log(err)
+    } else {
+        console.log('MongoDB Connected')
+    }
 })
 
 // Middleware, order of middlewares is important check
@@ -92,9 +92,9 @@ app.use(sessions(sess_config))
 app.use(cors(cors_config))
 app.use(cookieParser())
 app.use(express.json())
-// app.use(jwtCheck) // check tok en first comment if
-// app.use(handleErrors) // throw errors if error found in the token
-// app.use(setOrgName) // set the organization id in the session
+app.use(jwtCheck) // check tok en first comment if
+app.use(handleErrors) // throw errors if error found in the token
+app.use(setOrgName) // set the organization id in the session
 app.use(setSSOs) // initialize the sso array in session if empty
 
 // SSO Routes
@@ -105,7 +105,7 @@ app.use('/api/v1/onelogin', onelogin)
 app.use('/api/v1/jumpcloud', jumpcloud)
 app.use('/api/v1/shopify', shopify)
 app.use('/api/v1/gsuite', gsuite)
-// EMS Routes
+    // EMS Routes
 app.use('/api/v1/xero', xero)
 app.use('/api/v1/zoho', zoho)
 
