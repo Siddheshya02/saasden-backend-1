@@ -112,6 +112,7 @@ router.get('/callback', async(req, res) => {
             }
         }
     }
+    console.log(req.session.ssos)
     res.sendStatus(200)
 })
 export { router }
