@@ -112,7 +112,7 @@ router.get('/', async (req, res) => {
           const { appList1, appList2 } = await getGsuiteApps(sso.access_token,'C01t7czyh')
           await getGsuiteSubs(appList1, appList2, orgID)
           await getGsuiteEmps(appList1, appList2, orgID)
-          await getGroups(orgID,sso.access_token,'C01t7czyh')
+          await getGroups(orgID,sso.access_token,'C01t7czyh',appList2)
           break
       }
     }
