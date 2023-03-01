@@ -197,6 +197,10 @@ export async function getSubs (appList1, appList2, orgID) {
     }
     const ssoData = [sso]
     // console.log(app.name, ' : ', emps)
+    if(emps.length==0)
+   {
+     continue
+   }
     subList.push({
       sso: ssoData,
       name: app,
