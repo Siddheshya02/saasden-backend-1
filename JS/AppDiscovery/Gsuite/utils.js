@@ -254,9 +254,9 @@ export async function getSubs (appList1, appList2, orgID) {
   console.log('Gsuite subscription data updated successfully')
   return subList
 }
-export async function getGroups (orgID,access_token) {
+export async function getGroups (orgID,access_token,customerId) {
   const groups = []
-  const data = await axios.get(`https://admin.googleapis.com/admin/directory/v1/groups?customer=C01t7czyh`, {
+  const data = await axios.get(`https://admin.googleapis.com/admin/directory/v1/groups?customer=${customerId}`, {
     headers: {
       'Authorization': `Bearer ${access_token}`,
       'Accept': 'application/json'

@@ -4,7 +4,7 @@ import { getNewToken as getNewOneLoginToken, getEmps as getOneLoginEmps, getSubs
 import { getNewToken as getNewPingOneToken, getEmps as getPingOneEmps, getSubs as getPingOneSubs, getGroups as getPingOneGroups } from '../../JS/SSO/PingONE/utils.js'
 import { getNewToken as getNewZohoToken, verifyToken as verifyZohoToken, getZohoData } from '../../JS/EMS/Zoho/utils.js'
 import { getEmps as getOktaEmps, getSubs as getOktaSubs, getGroups as getOktaGroups, verifyToken as verifyOktaToken } from '../../JS/SSO/Okta/utils.js'
-import { getApps as getGsuiteApps, getEmps as getGsuiteEmps, getSubs as getGsuiteSubs } from '../../JS/AppDiscovery/Gsuite/utils.js'
+import { getApps as getGsuiteApps, getEmps as getGsuiteEmps, getGroups, getSubs as getGsuiteSubs } from '../../JS/AppDiscovery/Gsuite/utils.js'
 import { getScriptTags } from '../../JS/AppDiscovery/Shopify/utils.js'
 import express from 'express'
 import { getNewToken as getNewXeroToken, getXeroData } from '../../JS/EMS/Xero/utils.js'
@@ -112,6 +112,7 @@ router.get('/', async (req, res) => {
           const { appList1, appList2 } = await getGsuiteApps(sso.access_token,'C01t7czyh')
           await getGsuiteSubs(appList1, appList2, orgID)
           await getGsuiteEmps(appList1, appList2, orgID)
+          await getGroups(orgID,sso.access_token,'C01t7czyh')
           break
       }
     }
