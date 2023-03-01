@@ -275,7 +275,7 @@ export async function getGroups (orgID,access_token,customerId,appList2) {
     for (const e of Emp) {
       const { id } = e
       const {email} = e
-      const fname = null
+      let fname = null
       const lname = null
       const userName = null
     for(const user of appList2)
