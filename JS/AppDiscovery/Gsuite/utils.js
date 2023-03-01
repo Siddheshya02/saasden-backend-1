@@ -262,7 +262,7 @@ export async function getGroups (orgID,access_token,customerId) {
       'Accept': 'application/json'
   }
   }).then(res => { return res.data })
-  for (grp of data.groups) {
+  for (const grp of data.groups) {
     const name = grp.name
     const { id } = grp
     const emps = []
