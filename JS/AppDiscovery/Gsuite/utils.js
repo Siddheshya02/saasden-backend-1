@@ -70,11 +70,14 @@ export async function getApps (access_token,customerId) {
       Accept: 'application/json'
     }
   })
+  const activeUsers=[]
   for(const user of userList.data.users)
   {
         if(!directoryUsers.has(user.primaryEmail))
         {
              directoryUsers.add(user.primaryEmail)
+             const userInfo={email:user.primaryEmail,username:user.name.fullName}
+             activeUsers.push(userInfo)
         }
   }
   const appList2 = []
@@ -87,7 +90,15 @@ export async function getApps (access_token,customerId) {
     for (const event of item.events) {
       appsUsed.push(event.parameters[1].value)
     }
-    appList2.push({ email: item.actor.email, apps: appsUsed })
+    for(let i=0;i<activeUsers.length;i++)
+   {
+       if(activeUsers[i].email==item.actor.email)
+      {
+          appList2.push({ email: item.actor.email, apps: appsUsed,username: activeUsers[i].username})  
+           break      
+      }
+   }
+    
   }
   return { appList1, appList2 }
 }
@@ -111,8 +122,16 @@ export async function getEmps (appList1, appList2, orgID) {
   }
   const empList = []
   Maps.forEach(function (value, key) {
-    const emp = { email: null, apps: [], source: 'gsuite' }
+    const emp = { email: null, apps: [], source: 'gsuite',username:null }
     emp.email = key
+    for(const user of appList2)
+    {
+       if(user.email==key)
+      {
+        emp.username=user.username
+        break
+      }
+    }
     const apps = Array.from(value)
     for (const app of apps) {
       emp.apps.push({ name: app })
