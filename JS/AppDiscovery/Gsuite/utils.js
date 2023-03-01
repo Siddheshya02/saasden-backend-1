@@ -122,13 +122,13 @@ export async function getEmps (appList1, appList2, orgID) {
   }
   const empList = []
   Maps.forEach(function (value, key) {
-    const emp = { email: null, apps: [], source: 'gsuite',username:null }
+    const emp = { email: null, apps: [], source: 'gsuite',firstname:null }
     emp.email = key
     for(const user of appList2)
     {
        if(user.email==key)
       {
-        emp.username=user.username
+        emp.firstname=user.username
         break
       }
     }
