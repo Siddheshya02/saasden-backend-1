@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import axios from 'axios'
 import { google } from 'googleapis'
 import subSchema from '../../../models/subscription.js'
@@ -13,18 +14,18 @@ export function getoauth2Client (client_id, client_secret) {
 }
 export async function getAuthorizationUrl (client_id, client_secret) {
   const scopes = [
-  'https://www.googleapis.com/auth/drive.metadata.readonly',
-  'https://www.googleapis.com/auth/admin.reports.usage.readonly',
-  `https://www.googleapis.com/auth/apps.licensing`,
-  `https://www.googleapis.com/auth/admin.reports.audit.readonly`,
-  'https://www.googleapis.com/auth/admin.directory.user.security',
-  `https://www.googleapis.com/auth/admin.directory.user`,
-`https://www.googleapis.com/auth/admin.directory.user.readonly`,
-`https://www.googleapis.com/auth/admin.directory.domain`,
-`https://www.googleapis.com/auth/admin.directory.domain.readonly`,
-`https://apps-apis.google.com/a/feeds/groups/`,
-`https://www.googleapis.com/auth/admin.directory.group`
-]
+    'https://www.googleapis.com/auth/drive.metadata.readonly',
+    'https://www.googleapis.com/auth/admin.reports.usage.readonly',
+    'https://www.googleapis.com/auth/apps.licensing',
+    'https://www.googleapis.com/auth/admin.reports.audit.readonly',
+    'https://www.googleapis.com/auth/admin.directory.user.security',
+    'https://www.googleapis.com/auth/admin.directory.user',
+    'https://www.googleapis.com/auth/admin.directory.user.readonly',
+    'https://www.googleapis.com/auth/admin.directory.domain',
+    'https://www.googleapis.com/auth/admin.directory.domain.readonly',
+    'https://apps-apis.google.com/a/feeds/groups/',
+    'https://www.googleapis.com/auth/admin.directory.group'
+  ]
   const oauth2Client = getoauth2Client(client_id, client_secret)
   const authorizationUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -39,7 +40,7 @@ export async function getGsuiteToken (code, client_id, client_secret) {
   oauth2Client.setCredentials(tokens)
   return tokens.access_token
 }
-export async function getApps (access_token,customerId) {
+export async function getApps (access_token, customerId) {
   const apps = await axios.get('https://admin.googleapis.com/admin/reports/v1/usage/dates/2023-02-06', {
     headers: {
       Authorization: `Bearer ${access_token}`,
@@ -63,42 +64,36 @@ export async function getApps (access_token,customerId) {
       Accept: 'application/json'
     }
   })
-   const directoryUsers=new Set()
-   const userList=await axios.get(`https://admin.googleapis.com/admin/directory/v1/users?customer=${customerId}`,{
+  const directoryUsers = new Set()
+  const userList = await axios.get(`https://admin.googleapis.com/admin/directory/v1/users?customer=${customerId}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
     }
   })
-  const activeUsers=[]
-  for(const user of userList.data.users)
-  {
-        if(!directoryUsers.has(user.primaryEmail))
-        {
-             directoryUsers.add(user.primaryEmail)
-             const userInfo={email:user.primaryEmail,username:user.name.fullName}
-             activeUsers.push(userInfo)
-        }
+  const activeUsers = []
+  for (const user of userList.data.users) {
+    if (!directoryUsers.has(user.primaryEmail)) {
+      directoryUsers.add(user.primaryEmail)
+      const userInfo = { email: user.primaryEmail, username: user.name.fullName }
+      activeUsers.push(userInfo)
+    }
   }
   const appList2 = []
   for (const item of apps2.data.items) {
-    if(!directoryUsers.has(item.actor.email))
-   {
+    if (!directoryUsers.has(item.actor.email)) {
       continue
-   }
+    }
     const appsUsed = []
     for (const event of item.events) {
       appsUsed.push(event.parameters[1].value)
     }
-    for(let i=0;i<activeUsers.length;i++)
-   {
-       if(activeUsers[i].email==item.actor.email)
-      {
-          appList2.push({ email: item.actor.email, apps: appsUsed,username: activeUsers[i].username})  
-           break      
+    for (let i = 0; i < activeUsers.length; i++) {
+      if (activeUsers[i].email == item.actor.email) {
+        appList2.push({ email: item.actor.email, apps: appsUsed, username: activeUsers[i].username })
+        break
       }
-   }
-    
+    }
   }
   return { appList1, appList2 }
 }
@@ -122,13 +117,11 @@ export async function getEmps (appList1, appList2, orgID) {
   }
   const empList = []
   Maps.forEach(function (value, key) {
-    const emp = { email: null, apps: [], source: 'gsuite',firstname:null }
+    const emp = { email: null, apps: [], source: 'gsuite', firstname: null }
     emp.email = key
-    for(const user of appList2)
-    {
-       if(user.email==key)
-      {
-        emp.firstname=user.username
+    for (const user of appList2) {
+      if (user.email == key) {
+        emp.firstname = user.username
         break
       }
     }
@@ -173,15 +166,13 @@ export async function getSubs (appList1, appList2, orgID) {
     Maps.forEach(async function (value, key) {
       if (value.has(app)) {
         if (!empSet.has(key)) {
-          const emp = { email: key ,firstname:null}
-          for(const user of appList2)
-    {
-       if(user.email==key)
-      {
-        emp.firstname=user.username
-        break
-      }
-    }
+          const emp = { email: key, firstname: null }
+          for (const user of appList2) {
+            if (user.email == key) {
+              emp.firstname = user.username
+              break
+            }
+          }
           emps.push(emp)
           empSet.add(key)
         }
@@ -224,10 +215,9 @@ export async function getSubs (appList1, appList2, orgID) {
     }
     const ssoData = [sso]
     // console.log(app.name, ' : ', emps)
-    if(emps.length==0)
-   {
-     continue
-   }
+    if (emps.length == 0) {
+      continue
+    }
     subList.push({
       sso: ssoData,
       name: app,
@@ -254,13 +244,13 @@ export async function getSubs (appList1, appList2, orgID) {
   console.log('Gsuite subscription data updated successfully')
   return subList
 }
-export async function getGroups (orgID,access_token,customerId,appList2) {
+export async function getGroups (orgID, access_token, customerId, appList2) {
   const groups = []
   const data = await axios.get(`https://admin.googleapis.com/admin/directory/v1/groups?customer=${customerId}`, {
     headers: {
-      'Authorization': `Bearer ${access_token}`,
-      'Accept': 'application/json'
-  }
+      Authorization: `Bearer ${access_token}`,
+      Accept: 'application/json'
+    }
   }).then(res => { return res.data })
   for (const grp of data.groups) {
     const name = grp.name
@@ -268,24 +258,22 @@ export async function getGroups (orgID,access_token,customerId,appList2) {
     const emps = []
     const Emp = await axios.get(`https://admin.googleapis.com/admin/directory/v1/groups/${id}/members`, {
       headers: {
-        'Authorization': `Bearer ${access_token}`,
-        'Accept': 'application/json'
-    }
+        Authorization: `Bearer ${access_token}`,
+        Accept: 'application/json'
+      }
     }).then(res => { return res.data.members })
     for (const e of Emp) {
       const { id } = e
-      const {email} = e
+      const { email } = e
       let fname = null
       const lname = null
       const userName = null
-    for(const user of appList2)
-    {
-       if(user.email==email)
-      {
-        fname=user.username
-        break
+      for (const user of appList2) {
+        if (user.email == email) {
+          fname = user.username
+          break
+        }
       }
-    }
       const emp = { id: id, email: email, firstname: fname, username: userName, lastname: lname }
       emps.push(emp)
     }
@@ -300,75 +288,75 @@ export async function getGroups (orgID,access_token,customerId,appList2) {
   await groupSchema.findOneAndUpdate(filter, update)
   console.log('Gsuite group data updated successfully')
 }
-export async function createUser (userInfo,access_token) {
-  const response =axios.post(
-            `https://admin.googleapis.com/admin/directory/v1/users`, {
-              name: {
-                familyName: `${userInfo.familyName}`,
-                givenName: `${userInfo.givenName}`
-              },
-              password: `${userInfo.password}`,
-              primaryEmail:`${userInfo.email}`
-            }, {
-              headers: {
-                'Authorization': `Bearer ${access_token}`,
-                'Accept': 'application/json',
-              }
-            }
+export async function createUser (userInfo, access_token) {
+  const response = axios.post(
+    'https://admin.googleapis.com/admin/directory/v1/users', {
+      name: {
+        familyName: `${userInfo.familyName}`,
+        givenName: `${userInfo.givenName}`
+      },
+      password: `${userInfo.password}`,
+      primaryEmail: `${userInfo.email}`
+    }, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        Accept: 'application/json'
+      }
+    }
   ).then(function (response) {
     // console.log(JSON.stringify(response.data))
-     console.log('User created sucessfully')
+    console.log('User created sucessfully')
   })
     .catch(function (error) {
       console.log(error.response.data.error)
     })
 }
-export async function deleteUser (userInfo,access_token) {
+export async function deleteUser (userInfo, access_token) {
   const response = await axios.delete(
-            `https://admin.googleapis.com/admin/directory/v1/users/${userInfo.email}`,{
+            `https://admin.googleapis.com/admin/directory/v1/users/${userInfo.email}`, {
               headers: {
-                'Authorization': `Bearer ${access_token}`,
-                'Accept': 'application/json',
+                Authorization: `Bearer ${access_token}`,
+                Accept: 'application/json'
               }
             }
   ).then(function (response) {
     // console.log(JSON.stringify(response.data))
-     console.log('User deleted sucessfully')
+    console.log('User deleted sucessfully')
   })
     .catch(function (error) {
       console.log(error.response.data.error)
     })
 }
-export async function addUserTogroup (access_token,grpInfo,userInfo) {
-   const response = await axios.post(
+export async function addUserTogroup (access_token, userInfo, grpInfo) {
+  const response = await axios.post(
   `https://admin.googleapis.com/admin/directory/v1/groups/${grpInfo.id}/members`, {
-    role: `MEMBER`,
-    email:`${userInfo.id}`
+    role: 'MEMBER',
+    email: `${userInfo.id}`
   }, {
     headers: {
-      'Authorization': `Bearer ${access_token}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${access_token}`,
+      Accept: 'application/json'
     }
   }
-).then(function (response) {
-// console.log(JSON.stringify(response.data))
- console.log('Succefully added user to group')
-})
-.catch(function (error) {
-console.log(error.response.data.error)
-})
+  ).then(function (response) {
+    // console.log(JSON.stringify(response.data))
+    console.log('Succefully added user to group')
+  })
+    .catch(function (error) {
+      console.log(error.response.data.error)
+    })
 }
-export async function deleteUserFromGroup (access_token,userInfo,grpInfo) {
+export async function deleteUserFromGroup (access_token, userInfo, grpInfo) {
   const response = await axios.delete(
-            `https://admin.googleapis.com/admin/directory/v1/groups/${grpInfo.id}/members/${userInfo.email}`,{
+            `https://admin.googleapis.com/admin/directory/v1/groups/${grpInfo.id}/members/${userInfo.email}`, {
               headers: {
-                'Authorization': `Bearer ${access_token}`,
-                'Accept': 'application/json',
+                Authorization: `Bearer ${access_token}`,
+                Accept: 'application/json'
               }
             }
   ).then(function (response) {
     // console.log(JSON.stringify(response.data))
-     console.log('Successfully deleted user from group')
+    console.log('Successfully deleted user from group')
   })
     .catch(function (error) {
       console.log(error.response.data.error)

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAuthorizationUrl, getGsuiteToken } from '../../JS/AppDiscovery/Gsuite/utils.js'
+import { addUserTogroup, createUser, deleteUser, deleteUserFromGroup, getAuthorizationUrl, getGsuiteToken } from '../../JS/AppDiscovery/Gsuite/utils.js'
 // import orgSchema from '../../models/organization.js'
 import appDiscoverySchema from '../../models/appDiscovery.js'
 import orgSchema from '../../models/organization.js'
@@ -115,4 +115,85 @@ router.get('/callback', async (req, res) => {
   console.log(req.session.ssos)
   res.sendStatus(200)
 })
+
+router.post('/createUser', async (req, res) => {
+  const user = req.body
+  // console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'gsuite') {
+        console.log('hit')
+        await createUser(user, sso.access_token)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/deleteUser', async (req, res) => {
+  const user = req.body
+  // console.log('user ', user)
+  try {
+    for (const sso of req.session.ssos) {
+      console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'gsuite') {
+        console.log('hit')
+        await deleteUser(user, sso.access_token)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/groups/addUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const userInfo = req.body.userInfo
+  const grpInfo = req.body.grpInfo
+  // console.log('Request : ', req)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'gsuite') {
+        console.log('hit')
+        await addUserTogroup(sso.access_token, userInfo, grpInfo)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
+router.post('/groups/deleteUser', async (req, res) => {
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  const userInfo = req.body.userInfo
+  const grpInfo = req.body.grpInfo
+  // console.log('Request : ', req)
+  try {
+    for (const sso of req.session.ssos) {
+      // console.log(sso)
+      // eslint-disable-next-line eqeqeq
+      if (sso.ssoName == 'gsuite') {
+        console.log('hit')
+        await deleteUserFromGroup(sso.access_token, userInfo, grpInfo)
+      }
+    }
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 export { router }
