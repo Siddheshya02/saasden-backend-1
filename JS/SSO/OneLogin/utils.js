@@ -318,14 +318,14 @@ export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
     })
 }
 export async function addUserToGroup (sso, userInfo, grpInfo) {
-  const addUserToGroup = axios.post(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, {
-    data: `[${userInfo.userId}]`
-  }, {
+  const options = {
+    data: [`${userInfo.userId}`],
     headers: {
       Authorization: `bearer ${sso.access_token}`,
       'Content-Type': 'application/json'
     }
-  }).then((data) => {
+  }
+  const addUserToGroup = axios.post(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, options).then((data) => {
     console.log('User added to group successfully')
   })
     .catch((err) => {

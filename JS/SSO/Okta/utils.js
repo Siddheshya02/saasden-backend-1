@@ -337,7 +337,7 @@ export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
               }
             }
   ).then(function (response) {
-    console.log('User added to group successfully')
+    console.log('User removed from group successfully')
   })
     .catch(function (error) {
       console.log(error)
