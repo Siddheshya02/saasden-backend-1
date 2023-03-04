@@ -186,7 +186,7 @@ export async function getSubs (appList1, appList2, orgID) {
     let checkPresence = false
     for (const sub of subList) {
       // eslint-disable-next-line eqeqeq
-      console.log('gsuite :', app)
+      console.log(app == sub.name, app, sub.name)
       if (sub.name == app) {
         const updatedEmps = emps.concat(sub.emps)
         emps = updatedEmps
