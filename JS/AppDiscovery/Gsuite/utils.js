@@ -160,7 +160,7 @@ export async function getSubs (appList1, appList2, orgID) {
   }
   const appList = Array.from(appSet)
   const subList = subsData.apps
-  console.log(subList)
+  console.log('gsuite', subList)
   for (const app of appList) {
     // const sub = { name: app, emps: [] }
     let emps = []
