@@ -158,8 +158,9 @@ export async function getSubs (appList1, appList2, orgID) {
       Maps.set(data.email, apps)
     }
   }
+  const appList = Array.from(appSet)
   const subList = subsData.apps
-  for (const app of appSet) {
+  for (const app of appList) {
     // const sub = { name: app, emps: [] }
     const emps = []
     const empSet = new Set()
