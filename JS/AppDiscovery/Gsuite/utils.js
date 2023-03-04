@@ -200,6 +200,7 @@ export async function getSubs (appList1, appList2, orgID) {
         if (checkSsoPresence) {
           continue
         }
+        console.log(sub)
         sub.sso.push(sso)
         checkPresence = true
         break
