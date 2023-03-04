@@ -303,29 +303,21 @@ export async function deleteUser (sso, user) {
     })
 }
 export async function deleteUserFromGroup (sso, userInfo, grpInfo) {
-  const deleteUserFromGroup = axios.delete(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, {
-    data: `[${userInfo.userId}]`
-  }, {
+  console.log(sso.access_token)
+  const response = await axios.delete(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, {
+    headers: {
+      Authorization: `bearer ${sso.access_token}`
+    },
+    data: [`${userInfo.userId}`]
+  })
+}
+export async function addUserToGroup (sso, userInfo, grpInfo) {
+  const addUserToGroup = axios.post(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, [`${userInfo.userId}`], {
     headers: {
       Authorization: `bearer ${sso.access_token}`,
       'Content-Type': 'application/json'
     }
   }).then((data) => {
-    console.log('User successfully deleted from group')
-  })
-    .catch((err) => {
-      console.log(err)
-    })
-}
-export async function addUserToGroup (sso, userInfo, grpInfo) {
-  const options = {
-    data: [`${userInfo.userId}`],
-    headers: {
-      Authorization: `bearer ${sso.access_token}`,
-      'Content-Type': 'application/json'
-    }
-  }
-  const addUserToGroup = axios.post(`https://${sso.domain}/api/2/roles/${grpInfo.groupId}/users`, options).then((data) => {
     console.log('User added to group successfully')
   })
     .catch((err) => {

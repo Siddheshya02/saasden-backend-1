@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.post('/auth', async (req, res) => {
   // req.session.destroy()
-   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const filter = { ID: req.session.orgID }
 
   // const update = {
@@ -134,7 +134,7 @@ router.post('/groups/addUser', async (req, res) => {
   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const userInfo = req.body.userInfo
   const grpInfo = req.body.grpInfo
-   //console.log('Request : ', req.body)
+  // console.log('Request : ', req.body)
   try {
     for (const sso of req.session.ssos) {
       // console.log(sso)

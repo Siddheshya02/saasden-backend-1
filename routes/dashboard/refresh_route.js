@@ -20,7 +20,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   // const ssoName = req.session.sso_name
   console.log('refresh route called ')
-  req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
   const orgID = req.session.orgID
   // deleting the data already present in the db of the organization
   await empSchema.deleteOne({ ID: orgID })
@@ -109,10 +109,10 @@ router.get('/', async (req, res) => {
         case 'gsuite':
           console.log('Fetching gsuite data')
           // eslint-disable-next-line no-case-declarations
-          const { appList1, appList2 } = await getGsuiteApps(sso.access_token,'C01t7czyh')
+          const { appList1, appList2 } = await getGsuiteApps(sso.access_token, 'C01t7czyh')
           await getGsuiteSubs(appList1, appList2, orgID)
           await getGsuiteEmps(appList1, appList2, orgID)
-          await getGroups(orgID,sso.access_token,'C01t7czyh',appList2)
+          await getGroups(orgID, sso.access_token, 'C01t7czyh', appList2)
           break
       }
     }

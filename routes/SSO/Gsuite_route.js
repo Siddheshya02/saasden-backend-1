@@ -165,7 +165,7 @@ router.post('/groups/addUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'gsuite') {
         console.log('hit')
-        //await addUserTogroup(sso.access_token, userInfo, grpInfo)
+        await addUserTogroup(sso.access_token, userInfo, grpInfo)
         console.log(userInfo)
         console.log(grpInfo)
       }
