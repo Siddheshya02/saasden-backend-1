@@ -14,7 +14,8 @@ router.post('/auth', async (req, res) => {
     clientSecret: req.body.clientSecret,
     tenantID: null,
     domain: null,
-    apiToken: null
+    apiToken: null,
+    customerId: req.body.customerId
   }
   const initialData = await orgSchema.findOne(filter)
   let initialSSos

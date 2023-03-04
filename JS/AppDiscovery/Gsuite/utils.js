@@ -4,6 +4,7 @@ import { google } from 'googleapis'
 import subSchema from '../../../models/subscription.js'
 import empSchema from '../../../models/employee.js'
 import groupSchema from '../../../models/groups.js'
+import { subMonths } from 'date-fns'
 export function getoauth2Client (client_id, client_secret) {
   const oauth2Client = new google.auth.OAuth2(
     client_id,
@@ -41,7 +42,8 @@ export async function getGsuiteToken (code, client_id, client_secret) {
   return tokens.access_token
 }
 export async function getApps (access_token, customerId) {
-  const apps = await axios.get('https://admin.googleapis.com/admin/reports/v1/usage/dates/2023-02-06', {
+  const curDate = new Date().toISOString().split('T')[0]
+  const apps = await axios.get(`https://admin.googleapis.com/admin/reports/v1/usage/dates/${curDate}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
@@ -58,7 +60,9 @@ export async function getApps (access_token, customerId) {
       }
     }
   }
-  const apps2 = await axios.get('https://admin.googleapis.com/admin/reports/v1/activity/users/all/applications/token?endTime=2023-02-11T12:48:04.630Z&startTime=2023-01-01T12:48:04.630Z', {
+  const date = new Date()
+  const newDate = subMonths(date, 4)
+  const apps2 = await axios.get(`https://admin.googleapis.com/admin/reports/v1/activity/users/all/applications/token?endTime=${date}&startTime=${newDate}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
@@ -159,9 +163,7 @@ export async function getSubs (appList1, appList2, orgID) {
     }
   }
   const appList = Array.from(appSet)
-  console.log(typeof (appList[0]))
   const subList = subsData.apps
-  console.log(typeof (subList[0]))
   //   console.log('gsuite', subList)
   for (const app of appList) {
     // const sub = { name: app, emps: [] }
