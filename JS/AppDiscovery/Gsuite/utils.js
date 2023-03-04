@@ -160,6 +160,7 @@ export async function getSubs (appList1, appList2, orgID) {
   }
   const appList = Array.from(appSet)
   const subList = subsData.apps
+  console.log(subList)
   for (const app of appList) {
     // const sub = { name: app, emps: [] }
     let emps = []
@@ -186,7 +187,7 @@ export async function getSubs (appList1, appList2, orgID) {
     let checkPresence = false
     for (const sub of subList) {
       // eslint-disable-next-line eqeqeq
-      console.log(app == sub.name, app, sub.name)
+
       if (sub.name == app) {
         const updatedEmps = emps.concat(sub.emps)
         emps = updatedEmps
