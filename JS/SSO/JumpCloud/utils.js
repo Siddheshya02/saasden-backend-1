@@ -98,8 +98,6 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
   const appList = await getApps(sso_creds.apiToken)
   const subsData = await subSchema.findOne(filter)
   const subList = subsData.apps
-  console.log(typeof (appList[0]))
-  console.log(typeof (subList[0]))
   for (const app of appList) {
     const emps = await getAppUsers(app.id, sso_creds.apiToken)
     const sso = {
