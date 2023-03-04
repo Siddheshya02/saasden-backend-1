@@ -162,7 +162,7 @@ export async function getSubs (appList1, appList2, orgID) {
   const subList = subsData.apps
   for (const app of appList) {
     // const sub = { name: app, emps: [] }
-    const emps = []
+    let emps = []
     const empSet = new Set()
     Maps.forEach(async function (value, key) {
       if (value.has(app)) {
@@ -187,6 +187,8 @@ export async function getSubs (appList1, appList2, orgID) {
     for (const sub of subList) {
       // eslint-disable-next-line eqeqeq
       if (sub.name == app) {
+        const updatedEmps = emps.concat(sub.emps)
+        emps = updatedEmps
         let checkSsoPresence = false
         for (const origin of sub.sso) {
           // eslint-disable-next-line eqeqeq
