@@ -159,11 +159,13 @@ export async function getSubs (appList1, appList2, orgID) {
     }
   }
   const appList = Array.from(appSet)
+  console.log(typeof (appList[0]))
   const subList = subsData.apps
-  console.log('gsuite', subList)
+  console.log(typeof (subList[0]))
+  //   console.log('gsuite', subList)
   for (const app of appList) {
     // const sub = { name: app, emps: [] }
-    let emps = []
+    const emps = []
     const empSet = new Set()
     Maps.forEach(async function (value, key) {
       if (value.has(app)) {
@@ -189,8 +191,6 @@ export async function getSubs (appList1, appList2, orgID) {
       // eslint-disable-next-line eqeqeq
 
       if (sub.name == app) {
-        const updatedEmps = emps.concat(sub.emps)
-        emps = updatedEmps
         let checkSsoPresence = false
         for (const origin of sub.sso) {
           // eslint-disable-next-line eqeqeq

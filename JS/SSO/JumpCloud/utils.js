@@ -98,9 +98,8 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
   const appList = await getApps(sso_creds.apiToken)
   const subsData = await subSchema.findOne(filter)
   const subList = subsData.apps
-  console.log('jc ', subList)
   for (const app of appList) {
-    let emps = await getAppUsers(app.id, sso_creds.apiToken)
+    const emps = await getAppUsers(app.id, sso_creds.apiToken)
     const sso = {
       id: app.id,
       name: 'jumpcloud'
@@ -109,8 +108,6 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     for (const sub of subList) {
       // eslint-disable-next-line eqeqeq
       if (sub.name == app.name) {
-        const updatedEmps = emps.concat(sub.emps)
-        emps = updatedEmps
         let checkSsoPresence = false
         for (const origin of sub.sso) {
           // eslint-disable-next-line eqeqeq
