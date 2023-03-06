@@ -213,7 +213,7 @@ router.post('/app/addUser', async (req, res) => {
       // console.log(sso)
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'azure') {
-        console.log('hit')
+        console.log('hit', sso)
         await addUserToApp(sso, userInfo, appInfo)
       }
     }
