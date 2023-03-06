@@ -375,7 +375,7 @@ export async function addUserTogroup (sso, userInfo, groupInfo) {
     method: 'post',
     url: `https://graph.microsoft.com/v1.0/groups/${groupInfo.groupId}/members/$ref`,
     headers: {
-      Authorization: `Bearer ${sso.accessToken}`,
+      Authorization: `Bearer ${sso.access_token}`,
       'Content-Type': 'application/json'
     },
     data: data
