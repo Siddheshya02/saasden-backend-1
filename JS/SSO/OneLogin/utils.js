@@ -78,7 +78,8 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
         firstname: user.firstname,
         lastname: user.lastname,
         username: user.username,
-        email: user.email
+        email: user.email,
+        source: 'onelogin'
       })
     }
     const sso = {

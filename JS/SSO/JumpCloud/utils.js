@@ -53,7 +53,8 @@ async function getUserData (apiToken, userID) {
     email: userData.email,
     firstname: userData.firstname,
     username: userData.username,
-    lastname: userData.lastname
+    lastname: userData.lastname,
+    source: 'jumpcloud'
   }
 }
 

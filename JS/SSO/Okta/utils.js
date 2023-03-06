@@ -79,7 +79,8 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
           email: user.profile.email,
           firstname: user.profile.name,
           lastname: '',
-          username: user.profile.email
+          username: user.profile.email,
+          source: 'okta'
         })
       }
       const sso = {

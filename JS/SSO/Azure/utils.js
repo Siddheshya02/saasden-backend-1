@@ -125,7 +125,8 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
     for (const user of app.users) {
       emps.push({
         id: user.userID,
-        username: user.userName
+        username: user.userName,
+        source: 'azure'
       })
     }
     // console.log('actual emps', emps)

@@ -16,7 +16,8 @@ const subModel = new Schema({
       email: String,
       firstname: String,
       username: String,
-      lastname: String
+      lastname: String,
+      source: String
     }],
     licences: Number,
     currentCost: Number,
