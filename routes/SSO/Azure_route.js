@@ -151,7 +151,7 @@ router.post('/deleteUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'azure') {
         console.log('hit')
-        await deleteUser(sso.access_token, user)
+        await deleteUser(sso, user)
       }
     }
     res.sendStatus(200)
@@ -183,6 +183,7 @@ router.post('/groups/addUser', async (req, res) => {
 
 router.post('/groups/deleteUser', async (req, res) => {
   // req.session.orgID = 'org_qEHnRrdOzNUwWajN'
+  console.log(req.body)
   const userInfo = req.body.userInfo
   const grpInfo = req.body.grpInfo
   // console.log('Request : ', req)
