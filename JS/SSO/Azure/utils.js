@@ -419,8 +419,9 @@ export async function addUserToApp (sso, userInfo, appInfo) {
   const config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: `https://graph.microsoft.com/v1.0/${sso.tenantId}/users/${userInfo.userId}/appRoleAssignments`,
+    url: `https://graph.microsoft.com/v1.0/${sso.tenantID}/users/${userInfo.userId}/appRoleAssignments`,
     headers: {
+      Authorization: `Bearer ${sso.access_token}`,
       'Content-Type': 'application/json'
     },
     data: data
