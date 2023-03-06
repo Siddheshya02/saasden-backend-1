@@ -236,7 +236,7 @@ router.post('/app/deleteUser', async (req, res) => {
       if (sso.ssoName == 'azure') {
         console.log('hit')
         console.log(appInfo)
-        // await deleteUserFromApp(sso, userInfo, appInfo)
+        await deleteUserFromApp(sso, userInfo, appInfo)
       }
     }
     res.sendStatus(200)
