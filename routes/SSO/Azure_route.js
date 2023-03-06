@@ -235,7 +235,8 @@ router.post('/app/deleteUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'azure') {
         console.log('hit')
-        await deleteUserFromApp(sso, userInfo, appInfo)
+        console.log(appInfo)
+        // await deleteUserFromApp(sso, userInfo, appInfo)
       }
     }
     res.sendStatus(200)
