@@ -172,7 +172,7 @@ export async function getSubs (appList1, appList2, orgID) {
     Maps.forEach(async function (value, key) {
       if (value.has(app)) {
         if (!empSet.has(key)) {
-          const emp = { email: key, firstname: null }
+          const emp = { email: key, firstname: null, source: 'gsuite' }
           for (const user of appList2) {
             if (user.email == key) {
               emp.firstname = user.username

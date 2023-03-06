@@ -109,10 +109,10 @@ router.get('/', async (req, res) => {
         case 'gsuite':
           console.log('Fetching gsuite data')
           // eslint-disable-next-line no-case-declarations
-          const { appList1, appList2 } = await getGsuiteApps(sso.access_token, 'C01t7czyh')
+          const { appList1, appList2 } = await getGsuiteApps(sso.access_token, sso.customerId)
           await getGsuiteSubs(appList1, appList2, orgID)
           await getGsuiteEmps(appList1, appList2, orgID)
-          await getGroups(orgID, sso.access_token, 'C01t7czyh', appList2)
+          await getGroups(orgID, sso.access_token, sso.customerId, appList2)
           break
       }
     }
