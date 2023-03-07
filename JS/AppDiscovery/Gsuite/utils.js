@@ -300,6 +300,7 @@ export async function getGroups (orgID, access_token, customerId, appList2) {
   console.log('Gsuite group data updated successfully')
 }
 export async function createUser (userInfo, access_token) {
+  console.log(userInfo)
   const response = axios.post(
     'https://admin.googleapis.com/admin/directory/v1/users', {
       name: {
@@ -324,7 +325,7 @@ export async function createUser (userInfo, access_token) {
 }
 export async function deleteUser (userInfo, access_token) {
   const response = await axios.delete(
-            `https://admin.googleapis.com/admin/directory/v1/users/${userInfo.email}`, {
+            `https://admin.googleapis.com/admin/directory/v1/users/${userInfo.email.tolowerCase()}`, {
               headers: {
                 Authorization: `Bearer ${access_token}`,
                 Accept: 'application/json'
