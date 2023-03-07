@@ -44,7 +44,7 @@ export async function getGsuiteToken (code, client_id, client_secret) {
 export async function getApps (access_token, customerId) {
   const curDate = new Date()
   const apiDate = subDays(curDate, 2).toISOString().split('T')[0]
-  const apps = await axios.get(`https://admin.googleapis.com/admin/reports/v1/usage/dates/2023-03-05?customerId=${customerId}`, {
+  const apps = await axios.get(`https://admin.googleapis.com/admin/reports/v1/usage/dates/${apiDate}?customerId=${customerId}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
