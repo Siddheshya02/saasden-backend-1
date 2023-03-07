@@ -122,8 +122,8 @@ router.get('/callback', async (req, res) => {
 })
 
 router.post('/createUser', async (req, res) => {
-  const user = req.body.userInfo
-  // console.log('user ', user)
+  const user = req.body
+  console.log('user ', user)
   try {
     for (const sso of req.session.ssos) {
       console.log(sso)
