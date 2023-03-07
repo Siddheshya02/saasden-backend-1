@@ -65,7 +65,7 @@ export async function getApps (access_token, customerId) {
   }
   const date = new Date()
   const newDate = subMonths(date, 4)
-  const apps2 = await axios.get(`https://admin.googleapis.com/admin/reports/v1/activity/users/all/applications/token?endTime=${date}&startTime=${newDate}`, {
+  const apps2 = await axios.get(`https://admin.googleapis.com/admin/reports/v1/activity/users/all/applications/token?endTime=${date.toISOString()}&startTime=${newDate.toISOString()}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
