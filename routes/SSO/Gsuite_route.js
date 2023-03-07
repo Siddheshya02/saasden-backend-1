@@ -77,11 +77,13 @@ router.get('/callback', async (req, res) => {
   const ssos = orgData.ssoData
   let client_id
   let client_secret
+  let customerId
   for (const sso of ssos) {
     // eslint-disable-next-line eqeqeq
     if (sso.ssoName == 'gsuite') {
       client_id = sso.clientID
       client_secret = sso.clientSecret
+      customerId = sso.customerId
       break
     }
   }
@@ -99,7 +101,8 @@ router.get('/callback', async (req, res) => {
       ssoName: 'gsuite',
       clientID: client_id,
       clientSecret: client_secret,
-      access_token: access_token
+      access_token: access_token,
+      customerId: customerId
     }
     req.session.ssos.push(gsuiteData)
   } else {
@@ -109,6 +112,7 @@ router.get('/callback', async (req, res) => {
         sso.clientID = client_id
         sso.clientSecret = client_secret
         sso.access_token = access_token
+        sso.customerId = customerId
         break
       }
     }
