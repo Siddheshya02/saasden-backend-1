@@ -70,8 +70,8 @@ async function getApps (access_token) {
           }
         }).then(res => { return res.data.value }).catch(res => console.log(res))
         for (const user of user_list) {
-          const { principalId, principalDisplayName } = user
-          const userObject = { userID: principalId, userName: principalDisplayName }
+          const { principalId, principalDisplayName, id } = user
+          const userObject = { userID: principalId, userName: principalDisplayName, deleteId: id }
           users.push(userObject)
         }
         const appObject = { appID: Id, appName: appDisplayName, users: users }
@@ -126,7 +126,8 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
       emps.push({
         id: user.userID,
         username: user.userName,
-        source: 'azure'
+        source: 'azure',
+        deleteId: user.deleteId
       })
     }
     // console.log('actual emps', emps)
