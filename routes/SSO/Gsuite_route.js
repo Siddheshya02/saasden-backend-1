@@ -193,6 +193,8 @@ router.post('/groups/deleteUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'gsuite') {
         console.log('hit')
+        console.log(userInfo)
+        console.log(grpInfo)
         await deleteUserFromGroup(sso.access_token, userInfo, grpInfo)
       }
     }
