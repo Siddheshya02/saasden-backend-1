@@ -141,7 +141,7 @@ router.post('/createUser', async (req, res) => {
 })
 
 router.post('/deleteUser', async (req, res) => {
-  const user = req.body
+  const user = req.body.userInfo
   console.log('user ', user)
   try {
     for (const sso of req.session.ssos) {
