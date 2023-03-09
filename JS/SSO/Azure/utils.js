@@ -70,8 +70,8 @@ async function getApps (access_token) {
           }
         }).then(res => { return res.data.value }).catch(res => console.log(res))
         for (const user of user_list) {
-          const { id, principalDisplayName } = user
-          const userObject = { userID: id, userName: principalDisplayName }
+          const { principalId, principalDisplayName } = user
+          const userObject = { userID: principalId, userName: principalDisplayName }
           users.push(userObject)
         }
         const appObject = { appID: Id, appName: appDisplayName, users: users }
