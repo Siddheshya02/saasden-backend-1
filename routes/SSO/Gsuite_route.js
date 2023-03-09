@@ -126,7 +126,7 @@ router.post('/createUser', async (req, res) => {
   console.log('user ', user)
   try {
     for (const sso of req.session.ssos) {
-      console.log(sso)
+      // console.log(sso)
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'gsuite') {
         console.log('hit')
@@ -145,11 +145,11 @@ router.post('/deleteUser', async (req, res) => {
   console.log('user ', user)
   try {
     for (const sso of req.session.ssos) {
-      console.log(sso)
+      // console.log(sso)
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'gsuite') {
         console.log('hit')
-        // await deleteUser(user, sso.access_token)
+        await deleteUser(user, sso.access_token)
       }
     }
     res.sendStatus(200)
@@ -170,9 +170,9 @@ router.post('/groups/addUser', async (req, res) => {
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'gsuite') {
         console.log('hit')
-        await addUserTogroup(sso.access_token, userInfo, grpInfo)
         console.log(userInfo)
         console.log(grpInfo)
+        await addUserTogroup(sso.access_token, userInfo, grpInfo)
       }
     }
     res.sendStatus(200)
