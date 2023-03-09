@@ -142,14 +142,14 @@ router.post('/createUser', async (req, res) => {
 
 router.post('/deleteUser', async (req, res) => {
   const user = req.body
-  // console.log('user ', user)
+  console.log('user ', user)
   try {
     for (const sso of req.session.ssos) {
       console.log(sso)
       // eslint-disable-next-line eqeqeq
       if (sso.ssoName == 'gsuite') {
         console.log('hit')
-        await deleteUser(user, sso.access_token)
+        // await deleteUser(user, sso.access_token)
       }
     }
     res.sendStatus(200)
