@@ -439,7 +439,7 @@ export async function addUserToApp (sso, userInfo, appInfo) {
 export async function deleteUserFromApp (sso, userInfo, appInfo) {
   const config = {
     method: 'delete',
-    url: `https://graph.microsoft.com/v1.0/servicePrincipals/${appInfo.appId}/appRoleAssignments/${userInfo.userId}`,
+    url: `https://graph.microsoft.com/v1.0/users/${appInfo.appId}/appRoleAssignments/${userInfo.userId}`,
     headers: {
       Authorization: `Bearer ${sso.access_token}`,
       'Content-Type': 'application/json'
