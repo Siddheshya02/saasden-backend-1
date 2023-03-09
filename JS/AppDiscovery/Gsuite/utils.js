@@ -325,7 +325,7 @@ export async function createUser (userInfo, access_token) {
 }
 export async function deleteUser (userInfo, access_token) {
   const response = await axios.delete(
-            `https://admin.googleapis.com/admin/directory/v1/users/${userInfo.email.tolowerCase()}`, {
+            `https://admin.googleapis.com/admin/directory/v1/users/${userInfo.email.toLowerCase()}`, {
               headers: {
                 Authorization: `Bearer ${access_token}`,
                 Accept: 'application/json'
