@@ -50,6 +50,7 @@ export async function getApps (access_token, customerId) {
       Accept: 'application/json'
     }
   })
+  console.log(apps)
     .catch(function (error) {
       console.log(error.response.data.error)
     })
