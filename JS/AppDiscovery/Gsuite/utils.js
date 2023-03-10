@@ -90,6 +90,9 @@ export async function getApps (access_token, customerId) {
   }
   const appList2 = []
   for (const item of apps2.data.items) {
+    if (!directoryUsers.has(item.actor.email)) {
+      continue
+    }
     const appsUsed = []
     for (const event of item.events) {
       appsUsed.push(event.parameters[1].value)
@@ -121,6 +124,7 @@ export async function getEmps (appList1, appList2, orgID) {
       Maps.set(data.email, apps)
     }
   }
+  console.log(Maps)
   const empList = []
   Maps.forEach(function (value, key) {
     const emp = { email: null, apps: [], source: 'gsuite', firstname: null }
