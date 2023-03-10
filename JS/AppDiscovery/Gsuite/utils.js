@@ -74,7 +74,7 @@ export async function getApps (access_token, customerId) {
     }
   })
   const directoryUsers = new Set()
-  const userList = await axios.get(`https://admin.googleapis.com/admin/directory/v1/users/all?customer=${customerId}`, {
+  const userList = await axios.get(`https://admin.googleapis.com/admin/directory/v1/users?customer=${customerId}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
