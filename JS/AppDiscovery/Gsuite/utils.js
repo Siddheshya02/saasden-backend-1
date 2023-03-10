@@ -74,7 +74,7 @@ export async function getApps (access_token, customerId) {
     }
   })
   const directoryUsers = new Set()
-  const userList = await axios.get(`https://admin.googleapis.com/admin/directory/v1/users?customer=${customerId}`, {
+  const userList = await axios.get(`https://admin.googleapis.com/admin/directory/v1/users/all?customer=${customerId}`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
       Accept: 'application/json'
@@ -90,9 +90,6 @@ export async function getApps (access_token, customerId) {
   }
   const appList2 = []
   for (const item of apps2.data.items) {
-    if (!directoryUsers.has(item.actor.email)) {
-      continue
-    }
     const appsUsed = []
     for (const event of item.events) {
       appsUsed.push(event.parameters[1].value)
