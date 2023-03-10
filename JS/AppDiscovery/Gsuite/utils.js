@@ -97,6 +97,7 @@ export async function getApps (access_token, customerId) {
     for (const event of item.events) {
       appsUsed.push(event.parameters[1].value)
     }
+
     for (let i = 0; i < activeUsers.length; i++) {
       if (activeUsers[i].email == item.actor.email) {
         appList2.push({ email: item.actor.email, apps: appsUsed, username: activeUsers[i].username })
@@ -106,7 +107,7 @@ export async function getApps (access_token, customerId) {
   }
   return { appList1, appList2 }
 }
-export async function getEmps (appList1, appList2, orgID) {
+export async function getEmps (appList1, appList2, orgID, access_token, customerId) {
   const appSet = new Set()
   for (const app of appList1) {
     appSet.add(app.name)
@@ -124,7 +125,7 @@ export async function getEmps (appList1, appList2, orgID) {
       Maps.set(data.email, apps)
     }
   }
-  console.log(Maps)
+  //   console.log(Maps)
   const empList = []
   Maps.forEach(function (value, key) {
     const emp = { email: null, apps: [], source: 'gsuite', firstname: null }
@@ -141,6 +142,20 @@ export async function getEmps (appList1, appList2, orgID) {
     }
     empList.push(emp)
   })
+  const userList = await axios.get(`https://admin.googleapis.com/admin/directory/v1/users?customer=${customerId}`, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+      Accept: 'application/json'
+    }
+  })
+  for (const user of userList.data.users) {
+    if (emailSet.has(user.primaryEmail)) {
+      continue
+    } else {
+      const emp = { email: user.primaryEmail, apps: [], source: 'gsuite', firstname: user.name.fullName }
+      empList.push(emp)
+    }
+  }
   const filter = { ID: orgID }
   const orgData = await empSchema.findOne(filter)
   const empData = orgData.emps
