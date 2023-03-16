@@ -106,8 +106,8 @@ export async function getApps (access_token, customerId) {
       }
     }
   }
-  console.log(appList1)
-  console.log(appList2)
+  //   console.log(appList1)
+  //   console.log(appList2)
   return { appList1, appList2 }
 }
 export async function getEmps (appList1, appList2, orgID, access_token, customerId) {
@@ -115,10 +115,12 @@ export async function getEmps (appList1, appList2, orgID, access_token, customer
   for (const app of appList1) {
     appSet.add(app.name)
   }
-
   const emailSet = new Set()
   const Maps = new Map()
   for (const data of appList2) {
+    if (!appSet.has(data.apps[0])) {
+      continue
+    }
     if (emailSet.has(data.email)) {
       Maps.get(data.email).add(data.apps[0])
     } else {
