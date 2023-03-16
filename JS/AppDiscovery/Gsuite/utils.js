@@ -106,6 +106,8 @@ export async function getApps (access_token, customerId) {
       }
     }
   }
+  console.log(appList1)
+  console.log(appList2)
   return { appList1, appList2 }
 }
 export async function getEmps (appList1, appList2, orgID, access_token, customerId) {
