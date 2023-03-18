@@ -88,9 +88,8 @@ async function getExpense (reports, name, orgId, accessToken) {
   try {
     const data = await getExpenseReport(uri, options)
     const e = data.expense_report.expenses
-    console.log(e, ' ')
-    licences += e[0].line_items.length
-    currentCost += e[0].amount
+    licences += e.length
+    currentCost += e[0].total
     const dueDate = data.expense_report.due_date
 
     results = { report_id: report_id, licences: licences, currentCost: currentCost, PerSubscription: currentCost / licences, dueDate: dueDate }
