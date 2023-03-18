@@ -107,6 +107,7 @@ export async function getZohoData (orgId, accessToken, subData) {
     for (const sub of subList) {
       const expense = await getExpense(allExpenses, sub.name, orgId, accessToken)
       if (!expense) { continue }
+      console.log(sub.name, ' ', expense.licences)
       sub.emsID = expense.report_id
       sub.licences = expense.licences
       sub.currentCost = expense.currentCost

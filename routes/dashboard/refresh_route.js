@@ -142,7 +142,7 @@ router.get('/', async (req, res) => {
           break
       }
       await subSchema.findOneAndUpdate({ ID: req.session.orgID }, { apps: subData.subList, amtSaved: subData.amtSaved, amtSpent: subData.amtSpent })
-      console.log('after update', subData)
+      // console.log('after update', subData)
     }
     return res.sendStatus(200)
   } catch (error) {
