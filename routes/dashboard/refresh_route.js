@@ -107,9 +107,14 @@ router.get('/', async (req, res) => {
             sso.accessToken = await getNewAzureToken(sso.clientID, sso.clientSecret, sso.tenantID)
           }
           console.log('Fetching azure data')
-          await getAzureSubs(orgID, sso, ems_creds)
-          await getAzureEmps(orgID, sso)
-          await getAzureGroups(orgID, sso)
+          // await getAzureSubs(orgID, sso, ems_creds)
+          // await getAzureEmps(orgID, sso)
+          // await getAzureGroups(orgID, sso)
+          await Promise.all([
+            getAzureSubs(orgID, sso, ems_creds),
+            getAzureEmps(orgID, sso),
+            getAzureGroups(orgID, sso)
+          ])
           break
         case 'gsuite':
           console.log('Fetching gsuite data')
