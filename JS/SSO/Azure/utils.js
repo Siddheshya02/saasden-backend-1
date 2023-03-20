@@ -115,6 +115,7 @@ async function getUsers (access_token) {
 }
 
 export async function getSubs (orgID, sso_creds, ems_creds) {
+  console.log('getsubsazure')
   const filter = { ID: orgID }
   const subsData = await subSchema.findOne(filter)
   const subList = subsData.apps
@@ -210,6 +211,7 @@ export async function getSubs (orgID, sso_creds, ems_creds) {
 }
 
 export async function getEmps (orgID, sso_creds) {
+  console.log('getempssazure')
   const userList = []
   const empList = await getUsers(sso_creds.access_token)
 
@@ -243,6 +245,7 @@ export async function getEmps (orgID, sso_creds) {
 }
 // fetching azure group data
 export async function getGroups (orgID, sso_creds) {
+  console.log('getgroupssazure')
   const groups = []
   const response = await axios.get('https://graph.microsoft.com/beta/groups', {
     headers: {
