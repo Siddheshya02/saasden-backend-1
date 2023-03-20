@@ -92,9 +92,14 @@ router.get('/', async (req, res) => {
         case 'jumpcloud':
           if (!verifyJumpCloudToken(sso.apiToken)) { res.send(`${process.env.domain}/jumpcloud/auth`).status(303) }
           console.log('Fetching jumpcloud data')
-          await getJumpCloudSubs(orgID, sso, ems_creds)
-          await getJumpCloudEmps(orgID, sso)
-          await getJumpCloudGroups(orgID, sso)
+          // await getJumpCloudSubs(orgID, sso, ems_creds)
+          // await getJumpCloudEmps(orgID, sso)
+          // await getJumpCloudGroups(orgID, sso)
+          await Promise.all([
+            getJumpCloudSubs(orgID, sso, ems_creds),
+            getJumpCloudEmps(orgID, sso),
+            getJumpCloudEmps(orgID, sso)
+          ])
           // await getScriptTags(orgID, 'https://shobitam.com/')
           break
         case 'azure':
