@@ -25,7 +25,7 @@ import sessions from 'express-session'
 import { router as subs } from './routes/dashboard/subscription_route.js'
 import { router as xero } from './routes/EMS/Xero_route.js'
 import { router as zoho } from './routes/EMS/Zoho_route.js'
-import { router as logout } from './routes/dashboard/logout'
+import { router as logout } from './routes/dashboard/logout.js'
 dotenv.config()
 
 const RedisStore = connectRedis(sessions)
