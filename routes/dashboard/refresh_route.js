@@ -67,27 +67,33 @@ router.get('/', async (req, res) => {
         case 'okta':
           if (!verifyOktaToken(sso.domain, sso.apiToken)) { res.send(`${process.env.domain}/okta/auth`).status(303) }
           console.log('Fetching okta data')
-          await getOktaSubs(orgID, sso, ems_creds)
-          await getOktaEmps(orgID, sso)
-          await getOktaGroups(orgID, sso)
+          await Promise.all(
+            [getOktaSubs(orgID, sso, ems_creds),
+              getOktaEmps(orgID, sso),
+              getOktaGroups(orgID, sso)]
+          )
           break
         case 'pingone':
           if (isJwtExpired(sso.access_token)) {
             sso.access_token = await getNewPingOneToken(sso.domain, sso.clientID, sso.clientSecret, sso.tenantID)
           }
           console.log('Fetching pingone data')
-          await getPingOneSubs(orgID, sso, ems_creds)
-          await getPingOneEmps(orgID, sso)
-          await getPingOneGroups(orgID, sso)
+          await Promise.all(
+            [getPingOneSubs(orgID, sso, ems_creds),
+              getPingOneEmps(orgID, sso),
+              getPingOneGroups(orgID, sso)
+            ])
           break
         case 'onelogin':
           if (!verifyOneLoginToken(sso.domain, sso.access_token)) {
             getNewOneLoginToken(sso.domain, sso.clientID, sso.clientSecret)
           }
           console.log('Fetching onelogin data')
-          await getOneLoginSubs(orgID, sso, ems_creds)
-          await getOneLoginEmps(orgID, sso)
-          await getOneLoginGroups(orgID, sso)
+          await Promise.all([
+            getOneLoginSubs(orgID, sso, ems_creds),
+            getOneLoginEmps(orgID, sso),
+            getOneLoginGroups(orgID, sso)
+          ])
           break
         case 'jumpcloud':
           if (!verifyJumpCloudToken(sso.apiToken)) { res.send(`${process.env.domain}/jumpcloud/auth`).status(303) }
