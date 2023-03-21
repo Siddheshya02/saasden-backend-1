@@ -104,7 +104,7 @@ router.get('/', async (req, res) => {
           await Promise.all([
             getJumpCloudSubs(orgID, sso, ems_creds),
             getJumpCloudEmps(orgID, sso),
-            getJumpCloudEmps(orgID, sso)
+            getJumpCloudGroups(orgID, sso)
           ])
           // await getScriptTags(orgID, 'https://shobitam.com/')
           break
