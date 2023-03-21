@@ -25,7 +25,7 @@ import sessions from 'express-session'
 import { router as subs } from './routes/dashboard/subscription_route.js'
 import { router as xero } from './routes/EMS/Xero_route.js'
 import { router as zoho } from './routes/EMS/Zoho_route.js'
-
+import { router as logout } from './routes/dashboard/logout'
 dotenv.config()
 
 const RedisStore = connectRedis(sessions)
@@ -116,5 +116,6 @@ app.use('/api/v1/emps', emps) // add checkStatus afterwards
 app.use('/api/v1/groups', group)
 app.use('/api/v1/discovery', appDiscovery)
 app.use('/api/v1/checkOrgSso', checkOrgSso)
+app.use('/api/v1/logout', logout)
 const port = process.env.PORT || 4000
 app.listen(port, () => console.log(`Listening on port ${port}...`))
